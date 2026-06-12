@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 1 — Choose the Right Surface</title>
+  <style>
+    :root {
+      --text: #1a1a1a;
+      --muted: #555;
+      --accent: #2563eb;
+      --accent-light: #eff6ff;
+      --border: #ddd;
+      --bg: #fafafa;
+      --card: #fff;
+      --correct: #166534;
+      --correct-bg: #f0fdf4;
+      --wrong: #991b1b;
+      --wrong-bg: #fef2f2;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Palatino Linotype", Palatino, Georgia, serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+    .lesson-meta {
+      font-family: system-ui, sans-serif;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-weight: 400;
+      font-size: 2rem;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 1.25rem;
+    }
+    h2 {
+      font-weight: 400;
+      font-size: 1.15rem;
+      margin: 2rem 0 0.75rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--border);
+    }
+    p { margin-bottom: 1rem; }
+    .epigraph {
+      color: var(--muted);
+      font-style: italic;
+      border-left: 3px solid var(--border);
+      padding-left: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .surface-grid {
+      display: grid;
+      gap: 0.75rem;
+      margin: 1.25rem 0;
+    }
+    .surface {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1rem 1.15rem;
+    }
+    .surface strong {
+      font-family: system-ui, sans-serif;
+      font-size: 0.85rem;
+    }
+    .surface .shortcut {
+      float: right;
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.78rem;
+      color: var(--muted);
+      background: #f0f0f0;
+      padding: 0.15rem 0.45rem;
+      border-radius: 3px;
+    }
+    .surface p {
+      font-size: 0.92rem;
+      margin: 0.4rem 0 0;
+      color: var(--muted);
+    }
+    .callout {
+      background: var(--accent-light);
+      border: 1px solid #bfdbfe;
+      padding: 1rem 1.15rem;
+      font-size: 0.95rem;
+      margin: 1.5rem 0;
+    }
+    .callout strong { font-family: system-ui, sans-serif; font-size: 0.8rem; }
+    .quiz {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      margin: 1.25rem 0;
+    }
+    .quiz h3 {
+      font-size: 1rem;
+      font-weight: 400;
+      margin-bottom: 1rem;
+    }
+    .quiz-options { display: flex; flex-direction: column; gap: 0.5rem; }
+    .quiz-options button {
+      font-family: system-ui, sans-serif;
+      font-size: 0.88rem;
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      border: 1px solid var(--border);
+      background: var(--card);
+      cursor: pointer;
+      border-radius: 0;
+      transition: background 0.15s;
+    }
+    .quiz-options button:hover { background: #f5f5f5; }
+    .quiz-options button.correct {
+      background: var(--correct-bg);
+      border-color: var(--correct);
+      color: var(--correct);
+    }
+    .quiz-options button.wrong {
+      background: var(--wrong-bg);
+      border-color: var(--wrong);
+      color: var(--wrong);
+    }
+    .quiz-options button:disabled { cursor: default; opacity: 0.85; }
+    .feedback {
+      margin-top: 0.75rem;
+      font-size: 0.9rem;
+      min-height: 1.4em;
+    }
+    .practice {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      margin: 1.5rem 0;
+    }
+    .practice ol { padding-left: 1.25rem; }
+    .practice li { margin-bottom: 0.5rem; }
+    .practice code {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.85em;
+      background: #eee;
+      padding: 0.1em 0.35em;
+    }
+    .source {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-top: 2rem;
+    }
+    .source a, footer a { color: var(--accent); }
+    footer {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+    @media print {
+      body { background: white; }
+      .quiz-options button { border: 1px solid #999; }
+    }
+  </style>
+</head>
+<body>
+  <div class="lesson-meta">Lesson 1 · ~8 minutes</div>
+  <h1>Choose the Right Surface</h1>
+
+  <p class="epigraph">
+    The most common mistake solo builders make is opening Agent for everything.
+    Power users match the tool to the job.
+  </p>
+
+  <p>
+    Cursor is not one AI feature — it is four surfaces, each optimized for a different kind of work.
+    Your mission is to ship app ideas fast. That starts with knowing which surface to reach for
+    before you type a single prompt.
+  </p>
+
+  <h2>The four surfaces</h2>
+
+  <div class="surface-grid">
+    <div class="surface">
+      <span class="shortcut">type</span>
+      <strong>Tab — autocomplete</strong>
+      <p>Finishes the line you're writing. Best for boilerplate and obvious completions. Never leave the keyboard.</p>
+    </div>
+    <div class="surface">
+      <span class="shortcut">Cmd+K</span>
+      <strong>Inline Edit</strong>
+      <p>Select code, describe a change, get a diff in place. Best for local edits — rename a function, tweak one component.</p>
+    </div>
+    <div class="surface">
+      <span class="shortcut">Cmd+I</span>
+      <strong>Agent</strong>
+      <p>Full co-builder. Reads files, writes code, runs terminal commands. Best for features, bugs, and multi-file work.</p>
+    </div>
+    <div class="surface">
+      <span class="shortcut">Shift+Tab</span>
+      <strong>Plan Mode</strong>
+      <p>Agent researches and writes a plan <em>before</em> touching code. Best for new app ideas and anything architecturally unclear.</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>Rule of thumb for solo builders</strong><br>
+    New idea or big feature → <strong>Plan</strong> first.<br>
+    Known task spanning files → <strong>Agent</strong>.<br>
+    Small edit in one place → <strong>Inline Edit</strong>.<br>
+    Finishing what you're typing → <strong>Tab</strong>.
+  </div>
+
+  <p>
+    Keep the <a href="../reference/cursor-surfaces.html">surfaces reference</a> open while you work.
+    You'll internalize this quickly — until then, glance at it before every session.
+  </p>
+
+  <h2>Check your understanding</h2>
+
+  <div class="quiz" id="quiz1">
+    <h3>1. You want to rename a variable inside one function. Best choice?</h3>
+    <div class="quiz-options">
+      <button onclick="answer('quiz1', this, false)">Open full Agent chat now</button>
+      <button onclick="answer('quiz1', this, true)">Use Inline Edit here</button>
+      <button onclick="answer('quiz1', this, false)">Use Tab completion here</button>
+    </div>
+    <div class="feedback" id="quiz1-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz2">
+    <h3>2. You have a new app idea — a habit tracker — and no code yet. Best first step?</h3>
+    <div class="quiz-options">
+      <button onclick="answer('quiz2', this, true)">Switch to Plan Mode first</button>
+      <button onclick="answer('quiz2', this, false)">Start typing with Tab now</button>
+      <button onclick="answer('quiz2', this, false)">Use Inline Edit only now</button>
+    </div>
+    <div class="feedback" id="quiz2-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz3">
+    <h3>3. Agent built the wrong architecture. What do power users do?</h3>
+    <div class="quiz-options">
+      <button onclick="answer('quiz3', this, false)">Keep prompting until fixed</button>
+      <button onclick="answer('quiz3', this, true)">Revert and refine plan</button>
+      <button onclick="answer('quiz3', this, false)">Switch to Tab and retry</button>
+    </div>
+    <div class="feedback" id="quiz3-feedback"></div>
+  </div>
+
+  <h2>Do this now</h2>
+
+  <div class="practice">
+    <p><strong>5-minute win:</strong> open Cursor on any folder (even an empty one) and run this exact Agent prompt in Plan Mode:</p>
+    <ol>
+      <li>Press <code>Cmd+I</code> to open Agent</li>
+      <li>Press <code>Shift+Tab</code> until you see <strong>Plan</strong></li>
+      <li>Paste this prompt:</li>
+    </ol>
+    <p style="font-family: system-ui, sans-serif; font-size: 0.88rem; background: #f4f4f4; padding: 0.85rem; border-left: 3px solid var(--accent);">
+      I want to build a simple personal habit tracker as a web app.<br>
+      Ask me 3 clarifying questions, then propose the thinnest plan to get a working prototype in one session.
+    </p>
+    <p>Review the plan Agent produces. You don't need to build yet — the win is seeing Plan Mode in action.</p>
+  </div>
+
+  <p class="source">
+    Primary source:
+    <a href="https://cursor.com/docs/get-started/quickstart">Cursor Quickstart</a>
+    and
+    <a href="https://cursor.com/docs/agent/plan-mode">Plan Mode docs</a>.
+  </p>
+
+  <footer>
+    <p>Stuck on anything? Ask your agent teacher — describe what you tried and what confused you.</p>
+    <p style="margin-top: 0.75rem;">
+      Next up: Lesson 2 will cover writing prompts that actually work.
+      Reference: <a href="../reference/cursor-surfaces.html">Cursor Surfaces</a> ·
+      Mission: <a href="../MISSION.md">MISSION.md</a>
+    </p>
+  </footer>
+
+  <script>
+    const messages = {
+      quiz1: {
+        true: "Correct. Inline Edit knows exactly which code you selected — Agent would work but is slower for a local change.",
+        false: "Not quite. Agent and Tab aren't scoped to your selection the way Inline Edit is."
+      },
+      quiz2: {
+        true: "Correct. Plan Mode asks questions and proposes architecture before writing code — exactly what a greenfield idea needs.",
+        false: "Not for a new app. Tab and Inline Edit assume code already exists."
+      },
+      quiz3: {
+        true: "Correct. Cursor's own docs recommend reverting and refining the plan rather than patching a bad build.",
+        false: "Patching through follow-up prompts often costs more time than a better plan."
+      }
+    };
+
+    function answer(quizId, btn, isCorrect) {
+      const quiz = document.getElementById(quizId);
+      const buttons = quiz.querySelectorAll('button');
+      const feedback = document.getElementById(quizId + '-feedback');
+
+      buttons.forEach(b => {
+        b.disabled = true;
+        if (b === btn) {
+          b.classList.add(isCorrect ? 'correct' : 'wrong');
+        } else if (b.onclick.toString().includes('true')) {
+          b.classList.add('correct');
+        }
+      });
+
+      feedback.textContent = isCorrect ? messages[quizId].true : messages[quizId].false;
+      feedback.style.color = isCorrect ? 'var(--correct)' : 'var(--wrong)';
+    }
+  </script>
+</body>
+</html>

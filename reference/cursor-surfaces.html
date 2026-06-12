@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cursor Surfaces — Quick Reference</title>
+  <style>
+    :root {
+      --text: #1a1a1a;
+      --muted: #555;
+      --accent: #2563eb;
+      --border: #ddd;
+      --bg: #fafafa;
+      --card: #fff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Palatino Linotype", Palatino, Georgia, serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.55;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+    h1 {
+      font-weight: 400;
+      font-size: 1.75rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+    }
+    th, td {
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      font-family: system-ui, sans-serif;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      background: #f4f4f4;
+    }
+    tr:last-child td { border-bottom: none; }
+    code {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.85em;
+      background: #eee;
+      padding: 0.1em 0.35em;
+      border-radius: 3px;
+    }
+    .flow {
+      margin-top: 2rem;
+      padding: 1.25rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      font-size: 0.95rem;
+    }
+    .flow h2 {
+      font-size: 0.75rem;
+      font-family: system-ui, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+      font-weight: 600;
+    }
+    .flow ol { padding-left: 1.25rem; }
+    .flow li { margin-bottom: 0.4rem; }
+    footer {
+      margin-top: 2.5rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--accent); }
+    @media print {
+      body { background: white; padding: 0; }
+      .flow, table { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Cursor Surfaces</h1>
+  <p class="subtitle">Which tool to reach for, and when — for solo app building</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Surface</th>
+        <th>How to open</th>
+        <th>Use when</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Tab</strong></td>
+        <td>Just type</td>
+        <td>Finishing obvious lines, boilerplate, small completions</td>
+      </tr>
+      <tr>
+        <td><strong>Inline Edit</strong></td>
+        <td><code>Cmd+K</code></td>
+        <td>Editing a selected block — rename, tweak logic, local refactor</td>
+      </tr>
+      <tr>
+        <td><strong>Agent</strong></td>
+        <td><code>Cmd+I</code></td>
+        <td>Multi-file work, running commands, building features, fixing bugs</td>
+      </tr>
+      <tr>
+        <td><strong>Plan Mode</strong></td>
+        <td><code>Shift+Tab</code> in Agent</td>
+        <td>New app ideas, unclear scope, architecture decisions — plan before code</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="flow">
+    <h2>Solo builder loop</h2>
+    <ol>
+      <li><strong>Plan</strong> — describe the idea; let Agent research and propose a plan</li>
+      <li><strong>Build</strong> — approve the plan; Agent implements the thinnest runnable slice</li>
+      <li><strong>Verify</strong> — ask Agent to run the app, tests, or linter</li>
+      <li><strong>Iterate</strong> — new Agent chat per distinct task; Inline Edit for tiny fixes</li>
+    </ol>
+  </div>
+
+  <footer>
+    Reference for <a href="../MISSION.md">Cursor Power User mission</a>.
+    See also: <a href="../lessons/0001-choose-the-right-surface.html">Lesson 1</a>.
+    Source: <a href="https://cursor.com/docs/get-started/quickstart">Cursor Quickstart</a>
+  </footer>
+</body>
+</html>
