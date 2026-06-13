@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Rules — Quick Reference</title>
+  <style>
+    :root {
+      --text: #1a1a1a;
+      --muted: #555;
+      --accent: #2563eb;
+      --border: #ddd;
+      --bg: #fafafa;
+      --card: #fff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Palatino Linotype", Palatino, Georgia, serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.55;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+    h1 {
+      font-weight: 400;
+      font-size: 1.75rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+    h2 {
+      font-size: 0.75rem;
+      font-family: system-ui, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin: 2rem 0 0.75rem;
+      font-weight: 600;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      font-family: system-ui, sans-serif;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      background: #f4f4f4;
+    }
+    tr:last-child td { border-bottom: none; }
+    code, pre {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.82rem;
+    }
+    code {
+      font-size: 0.85em;
+      background: #eee;
+      padding: 0.1em 0.35em;
+      border-radius: 3px;
+    }
+    pre {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1rem;
+      overflow-x: auto;
+      line-height: 1.5;
+      margin: 0.75rem 0 1rem;
+      white-space: pre-wrap;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1rem 1.15rem;
+      font-size: 0.92rem;
+      margin-bottom: 0.75rem;
+    }
+    footer {
+      margin-top: 2.5rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--accent); }
+    @media print {
+      body { background: white; padding: 0; }
+      table, pre, .card { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Project Rules</h1>
+  <p class="subtitle">Persistent instructions so Agent remembers your stack and habits</p>
+
+  <h2>Three layers (solo builder)</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Layer</th>
+        <th>Where</th>
+        <th>Use for</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>User Rules</strong></td>
+        <td>Cursor Settings → Rules</td>
+        <td>Preferences on every project — tone, commit style, "don't commit unless asked"</td>
+      </tr>
+      <tr>
+        <td><strong>Project Rules</strong></td>
+        <td><code>.cursor/rules/*.mdc</code></td>
+        <td>Stack, architecture, test patterns — version-controlled per repo</td>
+      </tr>
+      <tr>
+        <td><strong>AGENTS.md</strong></td>
+        <td>Project root (or subdirs)</td>
+        <td>Simple markdown instructions when you don't need rule types or globs</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Rule apply modes (.mdc)</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Mode</th>
+        <th>When it loads</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Always Apply</strong></td>
+        <td>Every Agent chat in this project</td>
+      </tr>
+      <tr>
+        <td><strong>Apply Intelligently</strong></td>
+        <td>Agent reads <code>description</code> and pulls it in when relevant</td>
+      </tr>
+      <tr>
+        <td><strong>Apply to Specific Files</strong></td>
+        <td>When a matching file is in context (<code>globs</code>)</td>
+      </tr>
+      <tr>
+        <td><strong>Apply Manually</strong></td>
+        <td>When you <code>@</code>-mention the rule in chat</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Minimal .mdc template</h2>
+  <pre>---
+description: Express + SQLite API conventions for this project
+alwaysApply: true
+---
+
+- Express server; sqlite3 for persistence (no ORM)
+- Every feature ships with an npm test that seeds data and hits the endpoint
+- Run `npm test` as the done-when check before accepting a diff</pre>
+
+  <h2>When to add a rule</h2>
+  <div class="card">
+    Add a rule when you repeat the same <strong>Constraints</strong> in two or more prompts,
+    or when Agent makes the same mistake twice. Start with one short rule; split later if it grows past ~500 lines.
+  </div>
+
+  <h2>What rules do not affect</h2>
+  <div class="card">
+    Rules apply to <strong>Agent (Chat)</strong> only — not Tab completion or Inline Edit (Cmd+K).
+  </div>
+
+  <footer>
+    <p>
+      Source: <a href="https://cursor.com/docs/rules">Cursor Rules docs</a> ·
+      Lesson: <a href="../lessons/0003-set-up-project-rules.html">Lesson 3</a> ·
+      Prompt template: <a href="prompt-anatomy.html">Prompt Anatomy</a>
+    </p>
+  </footer>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lesson 2 — Write Prompts That Work</title>
+  <title>Lesson 3 — Set Up Project Rules</title>
   <style>
     :root {
       --text: #1a1a1a;
@@ -58,26 +58,26 @@
       padding-left: 1rem;
       margin-bottom: 1.5rem;
     }
-    .parts {
+    .layers {
       display: grid;
       gap: 0.65rem;
       margin: 1.25rem 0;
     }
-    .part {
+    .layer {
       background: var(--card);
       border: 1px solid var(--border);
       padding: 0.85rem 1.1rem;
       display: grid;
-      grid-template-columns: 5.5rem 1fr;
+      grid-template-columns: 6.5rem 1fr;
       gap: 0.75rem;
       align-items: start;
     }
-    .part strong {
+    .layer strong {
       font-family: system-ui, sans-serif;
       font-size: 0.82rem;
       color: var(--accent);
     }
-    .part span {
+    .layer span {
       font-size: 0.92rem;
       color: var(--muted);
     }
@@ -99,11 +99,11 @@
       font-size: 0.92rem;
       border: 1px solid var(--border);
     }
-    .compare-box.bad {
+    .compare-box.before {
       background: var(--wrong-bg);
       border-color: #fecaca;
     }
-    .compare-box.good {
+    .compare-box.after {
       background: var(--correct-bg);
       border-color: #bbf7d0;
     }
@@ -114,13 +114,23 @@
       letter-spacing: 0.06em;
       margin-bottom: 0.4rem;
     }
-    .compare-box.bad .label { color: var(--wrong); }
-    .compare-box.good .label { color: var(--correct); }
+    .compare-box.before .label { color: var(--wrong); }
+    .compare-box.after .label { color: var(--correct); }
     .compare-box pre {
       font-family: "SF Mono", Menlo, monospace;
       font-size: 0.8rem;
       white-space: pre-wrap;
       line-height: 1.55;
+    }
+    pre.example {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.8rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1rem 1.1rem;
+      white-space: pre-wrap;
+      line-height: 1.55;
+      margin: 1rem 0;
     }
     .quiz {
       background: var(--card);
@@ -238,148 +248,164 @@
   </style>
 </head>
 <body>
-  <div class="lesson-meta">Lesson 2 · ~10 minutes</div>
-  <h1>Write Prompts That Work</h1>
+  <div class="lesson-meta">Lesson 3 · ~10 minutes</div>
+  <h1>Set Up Project Rules</h1>
 
   <p class="epigraph">
-    Picking the right surface gets you in the door.
-    A clear prompt is what gets correct code on the first or second try.
+    A good prompt tells Agent what to do once.
+    A good rule tells Agent how this project works forever.
   </p>
 
   <p>
-    You already know <em>when</em> to open Agent or Plan Mode
-    (<a href="0001-choose-the-right-surface.html">Lesson 1</a>).
-    This lesson covers <em>what</em> to type once you're there.
-    Power-user prompts share the same four-part shape — whether you're building
-    a habit tracker or fixing a bug in someone else's repo.
+    In <a href="0002-write-prompts-that-work.html">Lesson 2</a> you wrote a four-part prompt
+    for step 1 of your Express plan — stack, sqlite3, test with <code>npm test</code>.
+    That's the right shape. But you'll repeat those <strong>Constraints</strong> on every plan step
+    unless you write them down once as a <strong>project rule</strong>.
   </p>
 
-  <h2>The four-part prompt</h2>
+  <p>
+    Rules are persistent instructions Agent loads automatically.
+    They turn repeated prompt boilerplate into project memory — exactly what solo builders need
+    when jumping between repos.
+    (<a href="../MISSION.md">Mission</a>: "set up project rules once.")
+  </p>
 
-  <div class="parts">
-    <div class="part">
-      <strong>Goal</strong>
-      <span>One concrete outcome. Not "improve auth" — "redirect to /dashboard after login succeeds."</span>
+  <h2>Three layers</h2>
+
+  <div class="layers">
+    <div class="layer">
+      <strong>User Rules</strong>
+      <span>Global preferences in Cursor Settings → Rules. "Don't commit unless I ask." Applies to every project.</span>
     </div>
-    <div class="part">
-      <strong>Scope</strong>
-      <span>What's in this message, and what's explicitly out. One distinct task per Agent chat.</span>
+    <div class="layer">
+      <strong>Project Rules</strong>
+      <span>Files in <code>.cursor/rules/*.mdc</code>, checked into git. Stack, architecture, test patterns for <em>this</em> repo.</span>
     </div>
-    <div class="part">
-      <strong>Constraints</strong>
-      <span>Stack, style, files to touch or avoid. "No new dependencies" saves you a refactor later.</span>
-    </div>
-    <div class="part">
-      <strong>Done-when</strong>
-      <span>How you'll verify success. "Run <code>npm test</code>" or "open localhost and add a habit."</span>
+    <div class="layer">
+      <strong>AGENTS.md</strong>
+      <span>Plain markdown in the project root. Simpler alternative when you don't need apply modes or globs.</span>
     </div>
   </div>
 
   <p>
-    Keep the <a href="../reference/prompt-anatomy.html">prompt anatomy reference</a> handy.
-    You'll internalize the template fast — until then, mentally check all four boxes before you hit Send.
+    Keep the <a href="../reference/project-rules.html">project rules reference</a> handy.
+    For your Express app, start with one <strong>Always Apply</strong> project rule — not a pile of rules on day one.
   </p>
 
-  <h2>Bad prompt vs good prompt</h2>
+  <h2>Before rules vs after</h2>
 
   <div class="compare">
-    <div class="compare-box bad">
-      <div class="label">Vague — Agent guesses</div>
-      <pre>Make the habit tracker better. Add whatever features you think are missing.</pre>
+    <div class="compare-box before">
+      <div class="label">Every prompt — you repeat Constraints</div>
+      <pre>Goal: Add POST /habits endpoint.
+Scope: Create route + db migration only.
+Constraints: Express server with sqlite3 db. Every feature needs npm test.
+Done-when: Run npm test — all green.</pre>
     </div>
-    <div class="compare-box good">
-      <div class="label">Four-part — Agent executes</div>
-      <pre>Goal: Add a habit list page that reads/writes localStorage.
-Scope: List view only — no edit or delete flow yet.
-Constraints: Vanilla HTML/CSS/JS in a single index.html.
-Done-when: Run `python3 -m http.server` — I can add a habit and see it persist after refresh.</pre>
+    <div class="compare-box after">
+      <div class="label">Rule handles Constraints — prompt stays thin</div>
+      <pre>Goal: Add POST /habits endpoint.
+Scope: Create route + db migration only.
+Done-when: Run npm test — all green.</pre>
     </div>
   </div>
 
   <div class="callout">
-    <strong>@ mentions — when and when not</strong><br>
-    Type <code>@</code> to attach files, folders, terminal output, or git diffs.
-    Use <code>@filename</code> when you <em>know</em> what's relevant.
-    When you don't — describe the symptom and let Agent search.
-    <a href="https://cursor.com/docs/agent/prompting">Official docs</a> say over-attaching
-    wastes context; under-specifying the goal wastes your time.
+    <strong>Start simple — official guidance</strong><br>
+    Add rules only when Agent repeats a mistake or you repeat the same constraints twice.
+    <a href="https://cursor.com/docs/rules">Cursor docs</a> warn against copying entire style guides — point to examples instead.
   </div>
+
+  <h2>A starter rule for your Express project</h2>
+
+  <p>Create <code>.cursor/rules/express-api.mdc</code> in the repo where you built step 1:</p>
+
+  <pre class="example">---
+description: Express + SQLite API conventions for this project
+alwaysApply: true
+---
+
+- Express server; sqlite3 for persistence (no ORM unless I ask)
+- Seed test data in tests, not in production startup
+- Every new endpoint ships with an npm test that hits it
+- Run `npm test` as the done-when check before accepting a diff</pre>
+
+  <p>
+    Or type <code>/create-rule</code> in Agent and describe what you want — Agent writes the file for you.
+  </p>
 
   <h2>Check your understanding</h2>
 
   <div class="quiz" id="quiz1">
-    <h3>1. Which prompt gives Agent the best shot at one-shot success?</h3>
+    <h3>1. Where should "always use sqlite3, never Postgres" live?</h3>
     <div class="quiz-options">
-      <button onclick="answer('quiz1', this, false)">Fix everything broken in the app.</button>
-      <button onclick="answer('quiz1', this, true)">Add dark mode to the header.</button>
-      <button onclick="answer('quiz1', this, false)">Make the whole codebase cleaner now.</button>
+      <button onclick="answer('quiz1', this, false)">User Rules in Cursor Settings.</button>
+      <button onclick="answer('quiz1', this, true)">Project Rules in this repo.</button>
+      <button onclick="answer('quiz1', this, false)">Constraints in every prompt.</button>
     </div>
     <div class="feedback" id="quiz1-feedback"></div>
   </div>
 
   <div class="quiz" id="quiz2">
-    <h3>2. Login fails but you don't know which file. Best approach?</h3>
+    <h3>2. You want rules only when editing test files. Best mode?</h3>
     <div class="quiz-options">
-      <button onclick="answer('quiz2', this, false)">Attach every file in the repo.</button>
-      <button onclick="answer('quiz2', this, true)">Skip @ mentions; describe the symptom.</button>
-      <button onclick="answer('quiz2', this, false)">Use Tab completion to fix it now.</button>
+      <button onclick="answer('quiz2', this, false)">Always Apply on every chat.</button>
+      <button onclick="answer('quiz2', this, true)">Apply to Specific Files via globs.</button>
+      <button onclick="answer('quiz2', this, false)">User Rules in global settings.</button>
     </div>
     <div class="feedback" id="quiz2-feedback"></div>
   </div>
 
   <div class="quiz" id="quiz3">
-    <h3>3. Agent finished a feature. What separates power users here?</h3>
+    <h3>3. Rules apply to which Cursor surface?</h3>
     <div class="quiz-options">
-      <button onclick="answer('quiz3', this, false)">Start next feature in this same chat.</button>
-      <button onclick="answer('quiz3', this, true)">Verify done-when, then in new chat.</button>
-      <button onclick="answer('quiz3', this, false)">Accept this diff without running it yet.</button>
+      <button onclick="answer('quiz3', this, true)">Agent chat only — not Tab or Cmd+K.</button>
+      <button onclick="answer('quiz3', this, false)">Tab completion and Agent chat both.</button>
+      <button onclick="answer('quiz3', this, false)">Inline Edit only — not Agent chat.</button>
     </div>
     <div class="feedback" id="quiz3-feedback"></div>
   </div>
 
-  <h2>Build a prompt</h2>
+  <h2>Draft your rule</h2>
 
-  <p>Fill in all four fields for this scenario: you approved a Plan for a habit tracker and want Agent to build the first runnable slice.</p>
+  <p>Based on your step-1 prompt, write the rule content Agent should always see in that Express repo:</p>
 
   <div class="builder" id="builder">
-    <label for="goal">Goal</label>
-    <textarea id="goal" rows="2" placeholder="What should exist when done?"></textarea>
-    <label for="scope">Scope</label>
-    <textarea id="scope" rows="2" placeholder="In / out for this message"></textarea>
-    <label for="constraints">Constraints</label>
-    <textarea id="constraints" rows="2" placeholder="Stack, style, limits"></textarea>
-    <label for="donewhen">Done-when</label>
-    <textarea id="donewhen" rows="2" placeholder="How you'll verify"></textarea>
-    <button class="check" onclick="checkBuilder()">Check my prompt</button>
+    <label for="stack">Stack &amp; architecture (2–4 bullets)</label>
+    <textarea id="stack" rows="3" placeholder="- Express + sqlite3&#10;- ..."></textarea>
+    <label for="testing">Testing conventions (2–3 bullets)</label>
+    <textarea id="testing" rows="3" placeholder="- npm test for every endpoint&#10;- ..."></textarea>
+    <label for="avoid">What Agent should not do (1–2 bullets)</label>
+    <textarea id="avoid" rows="2" placeholder="- No new dependencies without asking&#10;- ..."></textarea>
+    <button class="check" onclick="checkBuilder()">Check my rule</button>
     <div class="builder-feedback" id="builder-feedback"></div>
   </div>
 
   <h2>Do this now</h2>
 
   <div class="practice">
-    <p><strong>5-minute win:</strong> take the habit-tracker plan from Lesson 1 (or any small idea) and send Agent this exact shape — filled in with your details:</p>
+    <p><strong>5-minute win</strong> in your Express project (where you ran step 1):</p>
     <ol>
-      <li>Open Agent (<code>Cmd+I</code>) — Agent mode, not Plan</li>
-      <li>Paste your four-part prompt from the builder above</li>
-      <li>Let Agent implement, then run your <strong>done-when</strong> step yourself</li>
-      <li>If it fails, start a <em>new</em> chat with a refined prompt — don't patch endlessly in one thread</li>
+      <li>Open that repo in Cursor — not this teaching workspace</li>
+      <li>Create the rule above (<code>/create-rule</code> or paste the <code>.mdc</code> template)</li>
+      <li>Open a <em>new</em> Agent chat and send a thin prompt for step 2 — Goal + Scope + Done-when only, no Constraints</li>
+      <li>Check the diff: did Agent follow your stack and test conventions without you repeating them?</li>
     </ol>
-    <p>The win isn't a perfect app — it's a prompt that produces runnable code you verified.</p>
+    <p>The win isn't a perfect rule file — it's shorter prompts that still produce correct code.</p>
   </div>
 
   <p class="source">
     Primary source:
-    <a href="https://cursor.com/docs/agent/prompting">Prompting agents</a>
-    (@ mentions, context window, when to attach files).
+    <a href="https://cursor.com/docs/rules">Rules</a>
+    (project vs user rules, apply modes, AGENTS.md, best practices).
   </p>
 
   <footer>
-    <p>Stuck on anything? Ask your agent teacher — paste the prompt you wrote and what Agent did instead.</p>
+    <p>Stuck on anything? Ask your agent teacher — paste your rule file and the prompt Agent ignored.</p>
     <p style="margin-top: 0.75rem;">
-      Previous: <a href="0001-choose-the-right-surface.html">Lesson 1 — Surfaces</a> ·
-      Next: <a href="0003-set-up-project-rules.html">Lesson 3 — Project Rules</a> ·
-      Reference: <a href="../reference/prompt-anatomy.html">Prompt Anatomy</a> ·
-      <a href="../reference/cursor-surfaces.html">Cursor Surfaces</a> ·
+      Previous: <a href="0002-write-prompts-that-work.html">Lesson 2 — Prompts</a> ·
+      Reference: <a href="../reference/project-rules.html">Project Rules</a> ·
+      <a href="../reference/prompt-anatomy.html">Prompt Anatomy</a> ·
       Mission: <a href="../MISSION.md">MISSION.md</a>
     </p>
   </footer>
@@ -387,16 +413,16 @@ Done-when: Run `python3 -m http.server` — I can add a habit and see it persist
   <script>
     const messages = {
       quiz1: {
-        true: "Correct. A specific, bounded goal beats a vague request — Agent knows exactly what to build.",
-        false: "Too vague. Without scope and done-when, Agent invents its own definition of 'better' or 'cleaner'."
+        true: "Correct. Stack choices are per-repo — project rules travel with the code in git.",
+        false: "User Rules are global. Repeating Constraints every time works but wastes effort."
       },
       quiz2: {
-        true: "Correct. Official docs: skip @ when you're unsure — Agent searches. Describe what fails and when.",
-        false: "Attaching everything burns context. Tab can't debug multi-file login flows."
+        true: "Correct. Set globs like `**/*.test.js` so test conventions load only when relevant.",
+        false: "Always Apply loads every chat. User Rules can't scope to file patterns."
       },
       quiz3: {
-        true: "Correct. Run your done-when check, then open a fresh chat per distinct task — keeps context clean.",
-        false: "Skipping verification or stacking tasks in one chat is how small bugs become big detours."
+        true: "Correct. Rules feed Agent context only — Tab and Inline Edit ignore them.",
+        false: "Rules don't affect Tab or Inline Edit. Only Agent (Chat) reads them."
       }
     };
 
@@ -419,28 +445,28 @@ Done-when: Run `python3 -m http.server` — I can add a habit and see it persist
     }
 
     function checkBuilder() {
-      const fields = ['goal', 'scope', 'constraints', 'donewhen'];
-      const values = fields.map(id => document.getElementById(id).value.trim());
+      const stack = document.getElementById('stack').value.trim();
+      const testing = document.getElementById('testing').value.trim();
+      const avoid = document.getElementById('avoid').value.trim();
       const feedback = document.getElementById('builder-feedback');
-      const empty = values.filter(v => v.length < 8);
 
-      if (empty.length > 0) {
+      if (stack.length < 15 || testing.length < 15) {
         feedback.style.color = 'var(--wrong)';
-        feedback.textContent = 'Each field needs at least a short sentence (8+ characters). Be specific — "add list page" beats "build app".';
+        feedback.textContent = 'Stack and testing sections need at least a couple of concrete bullets each.';
         return;
       }
 
-      const doneWhen = values[3].toLowerCase();
-      const hasVerify = /run|test|open|check|verify|localhost|npm|python|curl|see|click|refresh/.test(doneWhen);
+      const hasStack = /express|sqlite|node|api|server/i.test(stack);
+      const hasTest = /test|npm|seed|endpoint|assert/i.test(testing);
 
-      if (!hasVerify) {
+      if (!hasStack || !hasTest) {
         feedback.style.color = '#92400e';
-        feedback.textContent = 'Good start — strengthen Done-when with a concrete verification step (run a command, open the app, check a behavior).';
+        feedback.textContent = 'Good start — mention your actual stack (Express, sqlite3) and how you verify (npm test, seed data).';
         return;
       }
 
       feedback.style.color = 'var(--correct)';
-      feedback.textContent = 'Solid four-part prompt. Copy it into Agent and run your done-when step when Agent finishes.';
+      feedback.textContent = 'Solid rule draft. Wrap it in .mdc frontmatter with alwaysApply: true and add it to your Express repo.';
     }
   </script>
 </body>
