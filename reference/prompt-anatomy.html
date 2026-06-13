@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prompt Anatomy — Quick Reference</title>
+  <style>
+    :root {
+      --text: #1a1a1a;
+      --muted: #555;
+      --accent: #2563eb;
+      --border: #ddd;
+      --bg: #fafafa;
+      --card: #fff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Palatino Linotype", Palatino, Georgia, serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.55;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+    h1 {
+      font-weight: 400;
+      font-size: 1.75rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      font-family: system-ui, sans-serif;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      background: #f4f4f4;
+    }
+    tr:last-child td { border-bottom: none; }
+    code {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.85em;
+      background: #eee;
+      padding: 0.1em 0.35em;
+      border-radius: 3px;
+    }
+    .template {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.82rem;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      margin-bottom: 1.5rem;
+    }
+    .anti {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      padding: 1rem 1.15rem;
+      font-size: 0.92rem;
+      margin-bottom: 1.5rem;
+    }
+    .anti h2 {
+      font-family: system-ui, sans-serif;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #991b1b;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+    .anti ul { padding-left: 1.25rem; }
+    .anti li { margin-bottom: 0.35rem; }
+    footer {
+      margin-top: 2rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--accent); }
+    @media print {
+      body { background: white; padding: 0; }
+      table, .template, .anti { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Prompt Anatomy</h1>
+  <p class="subtitle">Four parts every solo-builder Agent prompt should have</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Part</th>
+        <th>Ask yourself</th>
+        <th>Example</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Goal</strong></td>
+        <td>What should exist when done?</td>
+        <td>"Add a habit list page that loads from localStorage"</td>
+      </tr>
+      <tr>
+        <td><strong>Scope</strong></td>
+        <td>What is in / out this turn?</td>
+        <td>"Only the list view — no edit flow yet"</td>
+      </tr>
+      <tr>
+        <td><strong>Constraints</strong></td>
+        <td>What rules must Agent follow?</td>
+        <td>"Vanilla HTML/CSS/JS, no new dependencies"</td>
+      </tr>
+      <tr>
+        <td><strong>Done-when</strong></td>
+        <td>How will you verify it works?</td>
+        <td>"Run a local server; I can add and see habits"</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="template">Goal: [one concrete outcome]
+Scope: [in this message / not in this message]
+Constraints: [stack, style, files to touch or avoid]
+Done-when: [command to run or behavior to check]</div>
+
+  <h2 style="font-size: 1rem; font-weight: 400; margin-bottom: 0.75rem;">@ mentions</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>When</th>
+        <th>What to attach</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>You know the file</td>
+        <td><code>@src/auth.ts</code> or <code>@src/components/</code></td>
+      </tr>
+      <tr>
+        <td>Debugging a failure</td>
+        <td><code>@Terminals</code> for command output</td>
+      </tr>
+      <tr>
+        <td>Reviewing your changes</td>
+        <td><code>@Commit</code> or <code>@Branch</code> diff</td>
+      </tr>
+      <tr>
+        <td>You don't know where the bug lives</td>
+        <td>Skip @ — describe the symptom; Agent searches</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="anti">
+    <h2>Anti-patterns</h2>
+    <ul>
+      <li><strong>Kitchen sink</strong> — three features in one prompt</li>
+      <li><strong>Vague goal</strong> — "make it better" with no done-when</li>
+      <li><strong>Over-attach</strong> — @ every file when Agent should search</li>
+      <li><strong>No verify step</strong> — Agent finishes but you never run it</li>
+    </ul>
+  </div>
+
+  <footer>
+    Reference for <a href="../MISSION.md">Cursor Power User mission</a>.
+    See: <a href="../lessons/0002-write-prompts-that-work.html">Lesson 2</a> ·
+    <a href="cursor-surfaces.html">Cursor Surfaces</a> ·
+    Source: <a href="https://cursor.com/docs/agent/prompting">Prompting agents</a>
+  </footer>
+</body>
+</html>

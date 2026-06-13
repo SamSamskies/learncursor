@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 2 — Write Prompts That Work</title>
+  <style>
+    :root {
+      --text: #1a1a1a;
+      --muted: #555;
+      --accent: #2563eb;
+      --accent-light: #eff6ff;
+      --border: #ddd;
+      --bg: #fafafa;
+      --card: #fff;
+      --correct: #166534;
+      --correct-bg: #f0fdf4;
+      --wrong: #991b1b;
+      --wrong-bg: #fef2f2;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Palatino Linotype", Palatino, Georgia, serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+    .lesson-meta {
+      font-family: system-ui, sans-serif;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-weight: 400;
+      font-size: 2rem;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 1.25rem;
+    }
+    h2 {
+      font-weight: 400;
+      font-size: 1.15rem;
+      margin: 2rem 0 0.75rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--border);
+    }
+    p { margin-bottom: 1rem; }
+    .epigraph {
+      color: var(--muted);
+      font-style: italic;
+      border-left: 3px solid var(--border);
+      padding-left: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .parts {
+      display: grid;
+      gap: 0.65rem;
+      margin: 1.25rem 0;
+    }
+    .part {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 0.85rem 1.1rem;
+      display: grid;
+      grid-template-columns: 5.5rem 1fr;
+      gap: 0.75rem;
+      align-items: start;
+    }
+    .part strong {
+      font-family: system-ui, sans-serif;
+      font-size: 0.82rem;
+      color: var(--accent);
+    }
+    .part span {
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+    .callout {
+      background: var(--accent-light);
+      border: 1px solid #bfdbfe;
+      padding: 1rem 1.15rem;
+      font-size: 0.95rem;
+      margin: 1.5rem 0;
+    }
+    .callout strong { font-family: system-ui, sans-serif; font-size: 0.8rem; }
+    .compare {
+      display: grid;
+      gap: 0.75rem;
+      margin: 1.25rem 0;
+    }
+    .compare-box {
+      padding: 1rem 1.1rem;
+      font-size: 0.92rem;
+      border: 1px solid var(--border);
+    }
+    .compare-box.bad {
+      background: var(--wrong-bg);
+      border-color: #fecaca;
+    }
+    .compare-box.good {
+      background: var(--correct-bg);
+      border-color: #bbf7d0;
+    }
+    .compare-box .label {
+      font-family: system-ui, sans-serif;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.4rem;
+    }
+    .compare-box.bad .label { color: var(--wrong); }
+    .compare-box.good .label { color: var(--correct); }
+    .compare-box pre {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.8rem;
+      white-space: pre-wrap;
+      line-height: 1.55;
+    }
+    .quiz {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      margin: 1.25rem 0;
+    }
+    .quiz h3 {
+      font-size: 1rem;
+      font-weight: 400;
+      margin-bottom: 1rem;
+    }
+    .quiz-options { display: flex; flex-direction: column; gap: 0.5rem; }
+    .quiz-options button {
+      font-family: system-ui, sans-serif;
+      font-size: 0.88rem;
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      border: 1px solid var(--border);
+      background: var(--card);
+      cursor: pointer;
+      border-radius: 0;
+      transition: background 0.15s;
+    }
+    .quiz-options button:hover { background: #f5f5f5; }
+    .quiz-options button.correct {
+      background: var(--correct-bg);
+      border-color: var(--correct);
+      color: var(--correct);
+    }
+    .quiz-options button.wrong {
+      background: var(--wrong-bg);
+      border-color: var(--wrong);
+      color: var(--wrong);
+    }
+    .quiz-options button:disabled { cursor: default; opacity: 0.85; }
+    .feedback {
+      margin-top: 0.75rem;
+      font-size: 0.9rem;
+      min-height: 1.4em;
+    }
+    .builder {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      margin: 1.5rem 0;
+    }
+    .builder label {
+      display: block;
+      font-family: system-ui, sans-serif;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin: 0.75rem 0 0.35rem;
+    }
+    .builder label:first-of-type { margin-top: 0; }
+    .builder textarea {
+      width: 100%;
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.82rem;
+      padding: 0.6rem 0.75rem;
+      border: 1px solid var(--border);
+      resize: vertical;
+      min-height: 2.5rem;
+      line-height: 1.5;
+    }
+    .builder button.check {
+      margin-top: 1rem;
+      font-family: system-ui, sans-serif;
+      font-size: 0.88rem;
+      padding: 0.55rem 1rem;
+      background: var(--text);
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .builder button.check:hover { background: #333; }
+    .builder .builder-feedback {
+      margin-top: 0.85rem;
+      font-size: 0.9rem;
+      min-height: 1.4em;
+    }
+    .practice {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      margin: 1.5rem 0;
+    }
+    .practice ol { padding-left: 1.25rem; }
+    .practice li { margin-bottom: 0.5rem; }
+    .practice code {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.85em;
+      background: #eee;
+      padding: 0.1em 0.35em;
+    }
+    .source {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-top: 2rem;
+    }
+    .source a, footer a { color: var(--accent); }
+    footer {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+    @media print {
+      body { background: white; }
+      .quiz-options button { border: 1px solid #999; }
+    }
+  </style>
+</head>
+<body>
+  <div class="lesson-meta">Lesson 2 · ~10 minutes</div>
+  <h1>Write Prompts That Work</h1>
+
+  <p class="epigraph">
+    Picking the right surface gets you in the door.
+    A clear prompt is what gets correct code on the first or second try.
+  </p>
+
+  <p>
+    You already know <em>when</em> to open Agent or Plan Mode
+    (<a href="0001-choose-the-right-surface.html">Lesson 1</a>).
+    This lesson covers <em>what</em> to type once you're there.
+    Power-user prompts share the same four-part shape — whether you're building
+    a habit tracker or fixing a bug in someone else's repo.
+  </p>
+
+  <h2>The four-part prompt</h2>
+
+  <div class="parts">
+    <div class="part">
+      <strong>Goal</strong>
+      <span>One concrete outcome. Not "improve auth" — "redirect to /dashboard after login succeeds."</span>
+    </div>
+    <div class="part">
+      <strong>Scope</strong>
+      <span>What's in this message, and what's explicitly out. One distinct task per Agent chat.</span>
+    </div>
+    <div class="part">
+      <strong>Constraints</strong>
+      <span>Stack, style, files to touch or avoid. "No new dependencies" saves you a refactor later.</span>
+    </div>
+    <div class="part">
+      <strong>Done-when</strong>
+      <span>How you'll verify success. "Run <code>npm test</code>" or "open localhost and add a habit."</span>
+    </div>
+  </div>
+
+  <p>
+    Keep the <a href="../reference/prompt-anatomy.html">prompt anatomy reference</a> handy.
+    You'll internalize the template fast — until then, mentally check all four boxes before you hit Send.
+  </p>
+
+  <h2>Bad prompt vs good prompt</h2>
+
+  <div class="compare">
+    <div class="compare-box bad">
+      <div class="label">Vague — Agent guesses</div>
+      <pre>Make the habit tracker better. Add whatever features you think are missing.</pre>
+    </div>
+    <div class="compare-box good">
+      <div class="label">Four-part — Agent executes</div>
+      <pre>Goal: Add a habit list page that reads/writes localStorage.
+Scope: List view only — no edit or delete flow yet.
+Constraints: Vanilla HTML/CSS/JS in a single index.html.
+Done-when: Run `python3 -m http.server` — I can add a habit and see it persist after refresh.</pre>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>@ mentions — when and when not</strong><br>
+    Type <code>@</code> to attach files, folders, terminal output, or git diffs.
+    Use <code>@filename</code> when you <em>know</em> what's relevant.
+    When you don't — describe the symptom and let Agent search.
+    <a href="https://cursor.com/docs/agent/prompting">Official docs</a> say over-attaching
+    wastes context; under-specifying the goal wastes your time.
+  </div>
+
+  <h2>Check your understanding</h2>
+
+  <div class="quiz" id="quiz1">
+    <h3>1. Which prompt gives Agent the best shot at one-shot success?</h3>
+    <div class="quiz-options">
+      <button onclick="answer('quiz1', this, false)">Fix everything broken in the app.</button>
+      <button onclick="answer('quiz1', this, true)">Add dark mode to the header.</button>
+      <button onclick="answer('quiz1', this, false)">Make the whole codebase cleaner now.</button>
+    </div>
+    <div class="feedback" id="quiz1-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz2">
+    <h3>2. Login fails but you don't know which file. Best approach?</h3>
+    <div class="quiz-options">
+      <button onclick="answer('quiz2', this, false)">Attach every file in the repo.</button>
+      <button onclick="answer('quiz2', this, true)">Skip @ mentions; describe the symptom.</button>
+      <button onclick="answer('quiz2', this, false)">Use Tab completion to fix it now.</button>
+    </div>
+    <div class="feedback" id="quiz2-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz3">
+    <h3>3. Agent finished a feature. What separates power users here?</h3>
+    <div class="quiz-options">
+      <button onclick="answer('quiz3', this, false)">Start next feature in this same chat.</button>
+      <button onclick="answer('quiz3', this, true)">Verify done-when, then in new chat.</button>
+      <button onclick="answer('quiz3', this, false)">Accept this diff without running it yet.</button>
+    </div>
+    <div class="feedback" id="quiz3-feedback"></div>
+  </div>
+
+  <h2>Build a prompt</h2>
+
+  <p>Fill in all four fields for this scenario: you approved a Plan for a habit tracker and want Agent to build the first runnable slice.</p>
+
+  <div class="builder" id="builder">
+    <label for="goal">Goal</label>
+    <textarea id="goal" rows="2" placeholder="What should exist when done?"></textarea>
+    <label for="scope">Scope</label>
+    <textarea id="scope" rows="2" placeholder="In / out for this message"></textarea>
+    <label for="constraints">Constraints</label>
+    <textarea id="constraints" rows="2" placeholder="Stack, style, limits"></textarea>
+    <label for="donewhen">Done-when</label>
+    <textarea id="donewhen" rows="2" placeholder="How you'll verify"></textarea>
+    <button class="check" onclick="checkBuilder()">Check my prompt</button>
+    <div class="builder-feedback" id="builder-feedback"></div>
+  </div>
+
+  <h2>Do this now</h2>
+
+  <div class="practice">
+    <p><strong>5-minute win:</strong> take the habit-tracker plan from Lesson 1 (or any small idea) and send Agent this exact shape — filled in with your details:</p>
+    <ol>
+      <li>Open Agent (<code>Cmd+I</code>) — Agent mode, not Plan</li>
+      <li>Paste your four-part prompt from the builder above</li>
+      <li>Let Agent implement, then run your <strong>done-when</strong> step yourself</li>
+      <li>If it fails, start a <em>new</em> chat with a refined prompt — don't patch endlessly in one thread</li>
+    </ol>
+    <p>The win isn't a perfect app — it's a prompt that produces runnable code you verified.</p>
+  </div>
+
+  <p class="source">
+    Primary source:
+    <a href="https://cursor.com/docs/agent/prompting">Prompting agents</a>
+    (@ mentions, context window, when to attach files).
+  </p>
+
+  <footer>
+    <p>Stuck on anything? Ask your agent teacher — paste the prompt you wrote and what Agent did instead.</p>
+    <p style="margin-top: 0.75rem;">
+      Previous: <a href="0001-choose-the-right-surface.html">Lesson 1 — Surfaces</a> ·
+      Reference: <a href="../reference/prompt-anatomy.html">Prompt Anatomy</a> ·
+      <a href="../reference/cursor-surfaces.html">Cursor Surfaces</a> ·
+      Mission: <a href="../MISSION.md">MISSION.md</a>
+    </p>
+  </footer>
+
+  <script>
+    const messages = {
+      quiz1: {
+        true: "Correct. A specific, bounded goal beats a vague request — Agent knows exactly what to build.",
+        false: "Too vague. Without scope and done-when, Agent invents its own definition of 'better' or 'cleaner'."
+      },
+      quiz2: {
+        true: "Correct. Official docs: skip @ when you're unsure — Agent searches. Describe what fails and when.",
+        false: "Attaching everything burns context. Tab can't debug multi-file login flows."
+      },
+      quiz3: {
+        true: "Correct. Run your done-when check, then open a fresh chat per distinct task — keeps context clean.",
+        false: "Skipping verification or stacking tasks in one chat is how small bugs become big detours."
+      }
+    };
+
+    function answer(quizId, btn, isCorrect) {
+      const quiz = document.getElementById(quizId);
+      const buttons = quiz.querySelectorAll('button');
+      const feedback = document.getElementById(quizId + '-feedback');
+
+      buttons.forEach(b => {
+        b.disabled = true;
+        if (b === btn) {
+          b.classList.add(isCorrect ? 'correct' : 'wrong');
+        } else if (b.onclick.toString().includes('true')) {
+          b.classList.add('correct');
+        }
+      });
+
+      feedback.textContent = isCorrect ? messages[quizId].true : messages[quizId].false;
+      feedback.style.color = isCorrect ? 'var(--correct)' : 'var(--wrong)';
+    }
+
+    function checkBuilder() {
+      const fields = ['goal', 'scope', 'constraints', 'donewhen'];
+      const values = fields.map(id => document.getElementById(id).value.trim());
+      const feedback = document.getElementById('builder-feedback');
+      const empty = values.filter(v => v.length < 8);
+
+      if (empty.length > 0) {
+        feedback.style.color = 'var(--wrong)';
+        feedback.textContent = 'Each field needs at least a short sentence (8+ characters). Be specific — "add list page" beats "build app".';
+        return;
+      }
+
+      const doneWhen = values[3].toLowerCase();
+      const hasVerify = /run|test|open|check|verify|localhost|npm|python|curl|see|click|refresh/.test(doneWhen);
+
+      if (!hasVerify) {
+        feedback.style.color = '#92400e';
+        feedback.textContent = 'Good start — strengthen Done-when with a concrete verification step (run a command, open the app, check a behavior).';
+        return;
+      }
+
+      feedback.style.color = 'var(--correct)';
+      feedback.textContent = 'Solid four-part prompt. Copy it into Agent and run your done-when step when Agent finishes.';
+    }
+  </script>
+</body>
+</html>
