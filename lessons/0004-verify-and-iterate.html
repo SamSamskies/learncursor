@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 4 — Verify and Iterate</title>
+  <style>
+    :root {
+      --text: #1a1a1a;
+      --muted: #555;
+      --accent: #2563eb;
+      --accent-light: #eff6ff;
+      --border: #ddd;
+      --bg: #fafafa;
+      --card: #fff;
+      --correct: #166534;
+      --correct-bg: #f0fdf4;
+      --wrong: #991b1b;
+      --wrong-bg: #fef2f2;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Palatino Linotype", Palatino, Georgia, serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+    .lesson-meta {
+      font-family: system-ui, sans-serif;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-weight: 400;
+      font-size: 2rem;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 1.25rem;
+    }
+    h2 {
+      font-weight: 400;
+      font-size: 1.15rem;
+      margin: 2rem 0 0.75rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--border);
+    }
+    p { margin-bottom: 1rem; }
+    .epigraph {
+      color: var(--muted);
+      font-style: italic;
+      border-left: 3px solid var(--border);
+      padding-left: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .steps {
+      display: grid;
+      gap: 0.65rem;
+      margin: 1.25rem 0;
+    }
+    .step {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 0.85rem 1.1rem;
+      display: grid;
+      grid-template-columns: 5.5rem 1fr;
+      gap: 0.75rem;
+      align-items: start;
+    }
+    .step strong {
+      font-family: system-ui, sans-serif;
+      font-size: 0.82rem;
+      color: var(--accent);
+    }
+    .step span {
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+    .callout {
+      background: var(--accent-light);
+      border: 1px solid #bfdbfe;
+      padding: 1rem 1.15rem;
+      font-size: 0.95rem;
+      margin: 1.5rem 0;
+    }
+    .callout strong { font-family: system-ui, sans-serif; font-size: 0.8rem; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      margin: 1.25rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      font-family: system-ui, sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: #f5f5f5;
+    }
+    tr:last-child td { border-bottom: none; }
+    pre.example {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.8rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1rem 1.1rem;
+      white-space: pre-wrap;
+      line-height: 1.55;
+      margin: 1rem 0;
+    }
+    .quiz {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      margin: 1.25rem 0;
+    }
+    .quiz h3 {
+      font-size: 1rem;
+      font-weight: 400;
+      margin-bottom: 1rem;
+    }
+    .quiz-options { display: flex; flex-direction: column; gap: 0.5rem; }
+    .quiz-options button {
+      font-family: system-ui, sans-serif;
+      font-size: 0.88rem;
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      border: 1px solid var(--border);
+      background: var(--card);
+      cursor: pointer;
+      border-radius: 0;
+      transition: background 0.15s;
+    }
+    .quiz-options button:hover { background: #f5f5f5; }
+    .quiz-options button.correct {
+      background: var(--correct-bg);
+      border-color: var(--correct);
+      color: var(--correct);
+    }
+    .quiz-options button.wrong {
+      background: var(--wrong-bg);
+      border-color: var(--wrong);
+      color: var(--wrong);
+    }
+    .quiz-options button:disabled { cursor: default; opacity: 0.85; }
+    .feedback {
+      margin-top: 0.75rem;
+      font-size: 0.9rem;
+      min-height: 1.4em;
+    }
+    .practice {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      margin: 1.5rem 0;
+    }
+    .practice ol { padding-left: 1.25rem; }
+    .practice li { margin-bottom: 0.5rem; }
+    .practice code {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.85em;
+      background: #eee;
+      padding: 0.1em 0.35em;
+    }
+    .source {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-top: 2rem;
+    }
+    .source a, footer a { color: var(--accent); }
+    footer {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+    @media print {
+      body { background: white; }
+      .quiz-options button { border: 1px solid #999; }
+    }
+  </style>
+</head>
+<body>
+  <div class="lesson-meta">Lesson 4 · ~8 minutes</div>
+  <h1>Verify and Iterate</h1>
+
+  <p class="epigraph">
+    Agent finished. That doesn't mean you're done —
+    it means your review starts now.
+  </p>
+
+  <p>
+    In <a href="0003-set-up-project-rules.html">Lesson 3</a> you sent a thin prompt for
+    POST /habits and Agent followed your <code>express-api</code> rule without you repeating Constraints.
+    That's the build half of the loop. This lesson is the other half:
+    <strong>verify the diff, then pick the right fix</strong> when something's off.
+  </p>
+
+  <p>
+    AI code can compile, pass tests, and still be wrong — wrong scope, wrong patterns,
+    or tests that check the wrong thing.
+    (<a href="../MISSION.md">Mission</a>: you still need to read diffs.)
+  </p>
+
+  <h2>Three checks before you accept</h2>
+
+  <div class="steps">
+    <div class="step">
+      <strong>1. Scope</strong>
+      <span>Did Agent touch only the files you asked for? Extra refactors or surprise dependencies are a yellow flag.</span>
+    </div>
+    <div class="step">
+      <strong>2. Patterns</strong>
+      <span>Does the diff match your project rule? sqlite3 not an ORM, test seeds data, endpoint has a test.</span>
+    </div>
+    <div class="step">
+      <strong>3. Done-when</strong>
+      <span>Run your verification yourself — <code>npm test</code>, open the app, curl the endpoint. Don't trust Agent's "all tests pass."</span>
+    </div>
+  </div>
+
+  <p>
+    Keep the <a href="../reference/verify-loop.html">verify loop reference</a> open while you work.
+  </p>
+
+  <h2>While Agent is still running</h2>
+
+  <div class="callout">
+    <strong>Stop early</strong><br>
+    Watch the diff stream. If Agent opens the wrong file or heads in a bad direction,
+    click <strong>Stop</strong> or press <code>Cmd+Shift+Backspace</code>.
+    Revert and refine your prompt — don't wait for a full bad build.
+  </div>
+
+  <h2>When something fails — pick the surface</h2>
+
+  <table>
+    <thead>
+      <tr><th>Situation</th><th>Surface</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>One typo or off-by-one in a single function</td>
+        <td>Inline Edit (<code>Cmd+K</code>) on the selection</td>
+      </tr>
+      <tr>
+        <td>Wrong approach, missed files, or tests still red after one fix</td>
+        <td>New Agent chat — refined Goal + Scope + Done-when</td>
+      </tr>
+      <tr>
+        <td>Agent ignored your project rule</td>
+        <td>New chat — quote the rule bullet it missed + paste the failing output</td>
+      </tr>
+      <tr>
+        <td>Entire plan step went sideways</td>
+        <td>Revert the diff, go back to Plan Mode, refine the step</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Fix prompt shape (when tests fail)</h2>
+
+  <pre class="example">Goal: Fix POST /habits — test "creates habit" returns 201.
+Scope: Only routes/habits.js and tests/habits.test.js.
+Done-when: npm test — all green.
+
+Failing output:
+  Expected 201, got 500
+  at tests/habits.test.js:14</pre>
+
+  <p>
+  Paste the actual error. Agent fixes faster with evidence than with "it's broken."
+  </p>
+
+  <h2>Check your understanding</h2>
+
+  <div class="quiz" id="quiz1">
+    <h3>1. Agent says "all tests pass" but you haven't run them.</h3>
+    <div class="quiz-options">
+      <button onclick="answer('quiz1', this, false)">Accept the diff — Agent ran them.</button>
+      <button onclick="answer('quiz1', this, true)">Run npm test yourself first.</button>
+      <button onclick="answer('quiz1', this, false)">Ask Agent to run them again.</button>
+    </div>
+    <div class="feedback" id="quiz1-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz2">
+    <h3>2. One assertion is wrong in a test file Agent wrote.</h3>
+    <div class="quiz-options">
+      <button onclick="answer('quiz2', this, false)">New Agent chat with full context.</button>
+      <button onclick="answer('quiz2', this, true)">Inline Edit on the assertion line.</button>
+      <button onclick="answer('quiz2', this, false)">Revert and restart Plan Mode.</button>
+    </div>
+    <div class="feedback" id="quiz2-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz3">
+    <h3>3. Agent added a Postgres driver despite your sqlite3 rule.</h3>
+    <div class="quiz-options">
+      <button onclick="answer('quiz3', this, false)">Fix it manually and move on.</button>
+      <button onclick="answer('quiz3', this, true)">Revert, new chat, cite the rule.</button>
+      <button onclick="answer('quiz3', this, false)">Add more bullets to User Rules.</button>
+    </div>
+    <div class="feedback" id="quiz3-feedback"></div>
+  </div>
+
+  <h2>Do this now</h2>
+
+  <div class="practice">
+    <p><strong>5-minute win</strong> in your Express habit-tracker project.</p>
+    <p><em>No errors required.</em> Most diffs pass — the skill is checking anyway, not fixing.</p>
+    <ol>
+      <li><strong>Retrospective check</strong> — open the POST /habits diff. Ask: did Agent touch only route + migration files? Does it match your <code>express-api</code> rule (sqlite3, seeded test data, endpoint has a test)?</li>
+      <li><strong>Run done-when yourself</strong> — <code>npm test</code> in the terminal. You run it; don't rely on Agent saying tests passed.</li>
+      <li><strong>If all green → move on.</strong> Pick the next step from your habit-tracker plan (e.g. GET /habits, DELETE /habits). Send a thin prompt — Goal + Scope + Done-when only. When Agent finishes, repeat steps 1–2 on <em>that</em> diff.</li>
+    </ol>
+    <p>That's the loop: build → scope check → pattern check → run tests → next step. You're done with this lesson once you've verified one diff and started the next plan step with the three checks.</p>
+    <p style="margin-top: 0.75rem; font-size: 0.92rem; color: var(--muted);"><strong>Optional stretch:</strong> draft a fix prompt for a hypothetical failure (paste a made-up error). Useful later — skip if everything is green.</p>
+  </div>
+
+  <p class="source">
+    Primary source:
+    <a href="https://cursor.com/docs/agent/review">Reviewing and testing code</a>
+    (self-review, verifiable goals, stopping early, @Branch review).
+  </p>
+
+  <footer>
+    <p>Stuck on anything? Ask your agent teacher — paste the diff summary and the test output.</p>
+    <p style="margin-top: 0.75rem;">
+      Previous: <a href="0003-set-up-project-rules.html">Lesson 3 — Project Rules</a> ·
+      Reference: <a href="../reference/verify-loop.html">Verify Loop</a> ·
+      <a href="../reference/prompt-anatomy.html">Prompt Anatomy</a> ·
+      Mission: <a href="../MISSION.md">MISSION.md</a>
+    </p>
+  </footer>
+
+  <script>
+    const messages = {
+      quiz1: {
+        true: "Correct. Done-when is your check, not Agent's claim. Run it yourself every time.",
+        false: "Agent can misread output or skip tests. Your done-when step is non-negotiable."
+      },
+      quiz2: {
+        true: "Correct. Single-line fixes are Inline Edit territory — faster than a new chat.",
+        false: "A new chat or Plan revert is overkill for one wrong assertion."
+      },
+      quiz3: {
+        true: "Correct. Revert the bad diff, new chat, paste the rule bullet + what went wrong.",
+        false: "Stack choices belong in project rules, not User Rules. Don't patch around a wrong approach."
+      }
+    };
+
+    function answer(quizId, btn, isCorrect) {
+      const quiz = document.getElementById(quizId);
+      const buttons = quiz.querySelectorAll('button');
+      const feedback = document.getElementById(quizId + '-feedback');
+
+      buttons.forEach(b => {
+        b.disabled = true;
+        if (b === btn) {
+          b.classList.add(isCorrect ? 'correct' : 'wrong');
+        } else if (b.onclick.toString().includes('true')) {
+          b.classList.add('correct');
+        }
+      });
+
+      feedback.textContent = isCorrect ? messages[quizId].true : messages[quizId].false;
+      feedback.style.color = isCorrect ? 'var(--correct)' : 'var(--wrong)';
+    }
+  </script>
+</body>
+</html>
