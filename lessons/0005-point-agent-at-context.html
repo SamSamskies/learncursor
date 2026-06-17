@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 5 — Point Agent at Context</title>
+  <style>
+    :root {
+      --text: #1a1a1a;
+      --muted: #555;
+      --accent: #2563eb;
+      --accent-light: #eff6ff;
+      --border: #ddd;
+      --bg: #fafafa;
+      --card: #fff;
+      --correct: #166534;
+      --correct-bg: #f0fdf4;
+      --wrong: #991b1b;
+      --wrong-bg: #fef2f2;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Palatino Linotype", Palatino, Georgia, serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+    .lesson-meta {
+      font-family: system-ui, sans-serif;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-weight: 400;
+      font-size: 2rem;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 1.25rem;
+    }
+    h2 {
+      font-weight: 400;
+      font-size: 1.15rem;
+      margin: 2rem 0 0.75rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--border);
+    }
+    p { margin-bottom: 1rem; }
+    .epigraph {
+      color: var(--muted);
+      font-style: italic;
+      border-left: 3px solid var(--border);
+      padding-left: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .callout {
+      background: var(--accent-light);
+      border: 1px solid #bfdbfe;
+      padding: 1rem 1.15rem;
+      font-size: 0.95rem;
+      margin: 1.5rem 0;
+    }
+    .callout strong { font-family: system-ui, sans-serif; font-size: 0.8rem; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      margin: 1.25rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      font-family: system-ui, sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: #f5f5f5;
+    }
+    tr:last-child td { border-bottom: none; }
+    pre.example {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.8rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1rem 1.1rem;
+      white-space: pre-wrap;
+      line-height: 1.55;
+      margin: 1rem 0;
+    }
+    .quiz {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      margin: 1.25rem 0;
+    }
+    .quiz h3 {
+      font-size: 1rem;
+      font-weight: 400;
+      margin-bottom: 1rem;
+    }
+    .quiz-options { display: flex; flex-direction: column; gap: 0.5rem; }
+    .quiz-options button {
+      font-family: system-ui, sans-serif;
+      font-size: 0.88rem;
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      border: 1px solid var(--border);
+      background: var(--card);
+      cursor: pointer;
+      border-radius: 0;
+      transition: background 0.15s;
+    }
+    .quiz-options button:hover { background: #f5f5f5; }
+    .quiz-options button.correct {
+      background: var(--correct-bg);
+      border-color: var(--correct);
+      color: var(--correct);
+    }
+    .quiz-options button.wrong {
+      background: var(--wrong-bg);
+      border-color: var(--wrong);
+      color: var(--wrong);
+    }
+    .quiz-options button:disabled { cursor: default; opacity: 0.85; }
+    .feedback {
+      margin-top: 0.75rem;
+      font-size: 0.9rem;
+      min-height: 1.4em;
+    }
+    .practice {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      margin: 1.5rem 0;
+    }
+    .practice ol { padding-left: 1.25rem; }
+    .practice li { margin-bottom: 0.5rem; }
+    .practice code {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.85em;
+      background: #eee;
+      padding: 0.1em 0.35em;
+    }
+    .source {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-top: 2rem;
+    }
+    .source a, footer a { color: var(--accent); }
+    footer {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+    @media print {
+      body { background: white; }
+      .quiz-options button { border: 1px solid #999; }
+    }
+  </style>
+</head>
+<body>
+  <div class="lesson-meta">Lesson 5 · ~8 minutes</div>
+  <h1>Point Agent at Context</h1>
+
+  <p class="epigraph">
+    Rules carry your conventions. @ mentions carry your codebase.
+    Together they make thin prompts actually work.
+  </p>
+
+  <p>
+    In <a href="0004-verify-and-iterate.html">Lesson 4</a> you verified TypeScript and Drizzle
+    migrations yourself — scope, patterns, done-when. That's the review half.
+    This lesson is about the <em>build</em> half: telling Agent exactly which files
+    to read before it starts guessing.
+  </p>
+
+  <p>
+    Project rules say <em>how</em> to build (TypeScript, Drizzle, npm test).
+  <code>@</code> mentions say <em>where</em> to look (this route, this schema, this test).
+    (<a href="../MISSION.md">Mission</a>: clone an unfamiliar repo and contribute —
+    you can't @ a file you haven't found yet.)
+  </p>
+
+  <h2>Common @ mentions</h2>
+
+  <table>
+    <thead>
+      <tr><th>Type</th><th>When to use</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>@filename</code></td>
+        <td>You know the exact file — route handler, Drizzle schema, test file.</td>
+      </tr>
+      <tr>
+        <td><code>@folder/</code></td>
+        <td>A whole layer — <code>@src/routes/</code> or <code>@tests/</code>.</td>
+      </tr>
+      <tr>
+        <td><code>@Codebase</code></td>
+        <td>Unfamiliar repo — "where is routing set up?" before you know paths.</td>
+      </tr>
+      <tr>
+        <td><code>@Docs</code></td>
+        <td>Framework API Agent should follow — Drizzle queries, Express middleware.</td>
+      </tr>
+      <tr>
+        <td><code>@Web</code></td>
+        <td>Current docs or a specific error page not in your repo.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Keep the <a href="../reference/context-mentions.html">@ context reference</a> open while you work.
+  </p>
+
+  <h2>Decision rule</h2>
+
+  <pre class="example">Know the file?     → @file
+Know the area?     → @folder
+Don't know either? → @Codebase first, then narrow on the next prompt</pre>
+
+  <div class="callout">
+    <strong>Less is more</strong><br>
+    Attach 2–4 files that define the pattern — not the whole repo.
+    Agent's context window is finite; every irrelevant file crowds out what matters.
+  </div>
+
+  <h2>Thin prompt + @ context</h2>
+
+  <p>Your habit-tracker POST route already exists. Adding GET /habits should mirror it:</p>
+
+  <pre class="example">Goal: Add GET /habits — return all habits as JSON array.
+Scope: Route + test only. No schema changes.
+@src/routes/habits.ts @src/db/schema.ts @tests/habits.test.ts
+Done-when: npm test — all green.</pre>
+
+  <p>
+    Rules handle stack conventions. @ mentions handle "copy this pattern."
+    Then <a href="../reference/verify-loop.html">verify the diff</a> as usual.
+  </p>
+
+  <h2>Check your understanding</h2>
+
+  <div class="quiz" id="quiz1">
+    <h3>1. Adding GET /habits mirroring your POST route. Best @ strategy?</h3>
+    <div class="quiz-options">
+      <button onclick="answer('quiz1', this, false)">@Codebase — let Agent search.</button>
+      <button onclick="answer('quiz1', this, true)">@route @schema @test files.</button>
+      <button onclick="answer('quiz1', this, false)">No @ — rules are enough.</button>
+    </div>
+    <div class="feedback" id="quiz1-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz2">
+    <h3>2. Agent keeps editing the wrong file in a 40-file repo.</h3>
+    <div class="quiz-options">
+      <button onclick="answer('quiz2', this, false)">Add more bullets to rules.</button>
+      <button onclick="answer('quiz2', this, true)">Stop — @ the right file.</button>
+      <button onclick="answer('quiz2', this, false)">Switch to Tab completion.</button>
+    </div>
+    <div class="feedback" id="quiz2-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz3">
+    <h3>3. You cloned an OSS repo you've never opened. First move?</h3>
+    <div class="quiz-options">
+      <button onclick="answer('quiz3', this, false)">Agent: fix issue #42 now.</button>
+      <button onclick="answer('quiz3', this, true)">@Codebase: where is X handled?</button>
+      <button onclick="answer('quiz3', this, false)">Read every file manually.</button>
+    </div>
+    <div class="feedback" id="quiz3-feedback"></div>
+  </div>
+
+  <h2>Do this now</h2>
+
+  <div class="practice">
+    <p><strong>5-minute win</strong> in your habit-tracker repo.</p>
+    <ol>
+      <li><strong>Ship GET /habits with @ context</strong> — send the thin prompt above with your actual file paths. When Agent finishes, run the <a href="../reference/verify-loop.html">verify loop</a>: scope → patterns → <code>npm test</code>.</li>
+    </ol>
+    <p>You're done once GET /habits passes your three checks. DELETE /habits is a good follow-up using the same @ pattern.</p>
+    <p style="margin-top: 0.75rem; font-size: 0.92rem; color: var(--muted);"><strong>Already updated your project rule for TypeScript + Drizzle?</strong> Skip straight to step 1 — rules and @ mentions work together, not as substitutes.</p>
+  </div>
+
+  <p class="source">
+    Primary source:
+    <a href="https://cursor.com/docs/agent/prompting">Prompting agents (@ mentions, context)</a>
+    — official guide to @ context, images, and the context window.
+  </p>
+
+  <footer>
+    <p>Stuck on anything? Ask your agent teacher — paste your prompt and which @ mentions you used.</p>
+    <p style="margin-top: 0.75rem;">
+      Previous: <a href="0004-verify-and-iterate.html">Lesson 4 — Verify &amp; Iterate</a> ·
+      Reference: <a href="../reference/context-mentions.html">@ Context</a> ·
+      <a href="../reference/verify-loop.html">Verify Loop</a> ·
+      Mission: <a href="../MISSION.md">MISSION.md</a>
+    </p>
+  </footer>
+
+  <script>
+    const messages = {
+      quiz1: {
+        true: "Correct. You know the pattern files — @ them so Agent mirrors POST exactly.",
+        false: "@Codebase works but wastes turns. Rules don't replace file pointers."
+      },
+      quiz2: {
+        true: "Correct. Stop early, @ the target file, restart with a tighter Scope line.",
+        false: "Rules are conventions, not file paths. Tab won't help a multi-file task."
+      },
+      quiz3: {
+        true: "Correct. Explore with @Codebase first — find the module, then @ specific files.",
+        false: "Jumping straight to a fix without orientation wastes context and risks wrong edits."
+      }
+    };
+
+    function answer(quizId, btn, isCorrect) {
+      const quiz = document.getElementById(quizId);
+      const buttons = quiz.querySelectorAll('button');
+      const feedback = document.getElementById(quizId + '-feedback');
+
+      buttons.forEach(b => {
+        b.disabled = true;
+        if (b === btn) {
+          b.classList.add(isCorrect ? 'correct' : 'wrong');
+        } else if (b.onclick.toString().includes('true')) {
+          b.classList.add('correct');
+        }
+      });
+
+      feedback.textContent = isCorrect ? messages[quizId].true : messages[quizId].false;
+      feedback.style.color = isCorrect ? 'var(--correct)' : 'var(--wrong)';
+    }
+  </script>
+</body>
+</html>

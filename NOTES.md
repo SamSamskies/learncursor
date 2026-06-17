@@ -11,6 +11,12 @@
 
 - Asked about model selection for Plan Mode (session 2) — prefers practical guidance over theory
 
+## Habit-tracker project (session 5)
+
+- Stack migrated from Express + raw sqlite3 → **TypeScript + Drizzle ORM** (user explicitly chose Drizzle)
+- Project rule already updated to reflect TypeScript + Drizzle (user did this proactively)
+- User applied verify loop successfully on both migration tasks
+
 ## Model selection for Plan Mode
 
 User has **Cursor Pro** ($20/mo API pool + generous Auto + Composer pool).
