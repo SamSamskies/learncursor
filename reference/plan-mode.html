@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plan Mode — Quick Reference</title>
+  <style>
+    :root {
+      --text: #1a1a1a;
+      --muted: #555;
+      --accent: #2563eb;
+      --border: #ddd;
+      --bg: #fafafa;
+      --card: #fff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Palatino Linotype", Palatino, Georgia, serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.55;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+    h1 {
+      font-weight: 400;
+      font-size: 1.75rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+    h2 {
+      font-size: 0.75rem;
+      font-family: system-ui, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin: 2rem 0 0.75rem;
+      font-weight: 600;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+    }
+    th, td {
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      font-family: system-ui, sans-serif;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      background: #f4f4f4;
+    }
+    tr:last-child td { border-bottom: none; }
+    code {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.85em;
+      background: #eee;
+      padding: 0.1em 0.35em;
+      border-radius: 3px;
+    }
+    pre {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.82rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1rem 1.1rem;
+      white-space: pre-wrap;
+      line-height: 1.55;
+      margin: 0.75rem 0;
+    }
+    .flow {
+      margin-top: 1.5rem;
+      padding: 1.25rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      font-size: 0.95rem;
+    }
+    .flow h2 { margin-top: 0; }
+    .flow ol { padding-left: 1.25rem; }
+    .flow li { margin-bottom: 0.4rem; }
+    footer {
+      margin-top: 2.5rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--accent); }
+    @media print {
+      body { background: white; padding: 0; }
+      .flow, table { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Plan Mode</h1>
+  <p class="subtitle">When to plan first, and how to recover when builds go wrong</p>
+
+  <h2>Escalation rule</h2>
+  <table>
+    <thead>
+      <tr><th>Task shape</th><th>Surface</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>One route mirroring an existing one</td>
+        <td><strong>Agent</strong> + <code>@</code> files</td>
+      </tr>
+      <tr>
+        <td>Schema + routes + tests (3+ files)</td>
+        <td><strong>Plan Mode</strong> → Build</td>
+      </tr>
+      <tr>
+        <td>New app idea, stack unclear</td>
+        <td><strong>Plan Mode</strong> (frontier model)</td>
+      </tr>
+      <tr>
+        <td>One-line fix in a known file</td>
+        <td><strong>Inline Edit</strong> <code>Cmd+K</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Open Plan Mode</h2>
+  <p><code>Shift+Tab</code> in the Agent input, or pick <strong>Plan</strong> from the mode dropdown.</p>
+
+  <div class="flow">
+    <h2>Plan → Build loop</h2>
+    <ol>
+      <li><strong>Prompt</strong> — goal, constraints, done-when (same anatomy as Agent)</li>
+      <li><strong>Answer</strong> — Agent asks clarifying questions; reply in chat</li>
+      <li><strong>Review plan</strong> — edit scope, file list, and order before any code</li>
+      <li><strong>Build</strong> — switch to Composer or Auto; check model didn't reset</li>
+      <li><strong>Verify</strong> — <a href="verify-loop.html">verify loop</a> on the full diff</li>
+    </ol>
+  </div>
+
+  <h2>Pro model picks (Cursor Pro)</h2>
+  <table>
+    <thead>
+      <tr><th>Phase</th><th>Model</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Plan + refine</td>
+        <td>Opus or GPT-5.x — locked, not Auto</td>
+      </tr>
+      <tr>
+        <td>Build</td>
+        <td>Composer 2.5 or Auto</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>When the build goes wrong</h2>
+  <pre>Don't patch endlessly → revert → refine plan → build again</pre>
+  <p style="font-size: 0.92rem; color: var(--muted);">
+    Spending time on a precise plan is cheaper than steering a bad multi-file diff.
+    Save plans to the workspace for later reference (<em>Save to workspace</em>).
+  </p>
+
+  <footer>
+    Reference for <a href="../MISSION.md">Cursor Power User mission</a>.
+    See also: <a href="../lessons/0006-plan-mode-for-bigger-slices.html">Lesson 6</a> ·
+    <a href="cursor-surfaces.html">Surfaces</a> ·
+    <a href="verify-loop.html">Verify Loop</a>
+    Source: <a href="https://cursor.com/docs/agent/plan-mode">Plan Mode docs</a>
+  </footer>
+</body>
+</html>

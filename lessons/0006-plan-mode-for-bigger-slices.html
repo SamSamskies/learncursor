@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 6 — Plan Mode for Bigger Slices</title>
+  <style>
+    :root {
+      --text: #1a1a1a;
+      --muted: #555;
+      --accent: #2563eb;
+      --accent-light: #eff6ff;
+      --border: #ddd;
+      --bg: #fafafa;
+      --card: #fff;
+      --correct: #166534;
+      --correct-bg: #f0fdf4;
+      --wrong: #991b1b;
+      --wrong-bg: #fef2f2;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Palatino Linotype", Palatino, Georgia, serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+    .lesson-meta {
+      font-family: system-ui, sans-serif;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-weight: 400;
+      font-size: 2rem;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 1.25rem;
+    }
+    h2 {
+      font-weight: 400;
+      font-size: 1.15rem;
+      margin: 2rem 0 0.75rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--border);
+    }
+    p { margin-bottom: 1rem; }
+    .epigraph {
+      color: var(--muted);
+      font-style: italic;
+      border-left: 3px solid var(--border);
+      padding-left: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .callout {
+      background: var(--accent-light);
+      border: 1px solid #bfdbfe;
+      padding: 1rem 1.15rem;
+      font-size: 0.95rem;
+      margin: 1.5rem 0;
+    }
+    .callout strong { font-family: system-ui, sans-serif; font-size: 0.8rem; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      margin: 1.25rem 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      font-family: system-ui, sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: #f5f5f5;
+    }
+    tr:last-child td { border-bottom: none; }
+    pre.example {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.8rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1rem 1.1rem;
+      white-space: pre-wrap;
+      line-height: 1.55;
+      margin: 1rem 0;
+    }
+    .steps {
+      display: grid;
+      gap: 0.65rem;
+      margin: 1.25rem 0;
+    }
+    .step {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 0.85rem 1.1rem;
+      display: grid;
+      grid-template-columns: 5.5rem 1fr;
+      gap: 0.75rem;
+      align-items: start;
+    }
+    .step strong {
+      font-family: system-ui, sans-serif;
+      font-size: 0.82rem;
+      color: var(--accent);
+    }
+    .step span { font-size: 0.92rem; }
+    .quiz {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      margin: 1.25rem 0;
+    }
+    .quiz h3 {
+      font-size: 1rem;
+      font-weight: 400;
+      margin-bottom: 1rem;
+    }
+    .quiz-options { display: flex; flex-direction: column; gap: 0.5rem; }
+    .quiz-options button {
+      font-family: system-ui, sans-serif;
+      font-size: 0.88rem;
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      border: 1px solid var(--border);
+      background: var(--card);
+      cursor: pointer;
+      border-radius: 0;
+      transition: background 0.15s;
+    }
+    .quiz-options button:hover { background: #f5f5f5; }
+    .quiz-options button.correct {
+      background: var(--correct-bg);
+      border-color: var(--correct);
+      color: var(--correct);
+    }
+    .quiz-options button.wrong {
+      background: var(--wrong-bg);
+      border-color: var(--wrong);
+      color: var(--wrong);
+    }
+    .quiz-options button:disabled { cursor: default; opacity: 0.85; }
+    .feedback {
+      margin-top: 0.75rem;
+      font-size: 0.9rem;
+      min-height: 1.4em;
+    }
+    .practice {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1.25rem;
+      margin: 1.5rem 0;
+    }
+    .practice ol { padding-left: 1.25rem; }
+    .practice li { margin-bottom: 0.5rem; }
+    .practice code {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.85em;
+      background: #eee;
+      padding: 0.1em 0.35em;
+    }
+    .source {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-top: 2rem;
+    }
+    .source a, footer a { color: var(--accent); }
+    footer {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+    @media print {
+      body { background: white; }
+      .quiz-options button { border: 1px solid #999; }
+    }
+  </style>
+</head>
+<body>
+  <div class="lesson-meta">Lesson 6 · ~10 minutes</div>
+  <h1>Plan Mode for Bigger Slices</h1>
+
+  <p class="epigraph">
+    Agent plus @ mentions wins on single routes.
+    Schema plus routes plus tests is a plan-first job.
+  </p>
+
+  <p>
+    In <a href="0005-point-agent-at-context.html">Lesson 5</a> you shipped GET and DELETE
+    <code>/api/habits</code> with thin prompts and @ context. That pattern stops scaling
+    when a feature spans several layers — new Drizzle table, migration, route, and tests
+  all at once.
+  </p>
+
+  <p>
+    <strong>Plan Mode</strong> researches your repo, asks clarifying questions, and writes
+    a reviewable plan <em>before</em> any code lands. You edit the plan, then click Build.
+    (<a href="../MISSION.md">Mission</a>: reach a working first version in one focused session —
+    planning is how you keep that session from becoming a refactor spiral.)
+  </p>
+
+  <h2>When to escalate</h2>
+
+  <table>
+    <thead>
+      <tr><th>You are doing…</th><th>Reach for…</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Mirror an existing route (GET like POST)</td>
+        <td>Agent + <code>@</code> files — <a href="0005-point-agent-at-context.html">Lesson 5</a></td>
+      </tr>
+      <tr>
+        <td>New table + API + tests in one slice</td>
+        <td><strong>Plan Mode</strong> → Build</td>
+      </tr>
+      <tr>
+        <td>New app idea, stack not chosen</td>
+        <td><strong>Plan Mode</strong> with a frontier model</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Keep the <a href="../reference/plan-mode.html">Plan Mode reference</a> open while you work.
+  </p>
+
+  <h2>How Plan Mode works</h2>
+
+  <div class="steps">
+    <div class="step">
+      <strong>Prompt</strong>
+      <span>Same anatomy as Agent: Goal, Scope, Done-when. Agent explores the codebase.</span>
+    </div>
+    <div class="step">
+      <strong>Answer</strong>
+      <span>Reply to clarifying questions — default date timezone? Row insert/delete or boolean flip?</span>
+    </div>
+    <div class="step">
+      <strong>Review</strong>
+      <span>Edit the plan: which files, migration order, test cases. <em>Save to workspace</em> if useful.</span>
+    </div>
+    <div class="step">
+      <strong>Build</strong>
+      <span>Click Build. Switch to Composer or Auto — check the model didn't reset to Auto mid-flow.</span>
+    </div>
+    <div class="step">
+      <strong>Verify</strong>
+      <span>Run the <a href="../reference/verify-loop.html">verify loop</a> on the full diff, not just tests.</span>
+    </div>
+  </div>
+
+  <p>Open Plan Mode with <code>Shift+Tab</code> in the Agent input.</p>
+
+  <div class="callout">
+    <strong>Pro tip (Cursor Pro)</strong><br>
+    Lock <strong>Opus</strong> or <strong>GPT-5.x</strong> for planning and refinement.
+    Switch to <strong>Composer 2.5</strong> or <strong>Auto</strong> when you click Build —
+    save the API pool for decisions, burn the cheaper pool on implementation.
+  </div>
+
+  <h2>Sample plan prompt</h2>
+
+  <p>Your habit API is in place. A natural next slice is <em>completions</em> — marking a habit done (or undone) for a given day:</p>
+
+  <pre class="example">Goal: Add completion toggle — POST /api/habits/:id/toggle flips done state for a date.
+Scope: Drizzle schema + migration, route handler, tests only. No UI yet.
+Constraints: Optional { date } in body, defaults to today (UTC). No row = insert; row exists = delete.
+Response: { habitId, date, completed } reflecting new state. 404 if habit missing.
+Done-when: npm test — all green.</pre>
+
+  <p>
+    Plan Mode should propose: a <code>completions</code> table with a unique
+    <code>(habit_id, date)</code> constraint, migration steps, the route, and test cases
+    for toggle on, toggle off, default date, and missing habit. You review and
+    <em>edit</em> that list before Build touches your repo — swapping check-ins for
+    toggle, picking UTC vs local, or tightening the response shape is normal plan work.
+  </p>
+
+  <div class="callout">
+    <strong>Review checklist</strong><br>
+    Before Build, confirm the plan names: toggle semantics (insert/delete vs boolean flip),
+    date format and default, response body, and at least five test cases. Vague plans
+    produce vague diffs.
+  </div>
+
+  <h2>When the build goes wrong</h2>
+
+  <p>
+    Don't steer a bad multi-file diff with ten follow-up prompts.
+    <a href="https://cursor.com/docs/agent/plan-mode">Official guidance</a>:
+    revert, make the plan more specific, build again. The plan is cheaper to edit than the code.
+  </p>
+
+  <h2>Check your understanding</h2>
+
+  <div class="quiz" id="quiz1">
+    <h3>1. Toggle needs schema, route, and tests. Best surface?</h3>
+    <div class="quiz-options">
+      <button onclick="answer('quiz1', this, true)">Plan Mode — review first.</button>
+      <button onclick="answer('quiz1', this, false)">Agent — @ three files.</button>
+      <button onclick="answer('quiz1', this, false)">Inline Edit — schema only.</button>
+    </div>
+    <div class="feedback" id="quiz1-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz2">
+    <h3>2. Build shipped wrong toggle logic. Best recovery?</h3>
+    <div class="quiz-options">
+      <button onclick="answer('quiz2', this, true)">Revert — refine the plan.</button>
+      <button onclick="answer('quiz2', this, false)">Keep prompting — fix inline.</button>
+      <button onclick="answer('quiz2', this, false)">Add rules — ban mistakes.</button>
+    </div>
+    <div class="feedback" id="quiz2-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz3">
+    <h3>3. Brand-new app idea, stack not chosen. First move?</h3>
+    <div class="quiz-options">
+      <button onclick="answer('quiz3', this, true)">Plan Mode — explore options.</button>
+      <button onclick="answer('quiz3', this, false)">Agent — ship MVP now.</button>
+      <button onclick="answer('quiz3', this, false)">Tab — complete from scratch.</button>
+    </div>
+    <div class="feedback" id="quiz3-feedback"></div>
+  </div>
+
+  <h2>Do this now</h2>
+
+  <div class="practice">
+    <p><strong>15-minute win</strong> in your habit-tracker repo.</p>
+    <ol>
+      <li><strong>Open Plan Mode</strong> (<code>Shift+Tab</code>). Lock Opus or GPT-5.x for planning.</li>
+      <li><strong>Paste the toggle prompt</strong> above — or your own wording if you already started a plan.</li>
+      <li><strong>Review the plan</strong> — use the checklist above; edit endpoint shape, date handling, or tests until nothing is vague.</li>
+      <li><strong>Build</strong> with Composer or Auto. Run the <a href="../reference/verify-loop.html">verify loop</a>: scope → patterns → <code>npm test</code>.</li>
+    </ol>
+    <p>You're done once toggle passes all three verify checks and tests are green.</p>
+  </div>
+
+  <p class="source">
+    Primary source:
+    <a href="https://cursor.com/docs/agent/plan-mode">Plan Mode</a>
+    — when to plan, how plans are saved, and recovering by refining the plan instead of patching builds.
+  </p>
+
+  <footer>
+    <p>Stuck on anything? Ask your agent teacher — paste your plan or say what felt wrong in the review step.</p>
+    <p style="margin-top: 0.75rem;">
+      Previous: <a href="0005-point-agent-at-context.html">Lesson 5 — Point Agent at Context</a> ·
+      Reference: <a href="../reference/plan-mode.html">Plan Mode</a> ·
+      <a href="../reference/verify-loop.html">Verify Loop</a> ·
+      <a href="../reference/cursor-surfaces.html">Surfaces</a> ·
+      Mission: <a href="../MISSION.md">MISSION.md</a>
+    </p>
+  </footer>
+
+  <script>
+    const messages = {
+      quiz1: {
+        true: "Correct. Multi-layer features need a reviewed plan before code spreads across files.",
+        false: "@ files help execution, not design. Inline Edit can't span schema + routes + tests."
+      },
+      quiz2: {
+        true: "Correct. Revert, tighten the plan, rebuild — faster than steering a wrong multi-file diff.",
+        false: "Follow-up prompts compound errors across files. Rules can't fix a bad plan."
+      },
+      quiz3: {
+        true: "Correct. Plan Mode explores approaches and trade-offs before you commit to a stack.",
+        false: "Shipping without a plan on a greenfield idea wastes the session on wrong turns."
+      }
+    };
+
+    function answer(quizId, btn, isCorrect) {
+      const quiz = document.getElementById(quizId);
+      const buttons = quiz.querySelectorAll('button');
+      const feedback = document.getElementById(quizId + '-feedback');
+
+      buttons.forEach(b => {
+        b.disabled = true;
+        if (b === btn) {
+          b.classList.add(isCorrect ? 'correct' : 'wrong');
+        } else if (b.onclick.toString().includes('true')) {
+          b.classList.add('correct');
+        }
+      });
+
+      feedback.textContent = isCorrect ? messages[quizId].true : messages[quizId].false;
+      feedback.style.color = isCorrect ? 'var(--correct)' : 'var(--wrong)';
+    }
+  </script>
+</body>
+</html>

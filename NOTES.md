@@ -11,11 +11,13 @@
 
 - Asked about model selection for Plan Mode (session 2) — prefers practical guidance over theory
 
-## Habit-tracker project (session 5)
+## Habit-tracker project (session 5–6)
 
 - Stack migrated from Express + raw sqlite3 → **TypeScript + Drizzle ORM** (user explicitly chose Drizzle)
 - Project rule already updated to reflect TypeScript + Drizzle (user did this proactively)
 - User applied verify loop successfully on both migration tasks
+- **Lesson 5 complete:** GET + DELETE `/api/habits`; all API routes under `/api` prefix; tests green
+- **Next slice (Lesson 6):** completion toggle via Plan Mode — `POST /api/habits/:id/toggle` with optional `{ date }` (defaults to today); schema + route + tests
 
 ## Model selection for Plan Mode
 
