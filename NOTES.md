@@ -17,7 +17,8 @@
 - Project rule already updated to reflect TypeScript + Drizzle (user did this proactively)
 - User applied verify loop successfully on both migration tasks
 - **Lesson 5 complete:** GET + DELETE `/api/habits`; all API routes under `/api` prefix; tests green
-- **Next slice (Lesson 6):** completion toggle via Plan Mode — `POST /api/habits/:id/toggle` with optional `{ date }` (defaults to today); schema + route + tests
+- **Lesson 6 complete:** completion toggle via Plan Mode with Opus 4.8 — `POST /api/habits/:id/toggle`; schema + route + tests; verify loop passed
+- **Next slice (Lesson 7):** minimal UI — list/add/toggle/delete habits in browser; Plan Mode for page + static serve + fetch client; four-step verify (add Run/browser check)
 
 ## Model selection for Plan Mode
 

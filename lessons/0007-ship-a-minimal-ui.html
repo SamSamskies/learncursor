@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 7 — Ship a Minimal UI Slice</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <div class="lesson-meta">Lesson 7 · ~15 minutes</div>
+  <h1>Ship a Minimal UI Slice</h1>
+
+  <p class="epigraph">
+    Green tests prove the API works.
+    A working first version is something you can click.
+  </p>
+
+  <p>
+    In <a href="0006-plan-mode-for-bigger-slices.html">Lesson 6</a> you shipped
+    the completion toggle — schema, route, tests, all green. Your habit-tracker
+    backend is done. But your <a href="../MISSION.md">mission</a> success criterion
+    is a <em>working first version</em>, not a test suite you admire from the terminal.
+  </p>
+
+  <p>
+    A <strong>UI slice</strong> is the smallest clickable surface that exercises your
+    API: list habits, add one, toggle today, delete one. No auth, no design polish,
+    no mobile breakpoints — just proof the app <em>works</em> end to end.
+  </p>
+
+  <h2>Why this is Plan Mode again</h2>
+
+  <table>
+    <thead>
+      <tr><th>Slice touches…</th><th>Reach for…</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>One new route mirroring an existing handler</td>
+        <td>Agent + <code>@</code> — <a href="0005-point-agent-at-context.html">Lesson 5</a></td>
+      </tr>
+      <tr>
+        <td>Page + static serve + fetch client + server tweak</td>
+        <td><strong>Plan Mode</strong> → Build — <a href="../reference/plan-mode.html">reference</a></td>
+      </tr>
+      <tr>
+        <td>Wrong button color after build</td>
+        <td>Inline Edit (<code>Cmd+K</code>) on those lines</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    A UI slice typically spans four concerns at once: where files live, how the
+    server serves them, how the page calls <code>/api/*</code>, and whether existing
+    tests still pass. That is multi-file work — plan first, same workflow as Lesson 6.
+  </p>
+
+  <h2>Extend your done-when</h2>
+
+  <p>
+    Lessons 4–6 stopped at <code>npm test</code>. For UI work, add a fourth check —
+    the <strong>Run</strong> step. Keep the
+    <a href="../reference/ui-verify.html">UI Verify reference</a> open.
+  </p>
+
+  <div class="steps">
+    <div class="step">
+      <strong>Scope</strong>
+      <span>Only UI wiring — no API redesign, no new tables.</span>
+    </div>
+    <div class="step">
+      <strong>Patterns</strong>
+      <span>Matches your TypeScript + Drizzle project rule.</span>
+    </div>
+    <div class="step">
+      <strong>Tests</strong>
+      <span><code>npm test</code> — run it yourself.</span>
+    </div>
+    <div class="step">
+      <strong>Run</strong>
+      <span><code>npm run dev</code> → browser smoke test (add, toggle, reload, delete).</span>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>Browser beats description</strong><br>
+    "It should work" is not verification. Click through the happy path yourself.
+    Reload the page — does toggle state persist? That is your real done-when.
+  </div>
+
+  <h2>Sample plan prompt</h2>
+
+  <pre class="example">Goal: Minimal UI — list habits, add habit, toggle today's completion, delete habit.
+Scope: Single page served from existing server. Fetch existing /api routes only. Plain CSS OK.
+Constraints: Match project stack (TypeScript). No auth, routing library, or component framework unless already in repo.
+Done-when: npm test green; npm run dev; browser — add habit, toggle, reload persists, delete works.</pre>
+
+  <p>
+    Review the plan for: which URL serves the page, where static files live, how
+    fetch errors surface (even a simple <code>alert</code> is fine for v1), and
+    whether the server needs a one-line static middleware change. Edit until those
+    are explicit — vague plans produce pages that 404.
+  </p>
+
+  <div class="callout">
+    <strong>Pro workflow (same as Lesson 6)</strong><br>
+    Plan with Opus or GPT-5.x locked → review plan → Build with Composer or Auto
+    → four-step verify. Small DOM or CSS fixes afterward: Inline Edit, not a new plan.
+  </div>
+
+  <h2>Check your understanding</h2>
+
+  <div class="quiz" id="quiz1"
+       data-messages='{"true":"Correct. Tests alone do not satisfy the mission — ship a clickable slice.","false":"Users need to click it. More backend tests do not replace a UI slice."}'>
+    <h3>1. All tests green, nothing to click. First version done?</h3>
+    <div class="quiz-options">
+      <button data-correct="false">Yes — ready for users now.</button>
+      <button data-correct="true">No — ship a minimal UI.</button>
+      <button data-correct="false">Maybe — add more tests first.</button>
+    </div>
+    <div class="feedback" id="quiz1-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz2"
+       data-messages='{"true":"Correct. Page plus client plus server wiring needs a reviewed plan.","false":"One @ file cannot span page, serve config, and fetch client."}'>
+    <h3>2. UI needs page, client, and server change.</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Plan Mode — review the slice.</button>
+      <button data-correct="false">Agent — @ one HTML file.</button>
+      <button data-correct="false">Tab — autocomplete the page.</button>
+    </div>
+    <div class="feedback" id="quiz2-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz3"
+       data-messages='{"true":"Correct. Done-when includes tests — fix them before calling it shipped.","false":"A passing browser check with red tests hides API regressions."}'>
+    <h3>3. Browser works but npm test fails.</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Fail done-when — fix tests first.</button>
+      <button data-correct="false">Ship anyway — UI matters more.</button>
+      <button data-correct="false">Revert UI — API was enough.</button>
+    </div>
+    <div class="feedback" id="quiz3-feedback"></div>
+  </div>
+
+  <h2>Do this now</h2>
+
+  <div class="practice">
+    <p><strong>20-minute win</strong> in your habit-tracker repo.</p>
+    <ol>
+      <li><strong>Open Plan Mode</strong> (<code>Shift+Tab</code>). Lock Opus or GPT-5.x.</li>
+      <li><strong>Paste the UI prompt</strong> above — adjust if your server already serves static files.</li>
+      <li><strong>Review the plan</strong> — confirm file paths, serve URL, and all four done-when checks.</li>
+      <li><strong>Build</strong> with Composer or Auto.</li>
+      <li><strong>Four-step verify</strong> — scope, patterns, <code>npm test</code>, then browser smoke test per the <a href="../reference/ui-verify.html">UI Verify reference</a>.</li>
+    </ol>
+    <p>You are done when you can demo add → toggle → reload → delete in the browser and tests stay green.</p>
+  </div>
+
+  <p class="source">
+    Primary source:
+    <a href="https://cursor.com/docs/get-started/quickstart">Cursor Quickstart</a>
+    — make a change you can see, review the diff, escalate to Plan Mode for multi-file work.
+  </p>
+
+  <footer>
+    <p>Stuck on anything? Ask your agent teacher — paste your plan or describe what broke in the browser step.</p>
+    <p style="margin-top: 0.75rem;">
+      Previous: <a href="0006-plan-mode-for-bigger-slices.html">Lesson 6 — Plan Mode</a> ·
+      Reference: <a href="../reference/ui-verify.html">UI Verify</a> ·
+      <a href="../reference/plan-mode.html">Plan Mode</a> ·
+      <a href="../reference/verify-loop.html">Verify Loop</a> ·
+      Mission: <a href="../MISSION.md">MISSION.md</a>
+    </p>
+  </footer>
+
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>

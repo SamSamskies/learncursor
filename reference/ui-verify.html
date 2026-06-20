@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UI Verify — Quick Reference</title>
+  <style>
+    :root {
+      --text: #1a1a1a;
+      --muted: #555;
+      --accent: #2563eb;
+      --border: #ddd;
+      --bg: #fafafa;
+      --card: #fff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Palatino Linotype", Palatino, Georgia, serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.55;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+    h1 {
+      font-weight: 400;
+      font-size: 1.75rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+    h2 {
+      font-size: 0.75rem;
+      font-family: system-ui, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin: 2rem 0 0.75rem;
+      font-weight: 600;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      font-family: system-ui, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: #f5f5f5;
+    }
+    tr:last-child td { border-bottom: none; }
+    ol {
+      padding-left: 1.25rem;
+      font-size: 0.95rem;
+    }
+    ol li { margin-bottom: 0.45rem; }
+    code {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.85em;
+      background: #eee;
+      padding: 0.1em 0.35em;
+    }
+    .flow {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1rem 1.15rem;
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.8rem;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      margin-bottom: 1rem;
+    }
+    footer {
+      margin-top: 2.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--accent); }
+    @media print {
+      body { background: white; }
+    }
+  </style>
+</head>
+<body>
+  <h1>UI Verify</h1>
+  <p class="subtitle">Backend tests green is not enough for a personal app.</p>
+
+  <h2>Four-step check (UI slices)</h2>
+  <ol>
+    <li><strong>Scope</strong> — pages and API wiring only? No surprise refactors?</li>
+    <li><strong>Patterns</strong> — matches project rule (stack, folder layout)?</li>
+    <li><strong>Tests</strong> — run <code>npm test</code> yourself</li>
+    <li><strong>Run</strong> — start dev server, click the happy path in a browser</li>
+  </ol>
+
+  <h2>Smoke test script (habit tracker)</h2>
+  <div class="flow">npm run dev → open localhost
+→ add a habit → appears in list
+→ toggle today → visual state changes
+→ reload page → toggle state persists
+→ delete habit → gone from list</div>
+
+  <h2>Outcome → action</h2>
+  <table>
+    <thead>
+      <tr><th>Result</th><th>Do this</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Tests green, browser broken</td>
+        <td>Inline Edit on the fetch/DOM lines — not a new Plan.</td>
+      </tr>
+      <tr>
+        <td>Browser OK, tests red</td>
+        <td>Fix tests first — UI may be masking API regressions.</td>
+      </tr>
+      <tr>
+        <td>Wrong page structure or missing route</td>
+        <td>Revert, tighten Plan scope, rebuild.</td>
+      </tr>
+      <tr>
+        <td>All four green</td>
+        <td>Working first version — iterate with thin prompts.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Done-when line (copy into prompts)</h2>
+  <div class="flow">Done-when: npm test green; npm run dev;
+browser smoke test passes (add, toggle, reload, delete).</div>
+
+  <footer>
+    From <a href="../lessons/0007-ship-a-minimal-ui.html">Lesson 7</a> ·
+    <a href="verify-loop.html">Verify Loop</a> ·
+    <a href="plan-mode.html">Plan Mode</a>
+  </footer>
+</body>
+</html>
