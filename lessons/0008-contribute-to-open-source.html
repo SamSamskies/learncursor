@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 8 — Contribute to Open Source</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <div class="lesson-meta">Lesson 8 · ~20 minutes</div>
+  <h1>Contribute to Open Source</h1>
+
+  <p class="epigraph">
+    You built a habit tracker from nothing.
+    Now prove the workflow works on code you didn't write.
+  </p>
+
+  <p>
+    In <a href="0007-ship-a-minimal-ui.html">Lesson 7</a> you reached a
+    <em>working first version</em> — UI, API, tests, and (bonus) Playwright e2e.
+    That completes the solo-builder arc in your <a href="../MISSION.md">mission</a>.
+    One success criterion remains:
+    <strong>clone an unfamiliar repo and make a meaningful contribution using Agent.</strong>
+  </p>
+
+  <p>
+    OSS is different from your habit tracker. You don't set the rules, the folder
+    layout, or the test command. The skill is not "write perfect code" — it's
+    <strong>learn fast, change little, verify with their toolchain.</strong>
+    Keep the <a href="../reference/oss-workflow.html">OSS Workflow reference</a> open.
+  </p>
+
+  <h2>The mindset shift</h2>
+
+  <table>
+    <thead>
+      <tr><th>Your app</th><th>Unfamiliar OSS repo</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>You wrote the project rule</td>
+        <td>Read <code>CONTRIBUTING.md</code> — that's their rule</td>
+      </tr>
+      <tr>
+        <td>You know where files live</td>
+        <td>Agent explores first — skip <code>@</code> until you do</td>
+      </tr>
+      <tr>
+        <td>Plan Mode for multi-file slices</td>
+        <td>Plan Mode when the fix spans layers you don't own</td>
+      </tr>
+      <tr>
+        <td>Your verify loop</td>
+        <td>Their test command from the README</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>Explore before you @</strong><br>
+    On your repo, <code>@</code> mentions save time because you already know what's
+    relevant. On a foreign repo, premature <code>@</code> files can mislead Agent.
+    Start with open questions — let Agent search.
+    See the <a href="https://cursor.com/docs/agent/prompting">prompting docs</a>:
+    "If you're not sure which files matter, skip it — Agent finds relevant files
+    through its own search."
+  </div>
+
+  <h2>Pick the right first issue</h2>
+
+  <p>
+    Your first OSS contribution should be boring on purpose. Look for:
+  </p>
+
+  <ul>
+    <li><strong>Small scope</strong> — typo, missing validation, broken link, test gap</li>
+    <li><strong>Stack you recognize</strong> — TypeScript, Python, whatever you know</li>
+    <li><strong>Active repo</strong> — merged PRs in the last month; responsive maintainers</li>
+    <li><strong>Clear repro</strong> — issue describes expected vs actual behavior</li>
+  </ul>
+
+  <p>
+    Avoid "good first issue" labels on abandoned repos, and avoid issues that say
+    "refactor the entire module." One file changed is a win.
+  </p>
+
+  <h2>Five-phase workflow</h2>
+
+  <div class="steps">
+    <div class="step">
+      <strong>1. Pick</strong>
+      <span>One issue. Read it fully. Check if a PR already exists.</span>
+    </div>
+    <div class="step">
+      <strong>2. Clone</strong>
+      <span>Fork if needed. <code>git clone</code> → open folder in Cursor.</span>
+    </div>
+    <div class="step">
+      <strong>3. Explore</strong>
+      <span>Paste the issue link into Agent and ask where to look. Run their install + test commands yourself.</span>
+    </div>
+    <div class="step">
+      <strong>4. Change</strong>
+      <span>Agent + <code>@</code> on the 1–3 files you identified. Tight scope in the prompt.</span>
+    </div>
+    <div class="step">
+      <strong>5. Verify</strong>
+      <span>Their test/lint command green. Review diff for unrelated changes. Open PR linking the issue.</span>
+    </div>
+  </div>
+
+  <h2>Sample explore prompt</h2>
+
+  <p>
+    Paste the full issue URL and copy the title plus a sentence or two from the
+    description — Agent may not fetch GitHub links on its own, but the URL anchors
+    the task for you.
+  </p>
+
+  <pre class="example">I want to fix: https://github.com/owner/repo/issues/42
+Title: [paste issue title]
+Description: [paste key details — expected vs actual, repro steps]
+
+Do not change any code yet.
+1. Summarize what the issue is asking for.
+2. Which files are most likely involved?
+3. How do I run tests locally per CONTRIBUTING or README?</pre>
+
+  <h2>Sample implement prompt</h2>
+
+  <pre class="example">Fix: https://github.com/owner/repo/issues/42
+Summary: [one sentence from the issue]
+
+Scope: minimal change in the files we identified. No refactors, no formatting sweeps, no new dependencies unless the issue requires it.
+Done-when: [their test command from README] passes.</pre>
+
+  <div class="callout">
+    <strong>When to escalate to Plan Mode</strong><br>
+    If the fix needs schema + API + UI changes across unfamiliar modules, switch to
+    Plan Mode — same workflow as
+    <a href="0006-plan-mode-for-bigger-slices.html">Lesson 6</a>, but the plan
+    must respect <code>CONTRIBUTING.md</code> and existing patterns, not your
+    personal project rule.
+  </div>
+
+  <h2>Check your understanding</h2>
+
+  <div class="quiz" id="quiz1"
+       data-messages='{"true":"Correct. Agent search beats guessing @ files in a repo you have never opened.","false":"@ files you have not read yet can steer Agent wrong on unfamiliar code."}'>
+    <h3>1. First hour in a new OSS repo.</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Explore — Agent without @ mentions.</button>
+      <button data-correct="false">@ every src file — cover all bases.</button>
+      <button data-correct="false">Plan Mode — plan the whole codebase.</button>
+    </div>
+    <div class="feedback" id="quiz1-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz2"
+       data-messages='{"true":"Correct. Minimal diffs get merged; drive-by refactors get rejected.","false":"Unrelated changes make review harder and PRs get closed."}'>
+    <h3>2. Agent reformatted twelve unrelated files.</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Revert — keep only the fix.</button>
+      <button data-correct="false">Ship it — cleaner code helps everyone.</button>
+      <button data-correct="false">Ask maintainer — they might like it.</button>
+    </div>
+    <div class="feedback" id="quiz2-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz3"
+       data-messages='{"true":"Correct. Their CONTRIBUTING test command is your done-when.","false":"Your habit-tracker npm test is irrelevant in their repo."}'>
+    <h3>3. What verifies an OSS fix?</h3>
+    <div class="quiz-options">
+      <button data-correct="false">npm test in your habit tracker.</button>
+      <button data-correct="true">Their README test command green.</button>
+      <button data-correct="false">Agent says tests would pass.</button>
+    </div>
+    <div class="feedback" id="quiz3-feedback"></div>
+  </div>
+
+  <h2>Do this now</h2>
+
+  <div class="practice">
+    <p><strong>One-session win</strong> — your first merged-quality PR attempt.</p>
+    <ol>
+      <li><strong>Find an issue</strong> on a repo whose stack you know. Confirm no open PR already addresses it.</li>
+      <li><strong>Clone and install</strong> — run their test command before changing anything. Baseline must pass (or note pre-existing failures).</li>
+      <li><strong>Explore prompt</strong> — paste the sample above; read Agent's file list before implementing.</li>
+      <li><strong>Implement</strong> — Agent + <code>@</code> on identified files only. Review the diff line by line.</li>
+      <li><strong>Verify + PR</strong> — their tests green; PR description includes the issue link (add <code>Fixes #42</code> on its own line if you want GitHub to auto-close the issue on merge).</li>
+    </ol>
+    <p>You are done when the PR is open and the diff contains only what the issue asked for.</p>
+  </div>
+
+  <p class="source">
+    Primary source:
+    <a href="https://cursor.com/docs/get-started/quickstart">Cursor Quickstart</a>
+    — "Explain a codebase" is the explore step; attach context with <code>@</code>
+    once you know which files matter.
+  </p>
+
+  <footer>
+    <p>Stuck on anything? Ask your agent teacher — paste the issue URL or describe what Agent changed that looks wrong.</p>
+    <p style="margin-top: 0.75rem;">
+      Previous: <a href="0007-ship-a-minimal-ui.html">Lesson 7 — Minimal UI</a> ·
+      Reference: <a href="../reference/oss-workflow.html">OSS Workflow</a> ·
+      <a href="../reference/context-mentions.html">Context Mentions</a> ·
+      <a href="../reference/verify-loop.html">Verify Loop</a> ·
+      Mission: <a href="../MISSION.md">MISSION.md</a>
+    </p>
+  </footer>
+
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>

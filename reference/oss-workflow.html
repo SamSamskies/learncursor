@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UI Verify — Quick Reference</title>
+  <title>OSS Workflow — Quick Reference</title>
   <style>
     :root {
       --text: #1a1a1a;
@@ -100,64 +100,87 @@
   </style>
 </head>
 <body>
-  <h1>UI Verify</h1>
-  <p class="subtitle">Backend tests green is not enough for a personal app.</p>
+  <h1>OSS Workflow</h1>
+  <p class="subtitle">Explore first on unfamiliar code. Point Agent only after you know where.</p>
 
-  <h2>Four-step check (UI slices)</h2>
+  <h2>Five phases</h2>
   <ol>
-    <li><strong>Scope</strong> — pages and API wiring only? No surprise refactors?</li>
-    <li><strong>Patterns</strong> — matches project rule (stack, folder layout)?</li>
-    <li><strong>Tests</strong> — run <code>npm test</code> yourself</li>
-    <li><strong>Run</strong> — start dev server, click the happy path in a browser</li>
+    <li><strong>Pick</strong> — small issue, stack you recognize, active repo</li>
+    <li><strong>Clone</strong> — fork if required; open folder in Cursor</li>
+    <li><strong>Explore</strong> — Agent without <code>@</code>; read CONTRIBUTING + run their test command</li>
+    <li><strong>Change</strong> — Agent + <code>@</code> for 1–3 files; Plan Mode if slice spans many layers</li>
+    <li><strong>Verify</strong> — their test/lint commands green; open PR with issue link</li>
   </ol>
 
-  <h2>Optional fifth step — automate Run</h2>
-  <p style="font-size: 0.95rem; margin-bottom: 0.75rem;">
-    If you added Playwright (or similar) e2e tests, treat <code>npm run test:e2e</code>
-    as a repeatable Run step. Manual clicking finds UX bugs; automation catches regressions
-    on every verify pass.
-  </p>
-  <div class="flow">npm test green
-npm run test:e2e green  ← replaces manual smoke test once stable</div>
+  <h2>Explore prompts (no @ needed)</h2>
+  <div class="flow">I want to fix: https://github.com/owner/repo/issues/42
+Title: [paste title]
+Description: [paste key details]
 
-  <h2>Smoke test script (habit tracker)</h2>
-  <div class="flow">npm run dev → open localhost
-→ add a habit → appears in list
-→ toggle today → visual state changes
-→ reload page → toggle state persists
-→ delete habit → gone from list</div>
+How is this repo structured? Where should I start?
+What does [function/module] do? Who calls it?
+How do I run tests locally per CONTRIBUTING?</div>
 
-  <h2>Outcome → action</h2>
+  <h2>Implement prompts (after explore)</h2>
+  <div class="flow">Fix: https://github.com/owner/repo/issues/42
+Summary: [one sentence from issue]
+
+Scope: only files needed for this fix.
+Done-when: [their test command] green; no unrelated refactors.</div>
+
+  <h2>Surface picker (OSS)</h2>
   <table>
     <thead>
-      <tr><th>Result</th><th>Do this</th></tr>
+      <tr><th>Situation</th><th>Reach for</th></tr>
     </thead>
     <tbody>
       <tr>
-        <td>Tests green, browser broken</td>
-        <td>Inline Edit on the fetch/DOM lines — not a new Plan.</td>
+        <td>First hour in a new repo</td>
+        <td>Agent — explore prompts, no <code>@</code></td>
       </tr>
       <tr>
-        <td>Browser OK, tests red</td>
-        <td>Fix tests first — UI may be masking API regressions.</td>
+        <td>Bug in one known file</td>
+        <td>Agent + <code>@that-file</code></td>
       </tr>
       <tr>
-        <td>Wrong page structure or missing route</td>
-        <td>Revert, tighten Plan scope, rebuild.</td>
+        <td>Feature touching 4+ files you don't own</td>
+        <td>Plan Mode — review before Build</td>
       </tr>
       <tr>
-        <td>All four green</td>
-        <td>Working first version — iterate with thin prompts.</td>
+        <td>Typo or one-liner after you found the line</td>
+        <td>Inline Edit (<code>Cmd+K</code>)</td>
       </tr>
     </tbody>
   </table>
 
-  <h2>Done-when line (copy into prompts)</h2>
-  <div class="flow">Done-when: npm test green; npm run dev;
-browser smoke test passes (add, toggle, reload, delete).</div>
+  <h2>Red flags → stop and revert</h2>
+  <table>
+    <thead>
+      <tr><th>Agent did this</th><th>Why it's wrong</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Renamed unrelated files</td>
+        <td>OSS maintainers reject drive-by refactors</td>
+      </tr>
+      <tr>
+        <td>Changed formatting project-wide</td>
+        <td>Noisy diff hides your actual fix</td>
+      </tr>
+      <tr>
+        <td>Added dependencies without asking</td>
+        <td>Check issue/CONTRIBUTING first</td>
+      </tr>
+      <tr>
+        <td>Tests pass but you didn't run them</td>
+        <td>CI will fail — run locally yourself</td>
+      </tr>
+    </tbody>
+  </table>
 
   <footer>
-    From <a href="../lessons/0007-ship-a-minimal-ui.html">Lesson 7</a> ·
+    From <a href="../lessons/0008-contribute-to-open-source.html">Lesson 8</a> ·
+    <a href="context-mentions.html">Context Mentions</a> ·
     <a href="verify-loop.html">Verify Loop</a> ·
     <a href="plan-mode.html">Plan Mode</a>
   </footer>

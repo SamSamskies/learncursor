@@ -18,7 +18,10 @@
 - User applied verify loop successfully on both migration tasks
 - **Lesson 5 complete:** GET + DELETE `/api/habits`; all API routes under `/api` prefix; tests green
 - **Lesson 6 complete:** completion toggle via Plan Mode with Opus 4.8 — `POST /api/habits/:id/toggle`; schema + route + tests; verify loop passed
-- **Next slice (Lesson 7):** minimal UI — list/add/toggle/delete habits in browser; Plan Mode for page + static serve + fetch client; four-step verify (add Run/browser check)
+- **Lesson 7 complete:** minimal UI shipped — list/add/toggle/delete in browser via Plan Mode; four-step verify passed
+- **Bonus:** user added Playwright e2e tests (automated browser smoke test — beyond lesson scope, good instinct)
+- **Habit-tracker arc:** complete for mission's "working first version" criterion — iterate freely or start new ideas
+- **Next (Lesson 8):** OSS contribution on an unfamiliar repo — explore-first Agent workflow
 
 ## Model selection for Plan Mode
 
