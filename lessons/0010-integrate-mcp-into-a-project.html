@@ -60,6 +60,82 @@
     grunt work.
   </p>
 
+  <h2>Dashboard GitHub ≠ GitHub MCP</h2>
+
+  <p>
+    If you connected GitHub in the
+    <a href="https://cursor.com/docs/integrations/github">Cursor dashboard</a>,
+    that is a separate integration. It powers <strong>Cloud Agents</strong>,
+    <strong>Bugbot</strong>, and automations — Cursor's cloud talking to GitHub
+    on your behalf. It does <em>not</em> automatically give your local Agent
+    GitHub API tools in chat.
+  </p>
+
+  <table>
+    <thead>
+      <tr><th>What you need</th><th>Use this</th><th>GitHub MCP?</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Cloud agent opens a PR while you're away</td>
+        <td>Dashboard GitHub integration</td>
+        <td>No</td>
+      </tr>
+      <tr>
+        <td>Bugbot reviews your PR on GitHub</td>
+        <td>Dashboard GitHub integration</td>
+        <td>No</td>
+      </tr>
+      <tr>
+        <td>Clone, commit, push in the IDE</td>
+        <td>Built-in Git source control</td>
+        <td>No</td>
+      </tr>
+      <tr>
+        <td>Check a PR from terminal</td>
+        <td><code>gh pr view</code> — Agent can run it</td>
+        <td>No</td>
+      </tr>
+      <tr>
+        <td>Local Agent queries issues/PRs without paste or <code>gh</code></td>
+        <td>GitHub MCP in <code>mcp.json</code></td>
+        <td>Yes — optional upgrade</td>
+      </tr>
+      <tr>
+        <td>Agent drives browser to verify UI</td>
+        <td>Playwright MCP</td>
+        <td>N/A — not covered by dashboard</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>Already connected GitHub in the dashboard?</strong><br>
+    You do not need GitHub MCP for OSS work you've been doing — paste the PR URL
+    or let Agent run <code>gh</code>. Skip GitHub MCP unless you want hands-free
+    GitHub queries across repos every session. For this lesson, prefer Playwright
+    or database MCP on a project you're actively building.
+  </div>
+
+  <h2>Built-in setup vs manual JSON</h2>
+
+  <p>
+    Cursor gives you three ways to add MCP servers — you don't have to hand-write
+    JSON for everything:
+  </p>
+
+  <ul>
+    <li><strong>One-click</strong> — Settings (<code>Cmd+Shift+J</code>) → Tools &amp; MCP → browse marketplace → Add to Cursor</li>
+    <li><strong>Settings UI</strong> — same panel, Add new MCP server (writes global <code>~/.cursor/mcp.json</code>)</li>
+    <li><strong>Manual JSON</strong> — create <code>.cursor/mcp.json</code> for project-scoped config you commit to git</li>
+  </ul>
+
+  <p>
+    There is no UI picker for project-level files — for team-shared or
+    repo-specific tools, create <code>.cursor/mcp.json</code> by hand or ask
+    Agent to scaffold it.
+  </p>
+
   <h2>Two config locations</h2>
 
   <div class="steps">
@@ -90,12 +166,9 @@
   <pre class="example">// .cursor/mcp.json  (commit this file)
 {
   "mcpServers": {
-    "github": {
+    "playwright": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
-      "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "${env:GITHUB_PERSONAL_ACCESS_TOKEN}"
-      }
+      "args": ["-y", "@playwright/mcp@latest"]
     }
   }
 }</pre>
@@ -114,13 +187,8 @@
     </thead>
     <tbody>
       <tr>
-        <td>OSS repo (bitcoin-connect, etc.)</td>
-        <td>GitHub MCP</td>
-        <td><em>List open review comments on PR #395</em></td>
-      </tr>
-      <tr>
-        <td>App with UI (habit tracker)</td>
-        <td>Playwright / browser MCP</td>
+        <td>App with UI (habit tracker) — recommended</td>
+        <td>Playwright MCP</td>
         <td><em>Open localhost:3000 and confirm toggle works</em></td>
       </tr>
       <tr>
@@ -128,8 +196,25 @@
         <td>Supabase or Postgres MCP</td>
         <td><em>Show columns on the habits table</em></td>
       </tr>
+      <tr>
+        <td>OSS — already have dashboard GitHub + <code>gh</code></td>
+        <td>Skip GitHub MCP; paste PR URL</td>
+        <td><em>PR https://github.com/…/pull/395 — summarize review comments</em></td>
+      </tr>
+      <tr>
+        <td>OSS — frequent cross-repo GitHub queries</td>
+        <td>GitHub MCP (optional)</td>
+        <td><em>List open review comments on PR #395</em></td>
+      </tr>
     </tbody>
   </table>
+
+  <p>
+    GitHub MCP uses the
+    <a href="https://github.com/github/github-mcp-server">official GitHub MCP server</a>
+    (remote URL or Docker) — not the deprecated
+    <code>@modelcontextprotocol/server-github</code> npm package.
+  </p>
 
   <div class="callout">
     <strong>Install only what you need</strong><br>
@@ -171,8 +256,8 @@
     want consistency:
   </p>
 
-  <pre class="example">When I mention a GitHub PR or issue by number, use the GitHub MCP
-tools to fetch details instead of asking me to paste them.</pre>
+  <pre class="example">When verifying UI changes, use Playwright MCP to open the app
+and check behavior instead of asking me to describe what I see.</pre>
 
   <h2>Check your understanding</h2>
 
@@ -199,12 +284,12 @@ tools to fetch details instead of asking me to paste them.</pre>
   </div>
 
   <div class="quiz" id="quiz3"
-       data-messages='{"true":"Correct. Reload after editing mcp.json.","false":"MCP servers load at startup, not mid-chat."}'>
-    <h3>3. Just edited mcp.json.</h3>
+       data-messages='{"true":"Correct. Dashboard GitHub and GitHub MCP are separate.","false":"Dashboard connection does not enable local MCP tools."}'>
+    <h3>3. GitHub connected in dashboard.</h3>
     <div class="quiz-options">
-      <button data-correct="false">Keep coding — tools update live.</button>
-      <button data-correct="true">Reload Window — then check Tools MCP.</button>
-      <button data-correct="false">Restart computer — only fix that works.</button>
+      <button data-correct="false">GitHub MCP is on — nothing else needed.</button>
+      <button data-correct="true">Cloud Agents yes — local MCP is separate.</button>
+      <button data-correct="false">Local Agent reads all PRs automatically now.</button>
     </div>
     <div class="feedback" id="quiz3-feedback"></div>
   </div>
@@ -212,10 +297,10 @@ tools to fetch details instead of asking me to paste them.</pre>
   <h2>Do this now</h2>
 
   <div class="practice">
-    <p><strong>Wire one MCP server into a real project</strong> — pick the row that matches what you're building.</p>
+    <p><strong>Wire one MCP server into a real project</strong> — prefer Playwright or database MCP unless you specifically want GitHub API tools in chat.</p>
     <ol>
-      <li><strong>Choose a project</strong> — habit tracker, bitcoin-connect, or your next app idea.</li>
-      <li><strong>Create <code>.cursor/mcp.json</code></strong> — one server from the table above; use <code>${env:…}</code> for secrets.</li>
+      <li><strong>Choose a project</strong> — habit tracker (Playwright) or a DB-backed app (Postgres/Supabase MCP).</li>
+      <li><strong>Create <code>.cursor/mcp.json</code></strong> — one server from the table; use <code>${env:…}</code> for secrets if needed.</li>
       <li><strong>Set the secret</strong> — export in terminal or add to local <code>.env</code> (not committed).</li>
       <li><strong>Reload Window</strong> — confirm green in Settings → Tools &amp; MCP.</li>
       <li><strong>Test prompt</strong> — ask Agent something only that MCP can answer; confirm you see a tool call in the trace.</li>

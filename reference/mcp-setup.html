@@ -103,6 +103,40 @@
   <h1>MCP Setup</h1>
   <p class="subtitle">Project file for shared tools. Global file for personal ones.</p>
 
+  <h2>Dashboard GitHub ≠ GitHub MCP</h2>
+  <table>
+    <thead>
+      <tr><th>Integration</th><th>Powers</th><th>Local Agent tools?</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Dashboard GitHub app</td>
+        <td>Cloud Agents, Bugbot, automations</td>
+        <td>No</td>
+      </tr>
+      <tr>
+        <td>GitHub MCP in mcp.json</td>
+        <td>Query issues/PRs/code from chat</td>
+        <td>Yes — separate setup</td>
+      </tr>
+      <tr>
+        <td><code>gh</code> CLI + paste PR URL</td>
+        <td>PR/issue lookup without MCP</td>
+        <td>Via terminal, not MCP</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size: 0.92rem; color: var(--muted); margin-bottom: 1rem;">
+    Dashboard connected? Skip GitHub MCP unless you want hands-free GitHub API in every chat session.
+  </p>
+
+  <h2>Built-in setup</h2>
+  <ul style="padding-left: 1.25rem; font-size: 0.95rem; margin-bottom: 1rem;">
+    <li><strong>One-click:</strong> Settings → Tools &amp; MCP → marketplace → Add to Cursor</li>
+    <li><strong>Settings UI:</strong> Add new MCP server → writes global <code>~/.cursor/mcp.json</code></li>
+    <li><strong>Project JSON:</strong> <code>.cursor/mcp.json</code> — manual; commit to git (no secrets)</li>
+  </ul>
+
   <h2>Config locations</h2>
   <table>
     <thead>
@@ -176,16 +210,16 @@
     </thead>
     <tbody>
       <tr>
-        <td>GitHub</td>
-        <td><code>@modelcontextprotocol/server-github</code> + <code>GITHUB_PERSONAL_ACCESS_TOKEN</code></td>
-      </tr>
-      <tr>
         <td>Playwright</td>
-        <td><code>@playwright/mcp</code> — browser verify from Agent</td>
+        <td><code>@playwright/mcp</code> — browser verify from Agent (good first pick)</td>
       </tr>
       <tr>
         <td>Supabase</td>
         <td><code>@supabase/mcp-server-supabase</code> + access token</td>
+      </tr>
+      <tr>
+        <td>GitHub (optional)</td>
+        <td><a href="https://github.com/github/github-mcp-server">github/github-mcp-server</a> — remote URL or Docker; skip if dashboard + <code>gh</code> suffice</td>
       </tr>
     </tbody>
   </table>

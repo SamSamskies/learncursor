@@ -25,7 +25,8 @@
 - **Lesson 9 complete:** addressed both CodeRabbit comments — `aria-label` commit + inert-state preservation commit; 5 commits total; threads resolved; CI green
 - **Mission arc:** all five success criteria demonstrated — habit tracker working first version + OSS PR with review response
 - **User preference:** already familiar with standard OSS merge/hand-off workflow — skip re-teaching PR etiquette
-- **Next (Lesson 10):** integrate MCP into a project — `.cursor/mcp.json`, secrets via env, reload, test tool call
+- **GitHub:** dashboard integration already connected — Cloud Agents/Bugbot; GitHub MCP optional (use `gh` + paste PR URL instead)
+- **Next (Lesson 10):** integrate MCP into a project — prefer Playwright or DB MCP over redundant GitHub MCP
 
 ## Model selection for Plan Mode
 
