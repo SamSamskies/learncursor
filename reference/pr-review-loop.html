@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OSS Workflow — Quick Reference</title>
+  <title>PR Review Loop — Quick Reference</title>
   <style>
     :root {
       --text: #1a1a1a;
@@ -100,91 +100,80 @@
   </style>
 </head>
 <body>
-  <h1>OSS Workflow</h1>
-  <p class="subtitle">Explore first on unfamiliar code. Point Agent only after you know where.</p>
+  <h1>PR Review Loop</h1>
+  <p class="subtitle">Read → fix little → verify → reply. Repeat until merged.</p>
 
-  <h2>Five phases</h2>
+  <h2>Four steps</h2>
   <ol>
-    <li><strong>Pick</strong> — small issue, stack you recognize, active repo</li>
-    <li><strong>Clone</strong> — fork if required; open folder in Cursor</li>
-    <li><strong>Explore</strong> — Agent without <code>@</code>; read CONTRIBUTING + run their test command</li>
-    <li><strong>Change</strong> — Agent + <code>@</code> for 1–3 files; Plan Mode if slice spans many layers</li>
-    <li><strong>Verify</strong> — their test/lint commands green; open PR with issue link</li>
-    <li><strong>Review</strong> — triage comments; fix little; re-verify; reply on threads (<a href="pr-review-loop.html">PR Review Loop</a>)</li>
+    <li><strong>Paste</strong> — review comments or PR URL into Agent; ask what's valid</li>
+    <li><strong>Scope</strong> — one cluster of comments per prompt; no drive-by refactors</li>
+    <li><strong>Verify</strong> — same local command as before (their README test)</li>
+    <li><strong>Reply</strong> — push commit; comment "Fixed in [sha]" on each thread</li>
   </ol>
 
-  <h2>Explore prompts (no @ needed)</h2>
-  <div class="flow">I want to fix: https://github.com/owner/repo/issues/42
-Title: [paste title]
-Description: [paste key details]
+  <h2>Fix prompt template</h2>
+  <div class="flow">PR review on @path/to/file — address these comments only:
 
-How is this repo structured? Where should I start?
-What does [function/module] do? Who calls it?
-How do I run tests locally per CONTRIBUTING?</div>
+1. [paste comment 1]
+2. [paste comment 2]
 
-  <h2>Implement prompts (after explore)</h2>
-  <div class="flow">Fix: https://github.com/owner/repo/issues/42
-Summary: [one sentence from issue]
+No other changes.
+Done-when: [their verify command] passes.</div>
 
-Scope: only files needed for this fix.
-Done-when: [their test command] green; no unrelated refactors.</div>
-
-  <h2>Surface picker (OSS)</h2>
+  <h2>Triage table</h2>
   <table>
     <thead>
-      <tr><th>Situation</th><th>Reach for</th></tr>
+      <tr><th>Comment type</th><th>Action</th></tr>
     </thead>
     <tbody>
       <tr>
-        <td>First hour in a new repo</td>
-        <td>Agent — explore prompts, no <code>@</code></td>
+        <td>Accessibility gap</td>
+        <td>Fix — maintainers expect it</td>
       </tr>
       <tr>
-        <td>Bug in one known file</td>
-        <td>Agent + <code>@that-file</code></td>
+        <td>Lifecycle / state bug</td>
+        <td>Fix — shows thoroughness</td>
       </tr>
       <tr>
-        <td>Feature touching 4+ files you don't own</td>
-        <td>Plan Mode — review before Build</td>
+        <td>Out-of-scope refactor</td>
+        <td>Decline politely; cite issue scope</td>
       </tr>
       <tr>
-        <td>Typo or one-liner after you found the line</td>
-        <td>Inline Edit (<code>Cmd+K</code>)</td>
+        <td>Subjective style</td>
+        <td>Match repo patterns if cheap; else ask</td>
+      </tr>
+      <tr>
+        <td>Bot duplicate of human</td>
+        <td>Treat as required once human agrees</td>
       </tr>
     </tbody>
   </table>
 
-  <h2>Red flags → stop and revert</h2>
+  <h2>Reply snippets</h2>
   <table>
     <thead>
-      <tr><th>Agent did this</th><th>Why it's wrong</th></tr>
+      <tr><th>Situation</th><th>Reply</th></tr>
     </thead>
     <tbody>
       <tr>
-        <td>Renamed unrelated files</td>
-        <td>OSS maintainers reject drive-by refactors</td>
+        <td>Fixed</td>
+        <td><code>Addressed in abc1234 — [one line what changed]</code></td>
       </tr>
       <tr>
-        <td>Changed formatting project-wide</td>
-        <td>Noisy diff hides your actual fix</td>
+        <td>Out of scope</td>
+        <td><code>Good point for a follow-up; this PR scopes to #391 only.</code></td>
       </tr>
       <tr>
-        <td>Added dependencies without asking</td>
-        <td>Check issue/CONTRIBUTING first</td>
-      </tr>
-      <tr>
-        <td>Tests pass but you didn't run them</td>
-        <td>CI will fail — run locally yourself</td>
+        <td>Need clarification</td>
+        <td><code>Could you clarify — should this match pattern in [file]?</code></td>
       </tr>
     </tbody>
   </table>
 
   <footer>
-    From <a href="../lessons/0008-contribute-to-open-source.html">Lesson 8</a> ·
-    <a href="pr-review-loop.html">PR Review Loop</a> ·
-    <a href="context-mentions.html">Context Mentions</a> ·
-    <a href="verify-loop.html">Verify Loop</a> ·
-    <a href="plan-mode.html">Plan Mode</a>
+    From <a href="../lessons/0009-navigate-pr-review.html">Lesson 9</a> ·
+    <a href="oss-workflow.html">OSS Workflow</a> ·
+    <a href="verify-loop.html">Verify Loop</a>
   </footer>
 </body>
 </html>

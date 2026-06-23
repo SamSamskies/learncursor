@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 9 — Navigate PR Review</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <div class="lesson-meta">Lesson 9 · ~15 minutes</div>
+  <h1>Navigate PR Review</h1>
+
+  <p class="epigraph">
+    Opening the PR is half the job.
+    Landing it means reading feedback, changing little, and proving it still works.
+  </p>
+
+  <p>
+    In <a href="0008-contribute-to-open-source.html">Lesson 8</a> you opened
+    <a href="https://github.com/getAlby/bitcoin-connect/pull/395">PR #395</a> on
+    bitcoin-connect — a focus trap for keyboard users in the payment modal.
+    CodeRabbit left two actionable comments. This lesson is about turning those
+    into a clean follow-up commit without scope creep.
+  </p>
+
+  <h2>Review is not rejection</h2>
+
+  <p>
+    Maintainers and bots comment to help you merge, not to block you. A typical
+    first PR gets 1–5 rounds of small fixes. That's normal. Your job:
+  </p>
+
+  <ul>
+    <li><strong>Read every comment</strong> — human and bot</li>
+    <li><strong>Decide: fix, push back, or ask</strong> — most comments deserve a fix</li>
+    <li><strong>One commit per logical fix</strong> — easier to review than a squashed mess</li>
+    <li><strong>Re-run their verify command</strong> — same done-when as Lesson 8</li>
+  </ul>
+
+  <h2>Triage bot vs human feedback</h2>
+
+  <table>
+    <thead>
+      <tr><th>Signal</th><th>Usually means</th><th>Your move</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Accessibility gap (missing <code>aria-*</code>)</td>
+        <td>Valid — screen readers need a name</td>
+        <td>Fix it; maintainers will ask anyway</td>
+      </tr>
+      <tr>
+        <td>State not restored on teardown</td>
+        <td>Valid edge case — another overlay may exist</td>
+        <td>Fix it; shows you thought about lifecycle</td>
+      </tr>
+      <tr>
+        <td>"Refactor the whole module"</td>
+        <td>Out of scope for your issue</td>
+        <td>Politely decline; link to the issue scope</td>
+      </tr>
+      <tr>
+        <td>Style preference with no bug</td>
+        <td>Subjective</td>
+        <td>Match their existing patterns if cheap; else ask</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>Your PR right now</strong><br>
+  Comment 1: add <code>aria-label</code> or <code>aria-labelledby</code> on the dialog panel.<br>
+  Comment 2: store each sibling's prior <code>inert</code> value in a <code>Map</code>, restore on close — don't set every sibling to <code>inert = false</code>.
+  </div>
+
+  <h2>Four-step review loop</h2>
+
+  <div class="steps">
+    <div class="step">
+      <strong>1. Paste</strong>
+      <span>Copy review comments (or the PR URL) into Agent. Ask which are valid and what files to touch.</span>
+    </div>
+    <div class="step">
+      <strong>2. Scope</strong>
+      <span>One prompt per comment cluster. No "while we're here" refactors.</span>
+    </div>
+    <div class="step">
+      <strong>3. Verify</strong>
+      <span>Run the same local test you used before (<code>yarn dev</code> + keyboard check).</span>
+    </div>
+    <div class="step">
+      <strong>4. Reply</strong>
+      <span>Push commit(s). Reply on GitHub: "Fixed in abc123" or explain why you disagreed.</span>
+    </div>
+  </div>
+
+  <h2>Sample fix prompt</h2>
+
+  <pre class="example">PR review on @src/components/bc-modal.ts — address these two comments only:
+
+1. Add an accessible name to the dialog (aria-label or aria-labelledby).
+2. On mount, save each body sibling's current inert value in a Map; on unmount restore those exact values instead of setting all to false.
+
+No other changes. Done-when: yarn dev, open modal, Tab stays trapped, close restores focus.</pre>
+
+  <h2>When to push back</h2>
+
+  <p>
+    You are allowed to disagree — politely and with evidence. Good reasons:
+  </p>
+
+  <ul>
+    <li>The comment is out of scope for the linked issue</li>
+    <li>The suggested fix breaks an existing pattern in the repo</li>
+    <li>You verified the concern doesn't reproduce locally</li>
+  </ul>
+
+  <p>
+    Bad reason: "the bot is annoying." If a human maintainer repeats the bot's
+    point, treat it as required.
+  </p>
+
+  <h2>Check your understanding</h2>
+
+  <div class="quiz" id="quiz1"
+       data-messages='{"true":"Correct. Store and restore — another modal may have set inert already.","false":"Blind reset can re-enable elements that should stay inert."}'>
+    <h3>1. Reviewer says restore inert state.</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Map prior values — restore on close.</button>
+      <button data-correct="false">Set all siblings inert false.</button>
+      <button data-correct="false">Ignore — edge case unlikely.</button>
+    </div>
+    <div class="feedback" id="quiz1-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz2"
+       data-messages='{"true":"Correct. aria-labelledby to a visible title is often best.","false":"role=dialog alone is not enough for screen readers."}'>
+    <h3>2. Dialog has role but no name.</h3>
+    <div class="quiz-options">
+      <button data-correct="false">Ship it — role is enough.</button>
+      <button data-correct="true">Add aria-label or aria-labelledby.</button>
+      <button data-correct="false">Remove role to avoid the warning.</button>
+    </div>
+    <div class="feedback" id="quiz2-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz3"
+       data-messages='{"true":"Correct. Same verify command — prove the fix did not regress.","false":"Review fixes still need local verification."}'>
+    <h3>3. After pushing review fixes.</h3>
+    <div class="quiz-options">
+      <button data-correct="false">Wait for CI — skip local test.</button>
+      <button data-correct="true">Re-run local verify — then push.</button>
+      <button data-correct="false">Squash everything — one commit only.</button>
+    </div>
+    <div class="feedback" id="quiz3-feedback"></div>
+  </div>
+
+  <h2>Do this now</h2>
+
+  <div class="practice">
+    <p><strong>Land the review round</strong> — on your open bitcoin-connect PR.</p>
+    <ol>
+      <li><strong>Open PR #395</strong> — read both CodeRabbit comments in full.</li>
+      <li><strong>Fix prompt</strong> — paste the sample above (or the comment text) into Agent with <code>@src/components/bc-modal.ts</code>.</li>
+      <li><strong>Verify</strong> — <code>yarn dev</code>; Tab through modal; close and confirm focus returns.</li>
+      <li><strong>Push + reply</strong> — one commit; reply on each thread: "Addressed in [sha]."</li>
+    </ol>
+    <p>You are done when both comments are resolved and CI is green (or you explained why not).</p>
+  </div>
+
+  <p class="source">
+    Primary source:
+    <a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/about-pull-request-reviews">GitHub — About pull request reviews</a>
+    — how review threads, resolve, and re-request review work.
+  </p>
+
+  <footer>
+    <p>Stuck on anything? Ask your agent teacher — paste a review comment and your diff.</p>
+    <p style="margin-top: 0.75rem;">
+      Previous: <a href="0008-contribute-to-open-source.html">Lesson 8 — Open Source</a> ·
+      Reference: <a href="../reference/oss-workflow.html">OSS Workflow</a> ·
+      <a href="../reference/pr-review-loop.html">PR Review Loop</a> ·
+      Mission: <a href="../MISSION.md">MISSION.md</a>
+    </p>
+  </footer>
+
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>

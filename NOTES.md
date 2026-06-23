@@ -21,7 +21,9 @@
 - **Lesson 7 complete:** minimal UI shipped — list/add/toggle/delete in browser via Plan Mode; four-step verify passed
 - **Bonus:** user added Playwright e2e tests (automated browser smoke test — beyond lesson scope, good instinct)
 - **Habit-tracker arc:** complete for mission's "working first version" criterion — iterate freely or start new ideas
-- **Next (Lesson 8):** OSS contribution on an unfamiliar repo — explore-first Agent workflow
+- **Lesson 8 complete:** OSS contribution on bitcoin-connect — issue #391 (modal focus trap); [PR #395](https://github.com/getAlby/bitcoin-connect/pull/395) open; 3 commits; CodeRabbit left 2 actionable comments (aria name, inert state restore)
+- **Mission arc:** all five success criteria demonstrated — habit tracker working first version + OSS PR opened
+- **Next (Lesson 9):** navigate PR review — address CodeRabbit comments, push fix commit, reply on threads
 
 ## Model selection for Plan Mode
 
