@@ -29,6 +29,7 @@
 - No single official "solo indie builder workflow" guide — this curriculum fills that gap from official docs + practitioner patterns.
 - Open source contribution workflow with Cursor is documented piecemeal; Lessons 8–9 cover pick → PR → review loop.
 - [GitHub — About pull request reviews](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/about-pull-request-reviews) — review threads, resolve, re-request. Use for: Lesson 9 PR review loop.
+- MCP server catalog grows quickly — Lesson 10 uses official Cursor MCP docs as source of truth; verify package names before install.
 
 ## Community preferences
 

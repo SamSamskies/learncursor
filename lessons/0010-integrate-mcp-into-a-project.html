@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 10 — Integrate MCP Into a Project</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <div class="lesson-meta">Lesson 10 · ~20 minutes</div>
+  <h1>Integrate MCP Into a Project</h1>
+
+  <p class="epigraph">
+    @ mentions give the agent your files.
+    MCP gives it your tools — GitHub, browser, database, APIs.
+  </p>
+
+  <p>
+    In <a href="0005-point-agent-at-context.html">Lesson 5</a> you learned to
+    point Agent at code with <code>@</code>. That context lives inside your
+    repo. <strong>Model Context Protocol (MCP)</strong> extends Agent with
+    external capabilities: query GitHub, drive a browser, read a database schema,
+    call a docs API — without you copy-pasting into chat.
+  </p>
+
+  <p>
+    This lesson is about the <strong>project-level</strong> pattern: a
+    <code>.cursor/mcp.json</code> file you commit so every session in that repo
+    gets the same tools. Same idea as
+    <a href="0003-set-up-project-rules.html">project rules</a>, but for live
+    integrations. Keep the
+    <a href="../reference/mcp-setup.html">MCP Setup reference</a> open.
+  </p>
+
+  <h2>What MCP changes</h2>
+
+  <table>
+    <thead>
+      <tr><th>Without MCP</th><th>With MCP</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Paste PR comments into chat</td>
+        <td>Agent reads the PR via GitHub tools</td>
+      </tr>
+      <tr>
+        <td>Describe "Tab doesn't reach Confirm Payment"</td>
+        <td>Browser MCP opens the modal and checks focus</td>
+      </tr>
+      <tr>
+        <td>Copy schema from a dashboard</td>
+        <td>Database MCP lists tables and columns</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Agent decides when to call MCP tools — you prompt the goal, it picks the
+    tool. You still read diffs and verify results; MCP removes the fetch-and-paste
+    grunt work.
+  </p>
+
+  <h2>Two config locations</h2>
+
+  <div class="steps">
+    <div class="step">
+      <strong>Global</strong>
+      <span><code>~/.cursor/mcp.json</code> — personal tools in every workspace (your GitHub token, personal Notion, etc.)</span>
+    </div>
+    <div class="step">
+      <strong>Project</strong>
+      <span><code>.cursor/mcp.json</code> in repo root — shared with the team via git; project config wins on name conflicts</span>
+    </div>
+  </div>
+
+  <p>
+    Solo builders often start global, then move repeatable setups into the
+    project file once a stack stabilizes — exactly like user rules → project
+    rules in Lesson 3.
+  </p>
+
+  <h2>Project config shape</h2>
+
+  <p>
+    Most MCP servers are <strong>stdio</strong> — Cursor spawns a local process.
+    Remote servers use a <code>url</code> instead. Official docs:
+    <a href="https://cursor.com/docs/mcp">Cursor — MCP</a>.
+  </p>
+
+  <pre class="example">// .cursor/mcp.json  (commit this file)
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${env:GITHUB_PERSONAL_ACCESS_TOKEN}"
+      }
+    }
+  }
+}</pre>
+
+  <p>
+    <code>${env:VAR}</code> reads from your shell or <code>.env</code> — never
+    hardcode tokens in json you commit. Add <code>.env</code> to
+    <code>.gitignore</code> if it isn't already.
+  </p>
+
+  <h2>Pick a server for your project</h2>
+
+  <table>
+    <thead>
+      <tr><th>You're working on…</th><th>Start with</th><th>Example prompt after setup</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>OSS repo (bitcoin-connect, etc.)</td>
+        <td>GitHub MCP</td>
+        <td><em>List open review comments on PR #395</em></td>
+      </tr>
+      <tr>
+        <td>App with UI (habit tracker)</td>
+        <td>Playwright / browser MCP</td>
+        <td><em>Open localhost:3000 and confirm toggle works</em></td>
+      </tr>
+      <tr>
+        <td>App with Supabase / Postgres</td>
+        <td>Supabase or Postgres MCP</td>
+        <td><em>Show columns on the habits table</em></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>Install only what you need</strong><br>
+    Each MCP server exposes tools Agent can invoke. More servers = more attack
+    surface and context noise. One well-chosen server beats five "just in case"
+    installs. Prefer official or widely audited packages.
+  </div>
+
+  <h2>Five-step setup loop</h2>
+
+  <div class="steps">
+    <div class="step">
+      <strong>1. Create</strong>
+      <span><code>mkdir -p .cursor</code> → add <code>mcp.json</code> with one server entry</span>
+    </div>
+    <div class="step">
+      <strong>2. Secret</strong>
+      <span>Export token in shell or <code>.env</code>; reference via <code>${env:…}</code></span>
+    </div>
+    <div class="step">
+      <strong>3. Reload</strong>
+      <span>Command Palette → <strong>Developer: Reload Window</strong> (MCP loads at startup)</span>
+    </div>
+    <div class="step">
+      <strong>4. Confirm</strong>
+      <span>Settings → <strong>Tools &amp; MCP</strong> — server shows connected (green)</span>
+    </div>
+    <div class="step">
+      <strong>5. Prompt</strong>
+      <span>Ask Agent something only that tool can answer; watch it call the tool</span>
+    </div>
+  </div>
+
+  <h2>Sample project rule (optional)</h2>
+
+  <p>
+    MCP tells Agent <em>what tools exist</em>. A one-line project rule tells it
+    <em>when</em> to prefer them — add to <code>.cursor/rules/</code> if you
+    want consistency:
+  </p>
+
+  <pre class="example">When I mention a GitHub PR or issue by number, use the GitHub MCP
+tools to fetch details instead of asking me to paste them.</pre>
+
+  <h2>Check your understanding</h2>
+
+  <div class="quiz" id="quiz1"
+       data-messages='{"true":"Correct. Project config is shareable and scoped.","false":"Global config applies to every workspace on your machine."}'>
+    <h3>1. Team shares MCP via git.</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Commit .cursor/mcp.json in repo.</button>
+      <button data-correct="false">Commit ~/.cursor/mcp.json globally.</button>
+      <button data-correct="false">Paste server config into each chat.</button>
+    </div>
+    <div class="feedback" id="quiz1-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz2"
+       data-messages='{"true":"Correct. env interpolation keeps secrets out of git.","false":"Hardcoded tokens in mcp.json get committed and leaked."}'>
+    <h3>2. API token in mcp.json.</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Use ${env:TOKEN} — never hardcode.</button>
+      <button data-correct="false">Hardcode token — json is private enough.</button>
+      <button data-correct="false">Skip env — paste token when Agent asks.</button>
+    </div>
+    <div class="feedback" id="quiz2-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz3"
+       data-messages='{"true":"Correct. Reload after editing mcp.json.","false":"MCP servers load at startup, not mid-chat."}'>
+    <h3>3. Just edited mcp.json.</h3>
+    <div class="quiz-options">
+      <button data-correct="false">Keep coding — tools update live.</button>
+      <button data-correct="true">Reload Window — then check Tools MCP.</button>
+      <button data-correct="false">Restart computer — only fix that works.</button>
+    </div>
+    <div class="feedback" id="quiz3-feedback"></div>
+  </div>
+
+  <h2>Do this now</h2>
+
+  <div class="practice">
+    <p><strong>Wire one MCP server into a real project</strong> — pick the row that matches what you're building.</p>
+    <ol>
+      <li><strong>Choose a project</strong> — habit tracker, bitcoin-connect, or your next app idea.</li>
+      <li><strong>Create <code>.cursor/mcp.json</code></strong> — one server from the table above; use <code>${env:…}</code> for secrets.</li>
+      <li><strong>Set the secret</strong> — export in terminal or add to local <code>.env</code> (not committed).</li>
+      <li><strong>Reload Window</strong> — confirm green in Settings → Tools &amp; MCP.</li>
+      <li><strong>Test prompt</strong> — ask Agent something only that MCP can answer; confirm you see a tool call in the trace.</li>
+      <li><strong>Commit</strong> — <code>mcp.json</code> only (no secrets). Optional: add the one-line project rule.</li>
+    </ol>
+    <p>You are done when Agent successfully calls the MCP tool once on a real task.</p>
+  </div>
+
+  <p class="source">
+    Primary source:
+    <a href="https://cursor.com/docs/mcp">Cursor — Model Context Protocol (MCP)</a>
+    — config locations, stdio vs remote servers, and <code>${env:}</code> interpolation.
+  </p>
+
+  <footer>
+    <p>Stuck on anything? Ask your agent teacher — paste your mcp.json (redact secrets) and the error from Tools &amp; MCP.</p>
+    <p style="margin-top: 0.75rem;">
+      Previous: <a href="0009-navigate-pr-review.html">Lesson 9 — PR Review</a> ·
+      Reference: <a href="../reference/mcp-setup.html">MCP Setup</a> ·
+      <a href="../reference/project-rules.html">Project Rules</a> ·
+      Mission: <a href="../MISSION.md">MISSION.md</a>
+    </p>
+  </footer>
+
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>

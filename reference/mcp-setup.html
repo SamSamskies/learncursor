@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MCP Setup — Quick Reference</title>
+  <style>
+    :root {
+      --text: #1a1a1a;
+      --muted: #555;
+      --accent: #2563eb;
+      --border: #ddd;
+      --bg: #fafafa;
+      --card: #fff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Palatino Linotype", Palatino, Georgia, serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.55;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+    h1 {
+      font-weight: 400;
+      font-size: 1.75rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+    h2 {
+      font-size: 0.75rem;
+      font-family: system-ui, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin: 2rem 0 0.75rem;
+      font-weight: 600;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      font-family: system-ui, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: #f5f5f5;
+    }
+    tr:last-child td { border-bottom: none; }
+    ol {
+      padding-left: 1.25rem;
+      font-size: 0.95rem;
+    }
+    ol li { margin-bottom: 0.45rem; }
+    code {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.85em;
+      background: #eee;
+      padding: 0.1em 0.35em;
+    }
+    .flow {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1rem 1.15rem;
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.8rem;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      margin-bottom: 1rem;
+    }
+    footer {
+      margin-top: 2.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--accent); }
+    @media print {
+      body { background: white; }
+    }
+  </style>
+</head>
+<body>
+  <h1>MCP Setup</h1>
+  <p class="subtitle">Project file for shared tools. Global file for personal ones.</p>
+
+  <h2>Config locations</h2>
+  <table>
+    <thead>
+      <tr><th>Path</th><th>Scope</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>.cursor/mcp.json</code></td>
+        <td>This repo only — commit to git (no secrets)</td>
+      </tr>
+      <tr>
+        <td><code>~/.cursor/mcp.json</code></td>
+        <td>All workspaces on your machine</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size: 0.92rem; color: var(--muted); margin-bottom: 1rem;">
+    Same server name in both? Project config wins.
+  </p>
+
+  <h2>Stdio server template</h2>
+  <div class="flow">{
+  "mcpServers": {
+    "server-name": {
+      "command": "npx",
+      "args": ["-y", "@org/mcp-server-package"],
+      "env": {
+        "API_KEY": "${env:API_KEY}"
+      }
+    }
+  }
+}</div>
+
+  <h2>Remote server template</h2>
+  <div class="flow">{
+  "mcpServers": {
+    "remote-api": {
+      "url": "https://mcp.example.com/mcp",
+      "headers": {
+        "Authorization": "Bearer ${env:API_KEY}"
+      }
+    }
+  }
+}</div>
+
+  <h2>Interpolation variables</h2>
+  <table>
+    <thead>
+      <tr><th>Syntax</th><th>Resolves to</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>${env:NAME}</code></td><td>Environment variable</td></tr>
+      <tr><td><code>${workspaceFolder}</code></td><td>Project root (folder with <code>.cursor/</code>)</td></tr>
+      <tr><td><code>${userHome}</code></td><td>Your home directory</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Setup loop</h2>
+  <ol>
+    <li>Create <code>.cursor/mcp.json</code> with one server</li>
+    <li>Set secrets in shell or <code>.env</code> (gitignored)</li>
+    <li><strong>Developer: Reload Window</strong></li>
+    <li>Settings → Tools &amp; MCP → confirm connected</li>
+    <li>Prompt Agent with a task only that tool can do</li>
+  </ol>
+
+  <h2>Common solo-builder picks</h2>
+  <table>
+    <thead>
+      <tr><th>Server</th><th>Package / notes</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>GitHub</td>
+        <td><code>@modelcontextprotocol/server-github</code> + <code>GITHUB_PERSONAL_ACCESS_TOKEN</code></td>
+      </tr>
+      <tr>
+        <td>Playwright</td>
+        <td><code>@playwright/mcp</code> — browser verify from Agent</td>
+      </tr>
+      <tr>
+        <td>Supabase</td>
+        <td><code>@supabase/mcp-server-supabase</code> + access token</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Security checklist</h2>
+  <ul style="padding-left: 1.25rem; font-size: 0.95rem;">
+    <li>Never commit tokens — use <code>${env:…}</code></li>
+    <li>Install trusted servers only; read what tools they expose</li>
+    <li>Fewer servers = less context noise and smaller attack surface</li>
+  </ul>
+
+  <footer>
+    From <a href="../lessons/0010-integrate-mcp-into-a-project.html">Lesson 10</a> ·
+    <a href="https://cursor.com/docs/mcp">Cursor MCP docs</a> ·
+    <a href="project-rules.html">Project Rules</a>
+  </footer>
+</body>
+</html>

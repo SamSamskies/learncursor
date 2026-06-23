@@ -21,9 +21,11 @@
 - **Lesson 7 complete:** minimal UI shipped — list/add/toggle/delete in browser via Plan Mode; four-step verify passed
 - **Bonus:** user added Playwright e2e tests (automated browser smoke test — beyond lesson scope, good instinct)
 - **Habit-tracker arc:** complete for mission's "working first version" criterion — iterate freely or start new ideas
-- **Lesson 8 complete:** OSS contribution on bitcoin-connect — issue #391 (modal focus trap); [PR #395](https://github.com/getAlby/bitcoin-connect/pull/395) open; 3 commits; CodeRabbit left 2 actionable comments (aria name, inert state restore)
-- **Mission arc:** all five success criteria demonstrated — habit tracker working first version + OSS PR opened
-- **Next (Lesson 9):** navigate PR review — address CodeRabbit comments, push fix commit, reply on threads
+- **Lesson 8 complete:** OSS contribution on bitcoin-connect — issue #391 (modal focus trap); [PR #395](https://github.com/getAlby/bitcoin-connect/pull/395) open
+- **Lesson 9 complete:** addressed both CodeRabbit comments — `aria-label` commit + inert-state preservation commit; 5 commits total; threads resolved; CI green
+- **Mission arc:** all five success criteria demonstrated — habit tracker working first version + OSS PR with review response
+- **User preference:** already familiar with standard OSS merge/hand-off workflow — skip re-teaching PR etiquette
+- **Next (Lesson 10):** integrate MCP into a project — `.cursor/mcp.json`, secrets via env, reload, test tool call
 
 ## Model selection for Plan Mode
 
