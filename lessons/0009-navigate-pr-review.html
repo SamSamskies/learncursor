@@ -20,7 +20,7 @@
     <a href="https://github.com/getAlby/bitcoin-connect/pull/395">PR #395</a> on
     bitcoin-connect — a focus trap for keyboard users in the payment modal.
     CodeRabbit left two actionable comments. This lesson is about turning those
-    into a clean follow-up commit without scope creep.
+    into clean follow-up commits without scope creep.
   </p>
 
   <h2>Review is not rejection</h2>
@@ -82,7 +82,7 @@
     </div>
     <div class="step">
       <strong>2. Scope</strong>
-      <span>One prompt per comment cluster. No "while we're here" refactors.</span>
+      <span>One prompt per comment — even in the same file. No "while we're here" refactors.</span>
     </div>
     <div class="step">
       <strong>3. Verify</strong>
@@ -94,14 +94,29 @@
     </div>
   </div>
 
-  <h2>Sample fix prompt</h2>
+  <h2>Sample fix prompts</h2>
 
-  <pre class="example">PR review on @src/components/bc-modal.ts — address these two comments only:
+  <p>
+    Your two comments are in the same file but are separate concerns — markup vs
+    lifecycle. Fix them with two prompts and two commits, not one batched prompt.
+    Combine only when comments are tightly coupled (e.g. a bug fix and its test).
+  </p>
 
-1. Add an accessible name to the dialog (aria-label or aria-labelledby).
-2. On mount, save each body sibling's current inert value in a Map; on unmount restore those exact values instead of setting all to false.
+  <p><strong>Prompt 1 — accessible name</strong></p>
+  <pre class="example">PR review on @src/components/bc-modal.ts — one change only:
+Add an accessible name to the dialog (aria-label or aria-labelledby).
+No other changes.</pre>
 
-No other changes. Done-when: yarn dev, open modal, Tab stays trapped, close restores focus.</pre>
+  <p><strong>Prompt 2 — inert restore</strong> (after reviewing the diff from prompt 1)</p>
+  <pre class="example">PR review on @src/components/bc-modal.ts — one change only:
+On mount, save each body sibling's current inert value in a Map;
+on unmount restore those exact values instead of setting all to false.
+No other changes.</pre>
+
+  <p>
+    Run <code>yarn dev</code> and keyboard-check the modal after each prompt, or
+    once at the end if both diffs are small and you read them line by line.
+  </p>
 
   <h2>When to push back</h2>
 
@@ -161,9 +176,10 @@ No other changes. Done-when: yarn dev, open modal, Tab stays trapped, close rest
     <p><strong>Land the review round</strong> — on your open bitcoin-connect PR.</p>
     <ol>
       <li><strong>Open PR #395</strong> — read both CodeRabbit comments in full.</li>
-      <li><strong>Fix prompt</strong> — paste the sample above (or the comment text) into Agent with <code>@src/components/bc-modal.ts</code>.</li>
+      <li><strong>Prompt 1</strong> — accessible name; review diff; commit.</li>
+      <li><strong>Prompt 2</strong> — inert restore; review diff; commit.</li>
       <li><strong>Verify</strong> — <code>yarn dev</code>; Tab through modal; close and confirm focus returns.</li>
-      <li><strong>Push + reply</strong> — one commit; reply on each thread: "Addressed in [sha]."</li>
+      <li><strong>Push + reply</strong> — reply on each thread: "Addressed in [sha]."</li>
     </ol>
     <p>You are done when both comments are resolved and CI is green (or you explained why not).</p>
   </div>

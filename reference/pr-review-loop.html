@@ -106,19 +106,20 @@
   <h2>Four steps</h2>
   <ol>
     <li><strong>Paste</strong> — review comments or PR URL into Agent; ask what's valid</li>
-    <li><strong>Scope</strong> — one cluster of comments per prompt; no drive-by refactors</li>
+    <li><strong>Scope</strong> — one comment per prompt; combine only if tightly coupled</li>
     <li><strong>Verify</strong> — same local command as before (their README test)</li>
     <li><strong>Reply</strong> — push commit; comment "Fixed in [sha]" on each thread</li>
   </ol>
 
-  <h2>Fix prompt template</h2>
-  <div class="flow">PR review on @path/to/file — address these comments only:
+  <h2>Fix prompt template (one comment)</h2>
+  <div class="flow">PR review on @path/to/file — one change only:
+[paste single comment]
 
-1. [paste comment 1]
-2. [paste comment 2]
+No other changes.</div>
 
-No other changes.
-Done-when: [their verify command] passes.</div>
+  <p style="font-size: 0.92rem; color: var(--muted); margin-bottom: 1rem;">
+    Repeat per comment. Two commits map cleanly to two review threads.
+  </p>
 
   <h2>Triage table</h2>
   <table>
