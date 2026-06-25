@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hooks — Quick Reference</title>
+  <style>
+    :root {
+      --text: #1a1a1a;
+      --muted: #555;
+      --accent: #2563eb;
+      --border: #ddd;
+      --bg: #fafafa;
+      --card: #fff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Palatino Linotype", Palatino, Georgia, serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.55;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+    h1 {
+      font-weight: 400;
+      font-size: 1.75rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+    h2 {
+      font-size: 0.75rem;
+      font-family: system-ui, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin: 2rem 0 0.75rem;
+      font-weight: 600;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      font-family: system-ui, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: #f5f5f5;
+    }
+    tr:last-child td { border-bottom: none; }
+    ol, ul {
+      padding-left: 1.25rem;
+      font-size: 0.95rem;
+    }
+    ol li, ul li { margin-bottom: 0.45rem; }
+    code {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.85em;
+      background: #eee;
+      padding: 0.1em 0.35em;
+    }
+    .flow {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1rem 1.15rem;
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.8rem;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      margin-bottom: 1rem;
+    }
+    footer {
+      margin-top: 2.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--accent); }
+    @media print {
+      body { background: white; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Cursor Hooks</h1>
+  <p class="subtitle">Scripts on the agent loop. Rules are prose; hooks are code.</p>
+
+  <h2>Rules vs MCP vs hooks</h2>
+  <table>
+    <thead>
+      <tr><th>Layer</th><th>Mechanism</th><th>Enforcement</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Rules</td><td>Prose in <code>.cursor/rules/</code></td><td>Soft — Agent may ignore</td></tr>
+      <tr><td>MCP</td><td>Tools in <code>mcp.json</code></td><td>Agent chooses when to call</td></tr>
+      <tr><td>Hooks</td><td>Scripts in <code>hooks.json</code></td><td>Hard — can block actions</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Config locations</h2>
+  <table>
+    <thead>
+      <tr><th>Path</th><th>Scope</th><th>Script path style</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>.cursor/hooks.json</code></td>
+        <td>This repo — commit to git</td>
+        <td><code>.cursor/hooks/script.sh</code></td>
+      </tr>
+      <tr>
+        <td><code>~/.cursor/hooks.json</code></td>
+        <td>All workspaces</td>
+        <td><code>./hooks/script.sh</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Four behaviors</h2>
+  <table>
+    <thead>
+      <tr><th>Behavior</th><th>Response fields</th><th>Events</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Observe</td><td>None required</td><td><code>afterShellExecution</code>, <code>sessionStart</code></td></tr>
+      <tr><td>Gate</td><td><code>permission</code>, <code>user_message</code></td><td><code>beforeShellExecution</code>, <code>beforeMCPExecution</code></td></tr>
+      <tr><td>Modify</td><td><code>updated_input</code>, <code>additional_context</code></td><td><code>preToolUse</code>, <code>postToolUse</code></td></tr>
+      <tr><td>Follow up</td><td><code>followup_message</code></td><td><code>stop</code>, <code>subagentStop</code></td></tr>
+    </tbody>
+  </table>
+
+  <h2>Event chooser</h2>
+  <table>
+    <thead>
+      <tr><th>Goal</th><th>Event</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Block/approve shell commands</td><td><code>beforeShellExecution</code></td></tr>
+      <tr><td>Audit shell output</td><td><code>afterShellExecution</code></td></tr>
+      <tr><td>Gate MCP tool calls</td><td><code>beforeMCPExecution</code></td></tr>
+      <tr><td>Format after Agent edits</td><td><code>afterFileEdit</code></td></tr>
+      <tr><td>Any tool intercept</td><td><code>preToolUse</code> / <code>postToolUse</code></td></tr>
+      <tr><td>Scan prompts for secrets</td><td><code>beforeSubmitPrompt</code></td></tr>
+      <tr><td>Chain subagent loops</td><td><code>subagentStop</code></td></tr>
+    </tbody>
+  </table>
+
+  <h2>hooks.json template</h2>
+  <div class="flow">{
+  "version": 1,
+  "hooks": {
+    "beforeShellExecution": [
+      {
+        "command": ".cursor/hooks/block-force-push.sh",
+        "matcher": "git push",
+        "failClosed": false,
+        "timeout": 10
+      }
+    ]
+  }
+}</div>
+
+  <h2>Gate script template</h2>
+  <div class="flow">#!/bin/bash
+input=$(cat)
+command=$(python3 -c "import sys,json; print(json.load(sys.stdin).get('command',''))")
+
+# ... your logic ...
+
+echo '{"permission": "allow"}'
+exit 0
+
+# permission values: allow | deny | ask
+# exit 0 = success; exit 2 = block</div>
+
+  <h2>Hook entry fields</h2>
+  <table>
+    <thead>
+      <tr><th>Field</th><th>Meaning</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>command</code></td><td>Script path (relative to project or ~/.cursor)</td></tr>
+      <tr><td><code>type</code></td><td><code>"command"</code> (default) or <code>"prompt"</code></td></tr>
+      <tr><td><code>matcher</code></td><td>JavaScript regex — hook runs only on match</td></tr>
+      <tr><td><code>failClosed</code></td><td><code>true</code> = block on crash/timeout/invalid JSON</td></tr>
+      <tr><td><code>timeout</code></td><td>Seconds before hook times out</td></tr>
+      <tr><td><code>loop_limit</code></td><td>Max follow-ups for <code>stop</code> / <code>subagentStop</code></td></tr>
+    </tbody>
+  </table>
+
+  <h2>Setup loop</h2>
+  <ol>
+    <li>Pick narrowest event for your goal</li>
+    <li>Create <code>.cursor/hooks.json</code> with <code>version: 1</code></li>
+    <li>Write script in <code>.cursor/hooks/</code> — read stdin, print JSON</li>
+    <li><code>chmod +x</code> the script</li>
+    <li>Save — Cursor reloads on save; restart if needed</li>
+    <li>Trigger the action; debug via Settings → Hooks or Hooks output channel</li>
+  </ol>
+
+  <h2>Common solo-builder hooks</h2>
+  <table>
+    <thead>
+      <tr><th>Hook</th><th>Event</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Block force push to main</td><td><code>beforeShellExecution</code></td></tr>
+      <tr><td>Log Agent shell commands</td><td><code>afterShellExecution</code></td></tr>
+      <tr><td>Run formatter after edits</td><td><code>afterFileEdit</code></td></tr>
+      <tr><td>Ask before MCP browser opens</td><td><code>beforeMCPExecution</code></td></tr>
+    </tbody>
+  </table>
+
+  <footer>
+    From <a href="../lessons/0011-cursor-hooks.html">Lesson 11</a> ·
+    <a href="https://cursor.com/docs/hooks">Cursor Hooks docs</a> ·
+    <a href="project-rules.html">Project Rules</a> ·
+    <a href="mcp-setup.html">MCP Setup</a>
+  </footer>
+</body>
+</html>

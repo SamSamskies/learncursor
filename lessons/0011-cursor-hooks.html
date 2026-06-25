@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 11 — Cursor Hooks</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <div class="lesson-meta">Lesson 11 · ~20 minutes</div>
+  <h1>Cursor Hooks</h1>
+
+  <p class="epigraph">
+    Rules tell Agent what to prefer.
+    Hooks run code when Agent acts — gate, log, format, follow up.
+  </p>
+
+  <p>
+    In <a href="0003-set-up-project-rules.html">Lesson 3</a> you wrote project rules —
+    persistent prose Agent loads every session. In
+    <a href="0010-integrate-mcp-into-a-project.html">Lesson 10</a> you wired MCP —
+    external tools Agent can call. <strong>Hooks</strong> sit on the agent loop itself:
+    small scripts that fire at defined moments and can observe, block, or reshape behavior.
+  </p>
+
+  <p>
+    Rules are suggestions. Hooks are enforcement. When you need deterministic behavior —
+    block a force push, log every shell command, format files after edits — hooks beat
+    repeating it in prompts. Keep the
+    <a href="../reference/hooks.html">Hooks reference</a> open.
+  </p>
+
+  <h2>Rules vs MCP vs hooks</h2>
+
+  <table>
+    <thead>
+      <tr><th>Mechanism</th><th>What it does</th><th>Example</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Project rules</td>
+        <td>Prose instructions Agent reads</td>
+        <td>"Run npm test before marking done"</td>
+      </tr>
+      <tr>
+        <td>MCP</td>
+        <td>External tools Agent invokes</td>
+        <td>Playwright opens localhost:3000</td>
+      </tr>
+      <tr>
+        <td>Hooks</td>
+        <td>Scripts on agent-loop events</td>
+        <td>Deny <code>git push --force</code> to main</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    They stack. Your habit tracker might have a rule to run tests, Playwright MCP for
+    browser verify, and a hook that blocks destructive git commands — each layer does
+    what it's best at.
+  </p>
+
+  <h2>Four things hooks can do</h2>
+
+  <table>
+    <thead>
+      <tr><th>Behavior</th><th>What happens</th><th>Typical event</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Observe</strong></td>
+        <td>Log or audit — no blocking</td>
+        <td><code>afterShellExecution</code></td>
+      </tr>
+      <tr>
+        <td><strong>Gate</strong></td>
+        <td>Allow, deny, or ask the user</td>
+        <td><code>beforeShellExecution</code></td>
+      </tr>
+      <tr>
+        <td><strong>Modify</strong></td>
+        <td>Rewrite tool input or inject context</td>
+        <td><code>preToolUse</code>, <code>postToolUse</code></td>
+      </tr>
+      <tr>
+        <td><strong>Follow up</strong></td>
+        <td>Send Agent another message</td>
+        <td><code>stop</code>, <code>subagentStop</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Two config locations</h2>
+
+  <div class="steps">
+    <div class="step">
+      <strong>Project</strong>
+      <span><code>.cursor/hooks.json</code> + <code>.cursor/hooks/*</code> — commit to git; paths relative to repo root</span>
+    </div>
+    <div class="step">
+      <strong>User</strong>
+      <span><code>~/.cursor/hooks.json</code> + <code>~/.cursor/hooks/*</code> — personal hooks in every workspace</span>
+    </div>
+  </div>
+
+  <p>
+    Same pattern as project rules vs user rules in Lesson 3, and project MCP vs global
+    MCP in Lesson 10. Solo builders: start with one project hook on a repo you ship often.
+  </p>
+
+  <div class="callout">
+    <strong>Path gotcha</strong><br>
+    Project hooks run from the repo root — use <code>.cursor/hooks/my-hook.sh</code>.
+    User hooks run from <code>~/.cursor/</code> — use <code>./hooks/my-hook.sh</code>.
+    Wrong path is the #1 reason a hook "does nothing."
+  </div>
+
+  <h2>How hooks communicate</h2>
+
+  <p>
+    Hooks are spawned processes. Cursor sends JSON on <strong>stdin</strong>; your script
+    prints JSON on <strong>stdout</strong>. Exit code <code>0</code> = success;
+    exit code <code>2</code> = block (same as returning deny). Official docs:
+    <a href="https://cursor.com/docs/hooks">Cursor — Hooks</a>.
+  </p>
+
+  <pre class="example">// .cursor/hooks.json
+{
+  "version": 1,
+  "hooks": {
+    "beforeShellExecution": [
+      {
+        "command": ".cursor/hooks/block-force-push.sh",
+        "matcher": "git push"
+      }
+    ]
+  }
+}</pre>
+
+  <p>
+    Each hook entry supports <code>command</code> (script), <code>type: "prompt"</code>
+    (LLM evaluates policy), <code>matcher</code> (regex filter), <code>timeout</code>,
+    and <code>failClosed</code> (block on crash/timeout). Matchers use
+    <strong>JavaScript regex</strong>, not grep syntax.
+  </p>
+
+  <h2>Pick the narrowest event</h2>
+
+  <table>
+    <thead>
+      <tr><th>You want to…</th><th>Use this event</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Block or approve shell commands</td>
+        <td><code>beforeShellExecution</code></td>
+      </tr>
+      <tr>
+        <td>Log shell output after it runs</td>
+        <td><code>afterShellExecution</code></td>
+      </tr>
+      <tr>
+        <td>Gate Playwright or other MCP calls</td>
+        <td><code>beforeMCPExecution</code></td>
+      </tr>
+      <tr>
+        <td>Auto-format after Agent edits a file</td>
+        <td><code>afterFileEdit</code></td>
+      </tr>
+      <tr>
+        <td>Intercept any tool call</td>
+        <td><code>preToolUse</code> / <code>postToolUse</code></td>
+      </tr>
+      <tr>
+        <td>Scan prompts for secrets before send</td>
+        <td><code>beforeSubmitPrompt</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Prefer the specific event over the generic one. Gate shell commands with
+    <code>beforeShellExecution</code>, not <code>preToolUse</code>, unless you need
+    to rewrite the tool payload.
+  </p>
+
+  <h2>Starter hook: block force push</h2>
+
+  <p>
+    This gate hook matches your git safety instincts — Agent cannot force-push to
+    <code>main</code> or <code>master</code> even if a prompt goes wrong.
+  </p>
+
+  <pre class="example">#!/bin/bash
+# .cursor/hooks/block-force-push.sh
+input=$(cat)
+command=$(python3 -c "import sys,json; print(json.load(sys.stdin).get('command',''))")
+
+if echo "$command" | grep -qE 'git push.*(-f|--force)'; then
+  if echo "$command" | grep -qE '(main|master)'; then
+    cat &lt;&lt;'EOF'
+{"permission": "deny", "user_message": "Blocked: force push to main/master.", "agent_message": "Hook blocked force push to protected branch."}
+EOF
+    exit 0
+  fi
+fi
+
+echo '{"permission": "allow"}'
+exit 0</pre>
+
+  <p>
+    Gate hooks return <code>permission</code>: <code>allow</code>, <code>deny</code>,
+    or <code>ask</code> (prompts you to approve). Make the script executable:
+    <code>chmod +x .cursor/hooks/block-force-push.sh</code>.
+  </p>
+
+  <h2>Five-step setup loop</h2>
+
+  <div class="steps">
+    <div class="step">
+      <strong>1. Choose event</strong>
+      <span>Pick the narrowest hook for your goal — see table above</span>
+    </div>
+    <div class="step">
+      <strong>2. Create hooks.json</strong>
+      <span><code>.cursor/hooks.json</code> with <code>version: 1</code> and one entry</span>
+    </div>
+    <div class="step">
+      <strong>3. Write script</strong>
+      <span>Read stdin JSON, print stdout JSON, <code>chmod +x</code></span>
+    </div>
+    <div class="step">
+      <strong>4. Save</strong>
+      <span>Cursor reloads <code>hooks.json</code> on save; restart if needed</span>
+    </div>
+    <div class="step">
+      <strong>5. Trigger</strong>
+      <span>Ask Agent to run the gated action; check Settings → Hooks or Hooks output channel</span>
+    </div>
+  </div>
+
+  <h2>Command vs prompt hooks</h2>
+
+  <p>
+    <strong>Command hooks</strong> (default) run a script — deterministic, auditable,
+    best for gates and formatters. <strong>Prompt hooks</strong> send the hook input
+    to an LLM with a natural-language policy — good for fuzzy "does this look safe?"
+    checks when exact rules are hard to script.
+  </p>
+
+  <pre class="example">{
+  "type": "prompt",
+  "prompt": "Is this shell command read-only? Allow ls/cat/grep; deny rm/curl. Input: $ARGUMENTS",
+  "timeout": 10
+}</pre>
+
+  <p>
+    Prefer command hooks for anything security-critical. Use prompt hooks for lightweight
+    policy when the logic is easier to describe than to code.
+  </p>
+
+  <div class="callout">
+    <strong>Start with one hook</strong><br>
+    Each hook adds latency and complexity. One well-tested gate beats a pile of hooks
+    you forget to maintain. Add more only when Agent repeats a mistake rules can't fix.
+  </div>
+
+  <h2>Check your understanding</h2>
+
+  <div class="quiz" id="quiz1"
+       data-messages='{"true":"Correct. Project hooks live in .cursor/ and commit to git.","false":"User hooks live in ~/.cursor/, not the repo."}'>
+    <h3>1. Share hooks via git with team.</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Put hooks.json in .cursor/ folder.</button>
+      <button data-correct="false">Put hooks.json in home cursor folder.</button>
+      <button data-correct="false">Put hooks.json at repo root folder.</button>
+    </div>
+    <div class="feedback" id="quiz1-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz2"
+       data-messages='{"true":"Correct. Hooks run scripts; rules are prose instructions.","false":"MCP is external tools — different layer entirely."}'>
+    <h3>2. Block a risky shell command.</h3>
+    <div class="quiz-options">
+      <button data-correct="false">Add a rule telling Agent not to run it.</button>
+      <button data-correct="true">Use beforeShellExecution gate hook script.</button>
+      <button data-correct="false">Install an MCP server to intercept shells.</button>
+    </div>
+    <div class="feedback" id="quiz2-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz3"
+       data-messages='{"true":"Correct. Gate runs before the shell executes.","false":"afterFileEdit fires after Agent writes a file."}'>
+    <h3>3. Gate runs before shell executes.</h3>
+    <div class="quiz-options">
+      <button data-correct="true">beforeShellExecution — before shell runs.</button>
+      <button data-correct="false">afterFileEdit — after Agent writes file.</button>
+      <button data-correct="false">beforeSubmitPrompt — before you send chat.</button>
+    </div>
+    <div class="feedback" id="quiz3-feedback"></div>
+  </div>
+
+  <h2>Do this now</h2>
+
+  <div class="practice">
+    <p><strong>Install one project hook on a repo you actively build</strong> — habit tracker recommended.</p>
+    <ol>
+      <li><strong>Pick a behavior</strong> — start with the force-push gate above, or an <code>afterShellExecution</code> audit log if you prefer observe-only first.</li>
+      <li><strong>Create <code>.cursor/hooks.json</code></strong> — one event, one hook entry, optional <code>matcher</code>.</li>
+      <li><strong>Write the script</strong> in <code>.cursor/hooks/</code> — read stdin, print JSON, <code>chmod +x</code>.</li>
+      <li><strong>Save and confirm</strong> — Settings → Hooks shows your hook; Hooks output channel logs when it fires.</li>
+      <li><strong>Test</strong> — ask Agent to run the gated action (e.g. <em>run git push --force origin main</em>) and confirm deny/allow behavior.</li>
+      <li><strong>Commit</strong> — <code>hooks.json</code> and scripts only (no secrets).</li>
+    </ol>
+    <p>You are done when the hook fires on a real Agent action and you see it in the Hooks output channel.</p>
+  </div>
+
+  <p class="source">
+    Primary source:
+    <a href="https://cursor.com/docs/hooks">Cursor — Hooks</a>
+    — event catalog, stdin/stdout JSON schema, permission responses, and cloud agent support.
+  </p>
+
+  <footer>
+    <p>Stuck on anything? Ask your agent teacher — paste your hooks.json and any output from the Hooks channel.</p>
+    <p style="margin-top: 0.75rem;">
+      Previous: <a href="0010-integrate-mcp-into-a-project.html">Lesson 10 — MCP</a> ·
+      Reference: <a href="../reference/hooks.html">Hooks</a> ·
+      <a href="../reference/project-rules.html">Project Rules</a> ·
+      <a href="../reference/mcp-setup.html">MCP Setup</a> ·
+      Mission: <a href="../MISSION.md">MISSION.md</a>
+    </p>
+  </footer>
+
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>

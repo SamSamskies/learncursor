@@ -12,6 +12,8 @@
   Project rules in `.cursor/rules/`, user rules, and rule activation modes. Use for: persistent instructions across sessions.
 - [Model Context Protocol (MCP)](https://cursor.com/docs/mcp)
   Connecting Cursor to external tools (GitHub, browsers, databases). Use for: OSS contributions and integrations.
+- [Hooks](https://cursor.com/docs/hooks)
+  Scripts on the agent loop — gate shell commands, format after edits, audit tool use. Use for: Lesson 11 deterministic automation.
 - [GitHub integration (dashboard)](https://cursor.com/docs/integrations/github)
   Cloud Agents, Bugbot, automations — not the same as GitHub MCP. Use for: Lesson 10 dashboard vs MCP distinction.
 - [Cursor CLI + MCP](https://cursor.com/docs/cli/mcp)

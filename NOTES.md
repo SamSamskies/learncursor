@@ -26,7 +26,9 @@
 - **Mission arc:** all five success criteria demonstrated — habit tracker working first version + OSS PR with review response
 - **User preference:** already familiar with standard OSS merge/hand-off workflow — skip re-teaching PR etiquette
 - **GitHub:** dashboard integration already connected — Cloud Agents/Bugbot; GitHub MCP optional (use `gh` + paste PR URL instead)
-- **Next (Lesson 10):** integrate MCP into a project — prefer Playwright or DB MCP over redundant GitHub MCP
+- **Lesson 10 complete:** Playwright MCP installed and verified on habit tracker — Agent ran app, added a habit, captured page snapshot; tool call confirmed in trace
+- **Core curriculum arc:** complete (Lessons 1–10). Future sessions: hooks/skills/automations, cloud agents, DB MCP, or fresh app idea with full workflow
+- **Lesson 11 (current):** Cursor hooks — `.cursor/hooks.json`, gate/observe/modify/follow-up; practice: force-push gate on habit tracker
 
 ## Model selection for Plan Mode
 
