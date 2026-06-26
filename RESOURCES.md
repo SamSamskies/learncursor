@@ -14,6 +14,8 @@
   Connecting Cursor to external tools (GitHub, browsers, databases). Use for: OSS contributions and integrations.
 - [Hooks](https://cursor.com/docs/hooks)
   Scripts on the agent loop — gate shell commands, format after edits, audit tool use. Use for: Lesson 11 deterministic automation.
+- [Agent Skills](https://cursor.com/docs/skills)
+  Reusable SKILL.md workflows loaded on demand — verify loops, ship checklists, specialized procedures. Use for: Lesson 12 skills vs rules.
 - [GitHub integration (dashboard)](https://cursor.com/docs/integrations/github)
   Cloud Agents, Bugbot, automations — not the same as GitHub MCP. Use for: Lesson 10 dashboard vs MCP distinction.
 - [Cursor CLI + MCP](https://cursor.com/docs/cli/mcp)

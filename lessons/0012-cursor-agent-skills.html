@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 12 — Cursor Agent Skills</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <div class="lesson-meta">Lesson 12 · ~20 minutes</div>
+  <h1>Cursor Agent Skills</h1>
+
+  <p class="epigraph">
+    Rules tell Agent how to behave always.
+    Skills teach Agent how to run a workflow once.
+  </p>
+
+  <p>
+    In <a href="0003-set-up-project-rules.html">Lesson 3</a> you wrote project rules —
+    short prose loaded every session. In
+    <a href="0011-cursor-hooks.html">Lesson 11</a> you added hooks — scripts that
+    fire on agent events. <strong>Skills</strong> sit between them: reusable
+    multi-step procedures Agent loads <em>only when relevant</em>, keeping your
+    context window lean.
+  </p>
+
+  <p>
+    Think of a skill as a playbook you write once and invoke many times: ship the
+    habit tracker, review a PR your way, run a security audit. Same idea as the
+    verify loop from <a href="0004-verify-and-iterate.html">Lesson 4</a>, but
+    packaged so Agent follows it without you re-pasting the checklist. Keep the
+    <a href="../reference/skills.html">Skills reference</a> open.
+  </p>
+
+  <h2>Four layers, one stack</h2>
+
+  <table>
+    <thead>
+      <tr><th>Layer</th><th>Mechanism</th><th>Example</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Rules</td>
+        <td>Prose in <code>.cursor/rules/</code></td>
+        <td>"Use TypeScript + Drizzle"</td>
+      </tr>
+      <tr>
+        <td>Skills</td>
+        <td><code>SKILL.md</code> workflows</td>
+        <td>"Run verify loop before ship"</td>
+      </tr>
+      <tr>
+        <td>MCP</td>
+        <td>External tools</td>
+        <td>Playwright opens localhost</td>
+      </tr>
+      <tr>
+        <td>Hooks</td>
+        <td>Event scripts</td>
+        <td>Log every shell command</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    They complement each other. Your habit tracker might have a rule for stack
+    choice, a <strong>ship skill</strong> for the verify checklist, Playwright MCP
+    for browser checks, and an audit hook you installed in Lesson 11.
+  </p>
+
+  <h2>Rules vs skills — the split</h2>
+
+  <table>
+    <thead>
+      <tr><th>Project rules</th><th>Agent skills</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Always loaded — small, stable prefs</td>
+        <td>Loaded on demand — longer procedures</td>
+      </tr>
+      <tr>
+        <td>"Prefer npm test over manual curl"</td>
+        <td>Step-by-step: run test → dev server → e2e → report</td>
+      </tr>
+      <tr>
+        <td>Good for conventions</td>
+        <td>Good for workflows you run sometimes</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>Don't duplicate</strong><br>
+    If a preference applies every session, keep it in rules. If it's a
+    multi-step checklist you run when finishing a feature, make it a skill.
+    Duplicating the same text in both wastes context.
+  </div>
+
+  <h2>How skills load (progressive disclosure)</h2>
+
+  <div class="steps">
+    <div class="step">
+      <strong>Discovery</strong>
+      <span>At startup, Agent sees every skill's <code>name</code> and <code>description</code> — lightweight metadata only</span>
+    </div>
+    <div class="step">
+      <strong>Activation</strong>
+      <span>When your prompt matches the description — or you type <code>/skill-name</code> — the full <code>SKILL.md</code> loads</span>
+    </div>
+    <div class="step">
+      <strong>On demand</strong>
+      <span>During execution, Agent reads linked <code>reference.md</code> files or runs <code>scripts/</code> only if needed</span>
+    </div>
+  </div>
+
+  <p>
+    This keeps long workflows out of context until you need them. Official docs:
+    <a href="https://cursor.com/docs/skills">Cursor — Agent Skills</a>.
+  </p>
+
+  <h2>Two config locations</h2>
+
+  <div class="steps">
+    <div class="step">
+      <strong>Project</strong>
+      <span><code>.cursor/skills/your-skill/SKILL.md</code> — commit to git; shared with anyone cloning the repo</span>
+    </div>
+    <div class="step">
+      <strong>Personal</strong>
+      <span><code>~/.cursor/skills/your-skill/SKILL.md</code> — available in every workspace on your machine</span>
+    </div>
+  </div>
+
+  <p>
+    Cursor also discovers <code>.agents/skills/</code> (this teaching workspace
+    uses that path for the <code>teach</code> skill). Prefer
+    <code>.cursor/skills/</code> for new project skills — it's the canonical path
+    in current docs.
+  </p>
+
+  <h2>SKILL.md structure</h2>
+
+  <p>
+    Each skill is a folder with a required <code>SKILL.md</code>. YAML frontmatter
+    at the top; markdown body with instructions below.
+  </p>
+
+  <pre class="example">---
+name: habit-tracker-ship
+description: Run the habit tracker verify loop after a feature change. Use when shipping, verifying, or finishing work on the habit tracker API or UI.
+---
+
+# Habit Tracker Ship
+
+## Verify checklist
+- [ ] npm test — all API tests green
+- [ ] npm run dev — smoke the UI in browser
+- [ ] npx playwright test — if e2e tests exist
+
+## Done when
+All checks pass. If something fails, show the command output and fix before marking done.</pre>
+
+  <p>
+    Two fields are required. <code>name</code> must match the folder name
+    (lowercase, hyphens). <code>description</code> is the most important line —
+    Agent uses it to decide when to auto-apply the skill. Write the words you
+    would actually type: "ship", "verify", "finish", "check before merge."
+  </p>
+
+  <h2>Optional frontmatter</h2>
+
+  <table>
+    <thead>
+      <tr><th>Field</th><th>Effect</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>paths</code></td>
+        <td>Glob patterns — skill only surfaces when Agent works on matching files (e.g. <code>src/api/**</code>)</td>
+      </tr>
+      <tr>
+        <td><code>disable-model-invocation: true</code></td>
+        <td>Slash-command only — Agent won't auto-apply; you must type <code>/skill-name</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Start without <code>disable-model-invocation</code> so Agent can discover your
+    ship skill when you say "verify the habit tracker." Add slash-only mode later
+    for destructive or billing-sensitive workflows.
+  </p>
+
+  <h2>Three ways to invoke</h2>
+
+  <table>
+    <thead>
+      <tr><th>Method</th><th>When to use</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>/habit-tracker-ship</code></td>
+        <td>Explicit — you know exactly which playbook to run</td>
+      </tr>
+      <tr>
+        <td><code>@</code> attach the skill</td>
+        <td>Pin it to one message without typing the slash command</td>
+      </tr>
+      <tr>
+        <td>Natural prompt</td>
+        <td>"Verify the habit tracker before I commit" — Agent matches description</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Cursor also ships a built-in authoring skill: type <code>/create-skill</code>
+    in chat and describe what you want. Use it when you're unsure of structure;
+    use manual authoring when you know exactly what the workflow should be.
+  </p>
+
+  <h2>Starter skill: habit-tracker-ship</h2>
+
+  <p>
+    Your habit tracker already has tests, a UI, Playwright e2e, and a shell audit
+    hook. Codify the verify loop from
+    <a href="../reference/verify-loop.html">Verify Loop reference</a> as a project
+    skill — so every "done" session runs the same checks.
+  </p>
+
+  <pre class="example">mkdir -p .cursor/skills/habit-tracker-ship
+# Create .cursor/skills/habit-tracker-ship/SKILL.md (template above)
+# Commit the skill folder — no secrets, no .env paths</pre>
+
+  <p>
+    Optional: add <code>scripts/run-verify.sh</code> inside the skill folder if
+    you want one command Agent can execute instead of re-typing steps. Keep
+    <code>SKILL.md</code> concise; put long detail in a linked
+    <code>reference.md</code>.
+  </p>
+
+  <h2>Five-step authoring loop</h2>
+
+  <div class="steps">
+    <div class="step">
+      <strong>1. Pick one workflow</strong>
+      <span>One skill = one procedure. Not "everything about this repo."</span>
+    </div>
+    <div class="step">
+      <strong>2. Write description first</strong>
+      <span>Include trigger words users type — this drives discovery</span>
+    </div>
+    <div class="step">
+      <strong>3. Create folder + SKILL.md</strong>
+      <span><code>.cursor/skills/name/SKILL.md</code> — name matches folder</span>
+    </div>
+    <div class="step">
+      <strong>4. Test invocation</strong>
+      <span>Type <code>/name</code> or prompt naturally; confirm Agent follows steps</span>
+    </div>
+    <div class="step">
+      <strong>5. Commit</strong>
+      <span>Project skills belong in git — they're team (or future-you) documentation</span>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>Description is the trigger</strong><br>
+    If your skill never fires, the description is too narrow. Add synonyms:
+    "verify", "check", "ship", "done", "before commit." Not "handles quality
+    assurance procedures."
+  </div>
+
+  <h2>Check your understanding</h2>
+
+  <div class="quiz" id="quiz1"
+       data-messages='{"true":"Correct. Project skills live under .cursor/skills/.","false":"User skills live in ~/.cursor/skills/, not the repo."}'>
+    <h3>1. Share skills via git with team.</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Store skill file in the .cursor/skills folder.</button>
+      <button data-correct="false">Store skill file in the home cursor folder.</button>
+      <button data-correct="false">Store skill file in the repository root folder.</button>
+    </div>
+    <div class="feedback" id="quiz1-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz2"
+       data-messages='{"true":"Correct. Skills load on demand; rules load every session.","false":"Rules load every session — they are always-on prose."}'>
+    <h3>2. Agent loads skill on demand.</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Skills load only when the task matches.</button>
+      <button data-correct="false">Rules load only when the task matches.</button>
+      <button data-correct="false">Hooks load only when the task matches.</button>
+    </div>
+    <div class="feedback" id="quiz2-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz3"
+       data-messages='{"true":"Correct. Slash command always loads the skill explicitly.","false":"Hooks gate events — they do not load skill instructions."}'>
+    <h3>3. Force invoke a skill manually.</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Type slash skill-name in the agent chat box.</button>
+      <button data-correct="false">Add skill instructions to the project rules file.</button>
+      <button data-correct="false">Write a beforeShellExecution shell gate hook script.</button>
+    </div>
+    <div class="feedback" id="quiz3-feedback"></div>
+  </div>
+
+  <h2>Do this now</h2>
+
+  <div class="practice">
+    <p><strong>Create one project skill on your habit tracker</strong> — codify the verify loop you already use.</p>
+    <ol>
+      <li><strong>Create</strong> <code>.cursor/skills/habit-tracker-ship/SKILL.md</code> using the template above — adjust commands to match your repo (test script name, dev port, e2e command).</li>
+      <li><strong>Write the description</strong> with words you'd actually say: "verify habit tracker", "ship", "check before commit."</li>
+      <li><strong>Invoke</strong> — type <code>/habit-tracker-ship</code> or ask Agent to "verify the habit tracker is ready to ship."</li>
+      <li><strong>Confirm</strong> Agent runs your checklist (tests, dev smoke, e2e if present) and reports pass/fail.</li>
+      <li><strong>Commit</strong> the skill folder to git.</li>
+    </ol>
+    <p>You are done when Agent follows your skill's checklist on a real invocation without you re-pasting the steps.</p>
+  </div>
+
+  <p class="source">
+    Primary source:
+    <a href="https://cursor.com/docs/skills">Cursor — Agent Skills</a>
+    — discovery paths, frontmatter fields, progressive loading, and optional scripts.
+  </p>
+
+  <footer>
+    <p>Stuck on anything? Ask your agent teacher — paste your SKILL.md and say whether auto-discovery or slash invoke failed.</p>
+    <p style="margin-top: 0.75rem;">
+      Previous: <a href="0011-cursor-hooks.html">Lesson 11 — Hooks</a> ·
+      Reference: <a href="../reference/skills.html">Skills</a> ·
+      <a href="../reference/verify-loop.html">Verify Loop</a> ·
+      <a href="../reference/project-rules.html">Project Rules</a> ·
+      Mission: <a href="../MISSION.md">MISSION.md</a>
+    </p>
+  </footer>
+
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Skills — Quick Reference</title>
+  <style>
+    :root {
+      --text: #1a1a1a;
+      --muted: #555;
+      --accent: #2563eb;
+      --border: #ddd;
+      --bg: #fafafa;
+      --card: #fff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Palatino Linotype", Palatino, Georgia, serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.55;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+    h1 {
+      font-weight: 400;
+      font-size: 1.75rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+    h2 {
+      font-size: 0.75rem;
+      font-family: system-ui, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin: 2rem 0 0.75rem;
+      font-weight: 600;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      font-family: system-ui, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: #f5f5f5;
+    }
+    tr:last-child td { border-bottom: none; }
+    ol, ul {
+      padding-left: 1.25rem;
+      font-size: 0.95rem;
+    }
+    ol li, ul li { margin-bottom: 0.45rem; }
+    code {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.85em;
+      background: #eee;
+      padding: 0.1em 0.35em;
+    }
+    .flow {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1rem 1.15rem;
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.8rem;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      margin-bottom: 1rem;
+    }
+    footer {
+      margin-top: 2.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--accent); }
+    @media print {
+      body { background: white; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Agent Skills</h1>
+  <p class="subtitle">Reusable workflows. Rules are always-on; skills load on demand.</p>
+
+  <h2>Four layers</h2>
+  <table>
+    <thead>
+      <tr><th>Layer</th><th>What</th><th>When loaded</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Rules</td><td>Prose preferences</td><td>Every session</td></tr>
+      <tr><td>Skills</td><td>Multi-step procedures</td><td>When relevant or invoked</td></tr>
+      <tr><td>MCP</td><td>External tools</td><td>When Agent calls them</td></tr>
+      <tr><td>Hooks</td><td>Event scripts</td><td>On matching agent events</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Storage locations</h2>
+  <table>
+    <thead>
+      <tr><th>Path</th><th>Scope</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>.cursor/skills/name/SKILL.md</code></td>
+        <td>This repo — commit to git</td>
+      </tr>
+      <tr>
+        <td><code>~/.cursor/skills/name/SKILL.md</code></td>
+        <td>All workspaces — personal</td>
+      </tr>
+      <tr>
+        <td><code>.agents/skills/name/SKILL.md</code></td>
+        <td>Also discovered (compat path)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Progressive loading</h2>
+  <div class="flow">1. Discovery — name + description always available
+2. Activation — full SKILL.md when task matches or you invoke
+3. On demand — references/, scripts/ read only during execution</div>
+
+  <h2>SKILL.md template</h2>
+  <div class="flow">---
+name: habit-tracker-ship
+description: Run the habit tracker verify loop after a feature change. Use when shipping, verifying, or finishing work on the habit tracker API or UI.
+---
+
+# Habit Tracker Ship
+
+## Verify checklist
+- [ ] npm test
+- [ ] npm run dev — smoke UI
+- [ ] npx playwright test (if e2e exists)
+
+## Done when
+All checks pass. Report failures with command output.</div>
+
+  <h2>Frontmatter fields</h2>
+  <table>
+    <thead>
+      <tr><th>Field</th><th>Required</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>name</code></td><td>Yes</td><td>Lowercase, hyphens; matches folder name</td></tr>
+      <tr><td><code>description</code></td><td>Yes</td><td>WHAT + WHEN — drives auto-discovery</td></tr>
+      <tr><td><code>paths</code></td><td>No</td><td>Glob — skill only surfaces for matching files</td></tr>
+      <tr><td><code>disable-model-invocation</code></td><td>No</td><td><code>true</code> = slash-only, no auto-apply</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Invoke</h2>
+  <table>
+    <thead>
+      <tr><th>Method</th><th>When</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>/skill-name</code> in chat</td><td>Explicit — always works</td></tr>
+      <tr><td><code>@</code> attach skill</td><td>Explicit — pin to this message</td></tr>
+      <tr><td>Auto from description</td><td>Agent matches your prompt to description</td></tr>
+      <tr><td><code>/create-skill</code></td><td>Built-in wizard to author a new skill</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Rules vs skills — when to use which</h2>
+  <table>
+    <thead>
+      <tr><th>Put in rules</th><th>Put in skills</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Stack choice (TypeScript, Drizzle)</td><td>Multi-step ship / verify workflow</td></tr>
+      <tr><td>Formatting and naming prefs</td><td>PR review checklist for a repo</td></tr>
+      <tr><td>"Run tests before done" (soft)</td><td>Deploy-to-staging procedure</td></tr>
+      <tr><td>Always true in this project</td><td>Run sometimes, on explicit trigger</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Authoring checklist</h2>
+  <ol>
+    <li>One skill = one workflow (not a dump of all prefs)</li>
+    <li>Description includes words users actually type</li>
+    <li>Keep SKILL.md under ~500 lines; link to reference files</li>
+    <li>Optional <code>scripts/</code> for repeatable commands</li>
+    <li>Commit project skills; keep secrets out of skill files</li>
+  </ol>
+
+  <footer>
+    From <a href="../lessons/0012-cursor-agent-skills.html">Lesson 12</a> ·
+    <a href="https://cursor.com/docs/skills">Cursor Skills docs</a> ·
+    <a href="project-rules.html">Project Rules</a> ·
+    <a href="hooks.html">Hooks</a> ·
+    <a href="verify-loop.html">Verify Loop</a>
+  </footer>
+</body>
+</html>
