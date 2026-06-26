@@ -185,17 +185,52 @@
     to rewrite the tool payload.
   </p>
 
-  <h2>Starter hook: block force push</h2>
+  <h2>Starter hook: shell audit log</h2>
 
   <p>
-    This gate hook matches your git safety instincts — Agent cannot force-push to
-    <code>main</code> or <code>master</code> even if a prompt goes wrong.
+    Start with an <strong>observe</strong> hook — it never blocks, so you can test
+    safely before you trust a gate. Every shell command Agent runs gets appended
+    to a log file you can inspect.
+  </p>
+
+  <pre class="example">#!/bin/bash
+# .cursor/hooks/log-shell.sh
+input=$(cat)
+command=$(echo "$input" | python3 -c "import sys,json; print(json.load(sys.stdin).get('command',''))")
+timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+echo "$timestamp  $command" >> .cursor/hooks/shell-audit.log
+exit 0</pre>
+
+  <pre class="example">// .cursor/hooks.json  — add AFTER script tests pass
+{
+  "version": 1,
+  "hooks": {
+    "afterShellExecution": [
+      { "command": ".cursor/hooks/log-shell.sh" }
+    ]
+  }
+}</pre>
+
+  <p>
+    Observe hooks don't return JSON — they just run. Add
+    <code>.cursor/hooks/shell-audit.log</code> to <code>.gitignore</code> if you
+    don't want local logs in git.
+  </p>
+
+  <h2>Upgrade: block force push</h2>
+
+  <p>
+    Once you understand the setup loop, add a <strong>gate</strong> hook — Agent
+    cannot force-push to <code>main</code> or <code>master</code> even if a prompt
+    goes wrong. This repo may already have this hook installed from practice;
+    that's fine — read it as a reference, then install the audit log on another
+    project.
   </p>
 
   <pre class="example">#!/bin/bash
 # .cursor/hooks/block-force-push.sh
 input=$(cat)
-command=$(python3 -c "import sys,json; print(json.load(sys.stdin).get('command',''))")
+command=$(echo "$input" | python3 -c "import sys,json; print(json.load(sys.stdin).get('command',''))")
 
 if echo "$command" | grep -qE 'git push.*(-f|--force)'; then
   if echo "$command" | grep -qE '(main|master)'; then
@@ -215,6 +250,50 @@ exit 0</pre>
     <code>chmod +x .cursor/hooks/block-force-push.sh</code>.
   </p>
 
+  <h2>Test before you wire it</h2>
+
+  <p>
+    Write and test the script <em>before</em> creating <code>hooks.json</code>.
+    Once hooks.json is saved, Cursor loads the hook and intercepts matching shell
+    commands — you can't easily re-test the "before" state in the integrated
+    terminal.
+  </p>
+
+  <div class="steps">
+    <div class="step">
+      <strong>1. Baseline</strong>
+      <span>Run the action once with no hook — e.g. <code>git push --dry-run --force origin main</code> succeeds</span>
+    </div>
+    <div class="step">
+      <strong>2. Script only</strong>
+      <span>In <strong>Terminal.app</strong> (not Cursor), pipe sample JSON into your script:</span>
+    </div>
+  </div>
+
+  <pre class="example">echo '{"command":"git push --force origin main"}' | .cursor/hooks/block-force-push.sh
+# → {"permission": "deny", ...}
+
+echo '{"command":"git status"}' | .cursor/hooks/log-shell.sh
+# → check .cursor/hooks/shell-audit.log for a new line</pre>
+
+  <div class="steps">
+    <div class="step">
+      <strong>3. Wire it</strong>
+      <span>Create <code>hooks.json</code> — Cursor reloads on save</span>
+    </div>
+    <div class="step">
+      <strong>4. Agent test</strong>
+      <span>Ask Agent to trigger the hook; check Settings → Hooks or Hooks output channel</span>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>Why external terminal?</strong><br>
+    Once a <code>beforeShellExecution</code> hook is live, Cursor blocks matching
+    commands in the integrated terminal too — including test commands whose shell
+    line contains <code>git push --force</code>. Test script logic outside Cursor first.
+  </div>
+
   <h2>Five-step setup loop</h2>
 
   <div class="steps">
@@ -223,20 +302,20 @@ exit 0</pre>
       <span>Pick the narrowest hook for your goal — see table above</span>
     </div>
     <div class="step">
-      <strong>2. Create hooks.json</strong>
+      <strong>2. Write script</strong>
+      <span>Create <code>.cursor/hooks/your-hook.sh</code> — read stdin, print JSON if gating, <code>chmod +x</code></span>
+    </div>
+    <div class="step">
+      <strong>3. Test script</strong>
+      <span>Pipe sample JSON in Terminal.app — confirm output before wiring</span>
+    </div>
+    <div class="step">
+      <strong>4. Create hooks.json</strong>
       <span><code>.cursor/hooks.json</code> with <code>version: 1</code> and one entry</span>
     </div>
     <div class="step">
-      <strong>3. Write script</strong>
-      <span>Read stdin JSON, print stdout JSON, <code>chmod +x</code></span>
-    </div>
-    <div class="step">
-      <strong>4. Save</strong>
-      <span>Cursor reloads <code>hooks.json</code> on save; restart if needed</span>
-    </div>
-    <div class="step">
       <strong>5. Trigger</strong>
-      <span>Ask Agent to run the gated action; check Settings → Hooks or Hooks output channel</span>
+      <span>Ask Agent to run the hooked action; check Settings → Hooks or Hooks output channel</span>
     </div>
   </div>
 
@@ -304,14 +383,14 @@ exit 0</pre>
   <h2>Do this now</h2>
 
   <div class="practice">
-    <p><strong>Install one project hook on a repo you actively build</strong> — habit tracker recommended.</p>
+    <p><strong>Install one project hook on a repo you actively build</strong> — habit tracker recommended. Use this teaching repo only to read the force-push example; install your own hook elsewhere.</p>
     <ol>
-      <li><strong>Pick a behavior</strong> — start with the force-push gate above, or an <code>afterShellExecution</code> audit log if you prefer observe-only first.</li>
-      <li><strong>Create <code>.cursor/hooks.json</code></strong> — one event, one hook entry, optional <code>matcher</code>.</li>
-      <li><strong>Write the script</strong> in <code>.cursor/hooks/</code> — read stdin, print JSON, <code>chmod +x</code>.</li>
-      <li><strong>Save and confirm</strong> — Settings → Hooks shows your hook; Hooks output channel logs when it fires.</li>
-      <li><strong>Test</strong> — ask Agent to run the gated action (e.g. <em>run git push --force origin main</em>) and confirm deny/allow behavior.</li>
-      <li><strong>Commit</strong> — <code>hooks.json</code> and scripts only (no secrets).</li>
+      <li><strong>Pick a behavior</strong> — start with the <strong>shell audit log</strong> above (observe-only, safe). Upgrade to the force-push gate once that works.</li>
+      <li><strong>Write the script first</strong> in <code>.cursor/hooks/</code> — read stdin, <code>chmod +x</code>.</li>
+      <li><strong>Test in Terminal.app</strong> — pipe sample JSON into the script; confirm output before wiring.</li>
+      <li><strong>Create <code>.cursor/hooks.json</code></strong> — one event, one hook entry; Cursor reloads on save.</li>
+      <li><strong>Agent test</strong> — ask Agent to run a shell command (e.g. <em>run git status</em> for audit log, or <em>run git push --force origin main</em> for gate) and confirm the hook fires.</li>
+      <li><strong>Commit</strong> — <code>hooks.json</code> and scripts only (add audit log to <code>.gitignore</code>).</li>
     </ol>
     <p>You are done when the hook fires on a real Agent action and you see it in the Hooks output channel.</p>
   </div>

@@ -181,7 +181,7 @@
   <h2>Gate script template</h2>
   <div class="flow">#!/bin/bash
 input=$(cat)
-command=$(python3 -c "import sys,json; print(json.load(sys.stdin).get('command',''))")
+command=$(echo "$input" | python3 -c "import sys,json; print(json.load(sys.stdin).get('command',''))")
 
 # ... your logic ...
 
@@ -190,6 +190,13 @@ exit 0
 
 # permission values: allow | deny | ask
 # exit 0 = success; exit 2 = block</div>
+
+  <h2>Observe script template</h2>
+  <div class="flow">#!/bin/bash
+input=$(cat)
+command=$(echo "$input" | python3 -c "import sys,json; print(json.load(sys.stdin).get('command',''))")
+echo "$(date -u +%Y-%m-%dT%H:%M:%SZ)  $command" >> .cursor/hooks/shell-audit.log
+exit 0</div>
 
   <h2>Hook entry fields</h2>
   <table>
@@ -209,23 +216,23 @@ exit 0
   <h2>Setup loop</h2>
   <ol>
     <li>Pick narrowest event for your goal</li>
+    <li>Write script in <code>.cursor/hooks/</code> — read stdin, print JSON if gating</li>
+    <li>Test in Terminal.app — pipe sample JSON before wiring</li>
     <li>Create <code>.cursor/hooks.json</code> with <code>version: 1</code></li>
-    <li>Write script in <code>.cursor/hooks/</code> — read stdin, print JSON</li>
-    <li><code>chmod +x</code> the script</li>
-    <li>Save — Cursor reloads on save; restart if needed</li>
-    <li>Trigger the action; debug via Settings → Hooks or Hooks output channel</li>
+    <li><code>chmod +x</code> the script; save — Cursor reloads on save</li>
+    <li>Trigger via Agent; debug via Settings → Hooks or Hooks output channel</li>
   </ol>
 
   <h2>Common solo-builder hooks</h2>
   <table>
     <thead>
-      <tr><th>Hook</th><th>Event</th></tr>
+      <tr><th>Hook</th><th>Event</th><th>Start here?</th></tr>
     </thead>
     <tbody>
-      <tr><td>Block force push to main</td><td><code>beforeShellExecution</code></td></tr>
-      <tr><td>Log Agent shell commands</td><td><code>afterShellExecution</code></td></tr>
-      <tr><td>Run formatter after edits</td><td><code>afterFileEdit</code></td></tr>
-      <tr><td>Ask before MCP browser opens</td><td><code>beforeMCPExecution</code></td></tr>
+      <tr><td>Log Agent shell commands</td><td><code>afterShellExecution</code></td><td>Yes — observe-only</td></tr>
+      <tr><td>Block force push to main</td><td><code>beforeShellExecution</code></td><td>Upgrade after audit log</td></tr>
+      <tr><td>Run formatter after edits</td><td><code>afterFileEdit</code></td><td>When Agent skips format</td></tr>
+      <tr><td>Ask before MCP browser opens</td><td><code>beforeMCPExecution</code></td><td>When Playwright MCP is wired</td></tr>
     </tbody>
   </table>
 
