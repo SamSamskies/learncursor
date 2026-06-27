@@ -18,6 +18,12 @@
   Reusable SKILL.md workflows loaded on demand — verify loops, ship checklists, specialized procedures. Use for: Lesson 12 skills vs rules.
 - [Automations](https://cursor.com/docs/automations)
   Cloud agents on triggers — cron, GitHub/GitLab PR events, Slack, webhooks, Linear, Sentry, PagerDuty. Use for: Lesson 13 scheduled verify and PR triage.
+- [Cloud Agents](https://cursor.com/docs/cloud-agent)
+  Isolated VM agents — starting runs, Agents Window, capabilities, troubleshooting. Use for: Lesson 14 deep dive.
+- [Cloud agent setup](https://cursor.com/docs/cloud-agent/setup)
+  Dev environments — agent-driven setup, snapshots, `.cursor/environment.json`, secrets, install scripts. Use for: Lesson 14 environment configuration.
+- [Cloud agent capabilities](https://cursor.com/docs/cloud-agent/capabilities)
+  Computer use, MCP in cloud, CI autofix, remote desktop, PR artifacts. Use for: Lesson 14 when cloud differs from local.
 - [GitHub integration (dashboard)](https://cursor.com/docs/integrations/github)
   Cloud Agents, Bugbot, automations — not the same as GitHub MCP. Use for: Lesson 10 dashboard vs MCP distinction; Lesson 13 PR triggers.
 - [Cursor CLI + MCP](https://cursor.com/docs/cli/mcp)

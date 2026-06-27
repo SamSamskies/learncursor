@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cloud Agents — Quick Reference</title>
+  <style>
+    :root {
+      --text: #1a1a1a;
+      --muted: #555;
+      --accent: #2563eb;
+      --border: #ddd;
+      --bg: #fafafa;
+      --card: #fff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Palatino Linotype", Palatino, Georgia, serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.55;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+    h1 {
+      font-weight: 400;
+      font-size: 1.75rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+    h2 {
+      font-size: 0.75rem;
+      font-family: system-ui, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin: 2rem 0 0.75rem;
+      font-weight: 600;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      font-family: system-ui, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: #f5f5f5;
+    }
+    tr:last-child td { border-bottom: none; }
+    ol, ul {
+      padding-left: 1.25rem;
+      font-size: 0.95rem;
+    }
+    ol li, ul li { margin-bottom: 0.45rem; }
+    code {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.85em;
+      background: #eee;
+      padding: 0.1em 0.35em;
+    }
+    .flow {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1rem 1.15rem;
+      font-size: 0.92rem;
+      margin-bottom: 1rem;
+    }
+    footer {
+      margin-top: 2.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--accent); }
+    @media print {
+      body { background: white; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Cloud Agents</h1>
+  <p class="subtitle">Same agent loop — isolated VM, dashboard GitHub, dev environment.</p>
+
+  <h2>Local vs cloud</h2>
+  <table>
+    <thead>
+      <tr><th></th><th>Local Agent</th><th>Cloud Agent</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Runs on</td><td>Your machine</td><td>Cursor cloud VM</td></tr>
+      <tr><td>You start</td><td>IDE chat, Tab, Plan</td><td>Agents Window, web, trigger, @cursor</td></tr>
+      <tr><td>Repo access</td><td>Local checkout</td><td>Clones from GitHub/GitLab</td></tr>
+      <tr><td>MCP</td><td>Local <code>mcp.json</code></td><td>Dashboard MCP (cursor.com/agents)</td></tr>
+      <tr><td>Hooks / local skills</td><td>Yes</td><td>No — committed repo skills yes</td></tr>
+      <tr><td>Mode</td><td>Your model choice</td><td>Always Max Mode</td></tr>
+    </tbody>
+  </table>
+
+  <h2>How to start one</h2>
+  <table>
+    <thead>
+      <tr><th>Surface</th><th>Action</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><a href="https://cursor.com/agents">cursor.com/agents</a></td><td>Web — start, monitor, intervene</td></tr>
+      <tr><td>Agents Window</td><td>Cmd+Shift+P → Open Agents Window</td></tr>
+      <tr><td>IDE dropdown</td><td>Select <strong>Cloud</strong> under agent input</td></tr>
+      <tr><td>Automations</td><td>Trigger fires → cloud agent run</td></tr>
+      <tr><td>GitHub</td><td>Comment <code>@cursor</code> on PR or issue</td></tr>
+      <tr><td>CLI</td><td>Prepend <code>&amp;</code> to send task to cloud</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Run lifecycle</h2>
+  <div class="flow">
+    Trigger / prompt → VM boot → install (<code>npm install</code>) → agent loop → PR / comment / summary
+  </div>
+  <ul>
+    <li>Hover repo name on run page → which environment was used</li>
+    <li>Status: running, waiting for you, done, failed</li>
+    <li>Intervene: add follow-up message or take remote desktop control</li>
+    <li>Handoff: move cloud ↔ local in Agents Window</li>
+  </ul>
+
+  <h2>Development environment</h2>
+  <p>Most important setup step. Without deps + secrets, agents cannot close the loop.</p>
+  <table>
+    <thead>
+      <tr><th>Method</th><th>Best for</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Agent-driven setup</td><td>First time — dashboard guides install, save snapshot</td></tr>
+      <tr><td><code>.cursor/environment.json</code></td><td>Commit install command to repo</td></tr>
+      <tr><td>Dockerfile in <code>.cursor/</code></td><td>Custom OS, Docker, compilers</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Resolution order</h3>
+  <ol>
+    <li><code>.cursor/environment.json</code> in repo</li>
+    <li>Personal saved environment</li>
+    <li>Team saved environment</li>
+  </ol>
+
+  <h3>Minimal environment.json</h3>
+  <pre class="flow" style="font-family: 'SF Mono', Menlo, monospace; font-size: 0.8rem;">{
+  "install": "npm install"
+}</pre>
+
+  <h2>Secrets &amp; AGENTS.md</h2>
+  <ul>
+    <li>Secrets → Cursor dashboard (not committed <code>.env</code>)</li>
+    <li>Add <code>## Cursor Cloud specific instructions</code> to AGENTS.md for cloud-only setup</li>
+    <li>Cloud agents read committed skills from repo checkout</li>
+  </ul>
+
+  <h2>Dashboard MCP vs local MCP</h2>
+  <table>
+    <thead>
+      <tr><th>MCP type</th><th>Where configured</th><th>Cloud agent?</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Playwright (local project)</td><td><code>.cursor/mcp.json</code></td><td>No</td></tr>
+      <tr><td>Dashboard HTTP MCP</td><td>cursor.com/agents MCP dropdown</td><td>Yes — proxied</td></tr>
+      <tr><td>GitHub integration</td><td>Cursor dashboard</td><td>Yes — PR open/comment</td></tr>
+    </tbody>
+  </table>
+
+  <h2>When to use which</h2>
+  <table>
+    <thead>
+      <tr><th>Use local</th><th>Use cloud</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Active iteration, reading diffs, hooks, local MCP</td>
+        <td>Long tasks, away from keyboard, scheduled verify</td>
+      </tr>
+      <tr>
+        <td>Playwright MCP browser verify</td>
+        <td>PR opened → review while you sleep</td>
+      </tr>
+      <tr>
+        <td>Quick fixes, Plan Mode</td>
+        <td>Multi-hour refactors, CI autofix on agent PRs</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Debugging failed runs</h2>
+  <ol>
+    <li>Read install step — did <code>npm install</code> fail?</li>
+    <li>Check environment warning banner — snapshot expired?</li>
+    <li>Confirm repo + branch match what you pushed</li>
+    <li>Verify secrets in dashboard if tests need API keys</li>
+    <li>Re-run manually with narrower prompt to isolate</li>
+  </ol>
+
+  <h2>Automations = cloud agents</h2>
+  <p>Automations are cloud agents with a trigger + optional tools (Slack, PR comment, memories). Same VM, same environment, same run log UI. See <a href="automations.html">Automations reference</a>.</p>
+
+  <footer>
+    From <a href="../lessons/0014-cloud-agents-deep-dive.html">Lesson 14</a> ·
+    <a href="https://cursor.com/docs/cloud-agent">Cloud Agents docs</a> ·
+    <a href="https://cursor.com/docs/cloud-agent/setup">Environment setup</a> ·
+    <a href="automations.html">Automations</a> ·
+    <a href="mcp-setup.html">MCP Setup</a>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 14 — Cloud Agents Deep Dive</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <div class="lesson-meta">Lesson 14 · ~25 minutes</div>
+  <h1>Cloud Agents Deep Dive</h1>
+
+  <p class="epigraph">
+    Automations are one way to start a cloud agent.
+    This lesson is about what actually runs when they do.
+  </p>
+
+  <p>
+    In <a href="0013-cursor-automations.html">Lesson 13</a> you created a weekly
+    verify automation — a cloud agent that wakes on a cron trigger. You know
+    <em>that</em> it runs in the cloud. This lesson covers <em>how</em>: the VM,
+    the dev environment, run logs, when to use cloud vs local, and how to debug
+    when a run fails. Keep the
+    <a href="../reference/cloud-agents.html">Cloud Agents reference</a> open.
+  </p>
+
+  <h2>Same agent, different machine</h2>
+
+  <p>
+    Cloud agents use the same agent fundamentals as local Agent — tool calls,
+    terminal, file edits, follow-up messages — but they run in an
+    <strong>isolated Ubuntu VM</strong> in Cursor's cloud, not on your laptop.
+    They clone your repo from GitHub, run in <strong>Max Mode</strong>, and bill
+    to your usage pool.
+  </p>
+
+  <table>
+    <thead>
+      <tr><th></th><th>Local Agent</th><th>Cloud Agent</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Checkout</td>
+        <td>Your working tree</td>
+        <td>Fresh clone at trigger time</td>
+      </tr>
+      <tr>
+        <td>Hooks</td>
+        <td>Your <code>hooks.json</code> runs</td>
+        <td>Not available</td>
+      </tr>
+      <tr>
+        <td>Local MCP</td>
+        <td>Playwright, project <code>mcp.json</code></td>
+        <td>Dashboard MCP only</td>
+      </tr>
+      <tr>
+        <td>Skills</td>
+        <td>Auto-discovered from repo</td>
+        <td>Same — if committed and pushed</td>
+      </tr>
+      <tr>
+        <td>You intervene</td>
+        <td>Chat in IDE</td>
+        <td>Agents Window, web, or follow-up on run</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Official overview:
+    <a href="https://cursor.com/docs/cloud-agent">Cursor — Cloud Agents</a>.
+  </p>
+
+  <h2>Every way to start one</h2>
+
+  <p>
+    Your weekly automation is one entry point. Cloud agents also start from:
+  </p>
+
+  <table>
+    <thead>
+      <tr><th>Surface</th><th>How</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Agents Window</strong></td>
+        <td>Cmd+Shift+P → Open Agents Window — unified view of all runs</td>
+      </tr>
+      <tr>
+        <td><strong>Web</strong></td>
+        <td><a href="https://cursor.com/agents">cursor.com/agents</a> — start, monitor, intervene from any device</td>
+      </tr>
+      <tr>
+        <td><strong>IDE dropdown</strong></td>
+        <td>Select <strong>Cloud</strong> under the agent input (not Local)</td>
+      </tr>
+      <tr>
+        <td><strong>Automations</strong></td>
+        <td>Cron, PR opened, Slack, webhook — trigger → run</td>
+      </tr>
+      <tr>
+        <td><strong>GitHub</strong></td>
+        <td>Comment <code>@cursor</code> on a PR or issue (dashboard GitHub required)</td>
+      </tr>
+      <tr>
+        <td><strong>CLI handoff</strong></td>
+        <td>Prepend <code>&amp;</code> to a message to push work to cloud</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>Agents Window is the control plane.</strong><br>
+    A run started from your automation, from the web, or from GitHub all appear
+    in the same place. Status (running, waiting, done), transcript, and
+    environment details live there — not buried in email.
+  </div>
+
+  <h2>What happens during a run</h2>
+
+  <div class="steps">
+    <div class="step">
+      <strong>1. Boot VM</strong>
+      <span>Cursor starts an isolated machine and selects the dev environment for your repo</span>
+    </div>
+    <div class="step">
+      <strong>2. Install</strong>
+      <span>Runs the <code>install</code> command — usually <code>npm install</code> — to sync dependencies</span>
+    </div>
+    <div class="step">
+      <strong>3. Agent loop</strong>
+      <span>Reads prompt, discovers committed skills, runs terminal commands, may open a PR</span>
+    </div>
+    <div class="step">
+      <strong>4. Outcome</strong>
+      <span>Summary in run log, PR, PR comment, Slack message, or memory note — depending on tools enabled</span>
+    </div>
+  </div>
+
+  <p>
+    On the run page, hover the repository name at the top to see which
+    <strong>environment</strong> was used. That is the first thing to check when
+    a verify automation fails at install or test time.
+  </p>
+
+  <h2>The dev environment — the part that matters most</h2>
+
+  <p>
+    Cursor's docs are blunt: not giving cloud agents a dev environment is like
+    not giving engineers a computer. An agent that can edit code but cannot
+    install deps or run tests cannot close the loop.
+  </p>
+
+  <p>
+    For your habit tracker weekly verify, the cloud agent needs:
+  </p>
+
+  <ul>
+    <li>Node + npm available in the VM</li>
+    <li><code>npm install</code> succeeding on clone</li>
+    <li>Playwright browsers installed if e2e runs headless in cloud (may need extra setup)</li>
+    <li>Committed <code>habit-tracker-ship</code> skill in the repo branch the automation checks out</li>
+  </ul>
+
+  <h3>Three ways to configure it</h3>
+
+  <table>
+    <thead>
+      <tr><th>Method</th><th>When to use</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Agent-driven setup</strong></td>
+        <td>First time — dashboard walks through install, you save a snapshot</td>
+      </tr>
+      <tr>
+        <td><code>.cursor/environment.json</code></td>
+        <td>Commit install command — team-wide, version-controlled</td>
+      </tr>
+      <tr>
+        <td>Dockerfile in <code>.cursor/</code></td>
+        <td>Custom OS, Docker-in-Docker, compilers — advanced</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Resolution order when a run starts:
+    <strong>repo <code>environment.json</code></strong> → personal saved environment
+    → team saved environment. Full details:
+    <a href="https://cursor.com/docs/cloud-agent/setup">Cloud agent setup</a>.
+  </p>
+
+  <pre class="example">// .cursor/environment.json — minimal starter for Node repos
+{
+  "install": "npm install"
+}</pre>
+
+  <p>
+    The <code>install</code> command must be <strong>idempotent</strong> — it may
+    run on partially cached state. After a slow install, Cursor checkpoints the
+    VM so future runs start faster.
+  </p>
+
+  <div class="callout">
+    <strong>Secrets go in the dashboard, not git.</strong><br>
+    API keys and test credentials belong in Cursor dashboard → Cloud Agents →
+    Secrets. Cloud agents read them as environment variables. Do not commit
+    <code>.env</code> files for cloud use.
+  </div>
+
+  <h2>AGENTS.md for cloud-only instructions</h2>
+
+  <p>
+    Cloud agents read <code>AGENTS.md</code>. Add a section like
+    <code>## Cursor Cloud specific instructions</code> for steps that differ from
+    local dev — e.g. "e2e runs headless with <code>npm run test:e2e</code>; no
+    dev server needed if tests start their own server."
+  </p>
+
+  <p>
+    This complements your skill: the skill is the verify checklist; AGENTS.md is
+    environment context the agent needs before it can run that checklist in a VM.
+  </p>
+
+  <h2>Local MCP ≠ cloud MCP</h2>
+
+  <p>
+    You installed Playwright MCP locally in
+    <a href="0010-integrate-mcp-into-a-project.html">Lesson 10</a>. That config
+    does <em>not</em> automatically transfer to cloud agents. Cloud agents use
+    MCP servers configured in the
+    <strong>dashboard MCP dropdown</strong> at cursor.com/agents — HTTP transport
+    recommended; credentials are proxied, not exposed in the VM.
+  </p>
+
+  <table>
+    <thead>
+      <tr><th>Need</th><th>Local</th><th>Cloud</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Browser verify in IDE</td>
+        <td>Playwright MCP in project</td>
+        <td>Computer use (VM desktop) or terminal e2e</td>
+      </tr>
+      <tr>
+        <td>Open PR while away</td>
+        <td>Not without you</td>
+        <td>Dashboard GitHub integration</td>
+      </tr>
+      <tr>
+        <td>Database queries</td>
+        <td>Project or global MCP</td>
+        <td>Dashboard MCP (must be connected + authed)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>When to use cloud vs local</h2>
+
+  <table>
+    <thead>
+      <tr><th>Stay local</th><th>Send to cloud</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Active iteration — you are reading diffs live</td>
+        <td>Weekly verify while you are away (your automation)</td>
+      </tr>
+      <tr>
+        <td>Hooks gating shell commands</td>
+        <td>Multi-hour refactor — start and walk away</td>
+      </tr>
+      <tr>
+        <td>Playwright MCP smoke test in IDE</td>
+        <td><code>@cursor</code> on a PR for first-pass review</td>
+      </tr>
+      <tr>
+        <td>Plan Mode architecture decisions</td>
+        <td>Hand off from CLI with <code>&amp;</code> mid-session</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Solo-builder pattern: <strong>build and verify locally</strong>, then
+    <strong>automate or cloud-handoff</strong> for maintenance and review.
+    Your habit tracker stack already follows this.
+  </p>
+
+  <h2>Reading a run log</h2>
+
+  <p>
+    When your weekly automation completes (or fails), open the run in
+    cursor.com/agents or the Agents Window. Read top to bottom:
+  </p>
+
+  <ol>
+    <li><strong>Environment</strong> — which snapshot or config; any warning banner?</li>
+    <li><strong>Install step</strong> — did dependency setup finish?</li>
+    <li><strong>Agent transcript</strong> — which commands ran; did it find your skill?</li>
+    <li><strong>Outcome</strong> — pass/fail summary, PR link, or error</li>
+  </ol>
+
+  <p>
+    Common failures for verify automations:
+  </p>
+
+  <ul>
+    <li>Repo not pushed — cloud clones remote, not your laptop</li>
+    <li>No environment — install never ran or wrong Node version</li>
+    <li>E2e needs browsers — Playwright install step missing from environment</li>
+    <li>Snapshot expired — warning banner; re-run setup or restore version</li>
+  </ul>
+
+  <p>
+    You can <strong>intervene mid-run</strong>: send a follow-up message in the
+    run thread, or take remote desktop control to inspect the VM, then hand back
+    to the agent. See
+    <a href="https://cursor.com/docs/cloud-agent/capabilities">Capabilities</a>
+    for computer use and artifacts on PRs.
+  </p>
+
+  <h2>Automations revisited</h2>
+
+  <p>
+    An automation is a cloud agent with a saved prompt, trigger, and optional
+    tools (PR comment, Slack, memories). Everything in this lesson applies to
+    your weekly verify — you are already operating cloud agents; this lesson
+    gives you the dashboard literacy to trust and debug them.
+  </p>
+
+  <p>
+    <strong>Memories</strong> (optional automation tool) let an agent write notes
+    across runs — useful for triage agents, less so for a pure test verify.
+    Enabled by default; disable if the automation handles untrusted input.
+  </p>
+
+  <h2>Check your understanding</h2>
+
+  <div class="quiz" id="quiz1"
+       data-messages='{"true":"Correct. Cloud agents run in isolated remote VMs.","false":"Local Agent and IDE chat run on your machine — not in the cloud VM."}'>
+    <h3>1. Where does a cloud agent execute?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Cloud agents run inside isolated remote VMs.</button>
+      <button data-correct="false">Cloud agents run on your local laptop machine.</button>
+      <button data-correct="false">Cloud agents run only inside IDE chat panels.</button>
+    </div>
+    <div class="feedback" id="quiz1-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz2"
+       data-messages='{"true":"Correct. Environment setup lets agents install deps and run tests.","false":"Prompt wording alone cannot replace a configured dev environment."}'>
+    <h3>2. Most important cloud agent setup step?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Environment setup is the key cloud agent step.</button>
+      <button data-correct="false">Prompt wording is the key cloud agent step.</button>
+      <button data-correct="false">Model selection is the key cloud agent step.</button>
+    </div>
+    <div class="feedback" id="quiz2-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz3"
+       data-messages='{"true":"Correct. Dashboard MCP is configured at cursor.com/agents.","false":"Project mcp.json is local-only — it does not power cloud runs."}'>
+    <h3>3. Which MCP config do cloud agents use?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Dashboard MCP powers cloud agents in the cloud.</button>
+      <button data-correct="false">Local project MCP powers cloud agents in the cloud.</button>
+      <button data-correct="false">Shell hooks power cloud agents in the cloud.</button>
+    </div>
+    <div class="feedback" id="quiz3-feedback"></div>
+  </div>
+
+  <h2>Do this now</h2>
+
+  <div class="practice">
+    <p><strong>Inspect and improve your habit tracker cloud setup</strong></p>
+    <ol>
+      <li><strong>Open the control plane</strong> — go to <a href="https://cursor.com/agents">cursor.com/agents</a> or the Agents Window. Find your weekly verify automation's latest run (or trigger a manual run from the automation editor).</li>
+      <li><strong>Read the run log</strong> — note environment name, install step result, commands the agent ran, and pass/fail outcome. Paste anything unclear to your agent teacher.</li>
+      <li><strong>Check the environment</strong> — Cloud Agents dashboard → Environments. Does your habit tracker repo have one? If not, start agent-driven setup or add <code>.cursor/environment.json</code> with <code>"install": "npm install"</code> (plus Playwright browser install if e2e needs it).</li>
+      <li><strong>Add cloud hints</strong> — in your habit tracker repo, add a <code>## Cursor Cloud specific instructions</code> section to AGENTS.md: how to run tests headless, any secrets the cloud VM needs from the dashboard.</li>
+      <li><strong>Re-run</strong> — trigger the automation manually or kick off a one-off cloud agent: "Follow habit-tracker-ship. Run npm test and npm run test:e2e. Report pass or fail. Do not open a PR."</li>
+    </ol>
+    <p>You are done when you can explain what happened in a cloud run (environment → install → tests → outcome) and your verify passes or you know exactly why it failed.</p>
+  </div>
+
+  <p class="source">
+    Primary source:
+    <a href="https://cursor.com/docs/cloud-agent">Cursor — Cloud Agents</a>
+    — starting runs, environments, capabilities, and troubleshooting.
+  </p>
+
+  <footer>
+    <p>Stuck on anything? Ask your agent teacher — paste a run URL or describe the install/test failure and what environment you configured.</p>
+    <p style="margin-top: 0.75rem;">
+      Previous: <a href="0013-cursor-automations.html">Lesson 13 — Automations</a> ·
+      Reference: <a href="../reference/cloud-agents.html">Cloud Agents</a> ·
+      <a href="../reference/automations.html">Automations</a> ·
+      <a href="../reference/mcp-setup.html">MCP Setup</a> ·
+      Mission: <a href="../MISSION.md">MISSION.md</a>
+    </p>
+  </footer>
+
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>

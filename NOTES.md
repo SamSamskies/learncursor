@@ -31,8 +31,10 @@
 - **Lesson 11 complete:** shell audit hook on habit tracker — observe-only `afterShellExecution`; tested via Terminal.app + Agent trigger
 - **Lesson 12 complete:** `habit-tracker-ship` project skill — auto-discovery verified via "verify the habit tracker is ready to ship"; Agent ran UI + e2e tests per skill checklist
 - **Habit-tracker config stack:** rules (always-on) + hooks (shell audit) + skills (ship verify) — all three layers live
-- **Lesson 13 (current):** Cursor Automations — weekly habit tracker verify as first cloud automation; `/automate` in Agents Window
-- **Next branches:** Cloud agents deep dive, DB MCP, or fresh app idea with full workflow
+- **Lesson 13 complete:** weekly habit tracker automation — created manually at cursor.com/automations; `/automate` skill threw errors in Agents Window (manual path worked)
+- **Full config stack:** rules + hooks + skills + automations all live on habit tracker
+- **Lesson 14 (current):** Cloud agents deep dive — VM lifecycle, dev environments, run logs, local vs cloud, dashboard MCP
+- **Next branches:** OSS PR automation (L13 stretch), DB MCP, or capstone fresh-app workflow
 
 ## Model selection for Plan Mode
 

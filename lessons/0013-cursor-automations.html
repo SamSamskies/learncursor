@@ -260,10 +260,10 @@
   <div class="practice">
     <p><strong>Create your first automation — weekly habit tracker verify</strong></p>
     <ol>
-      <li><strong>Open the Agents Window</strong> — automations are created and managed there or at <a href="https://cursor.com/automations">cursor.com/automations</a>.</li>
-      <li><strong>Start with <code>/automate</code></strong> — say: "Weekly automation on my habit tracker repo. Run npm test and npm run test:e2e using the habit-tracker-ship skill. Report pass or fail. Do not open a PR."</li>
-      <li><strong>Review the draft</strong> — confirm trigger (weekly cron), single repo + branch, and prompt match the table above.</li>
-      <li><strong>Save and activate</strong> — finish any picker fields the editor still needs (schedule time, repo).</li>
+      <li><strong>Open the editor</strong> — <a href="https://cursor.com/automations">cursor.com/automations</a> or the Agents Window Automations panel.</li>
+      <li><strong>Path A: <code>/automate</code></strong> (Agents Window) — describe: "Weekly automation on my habit tracker repo. Run npm test and npm run test:e2e using the habit-tracker-ship skill. Report pass or fail. Do not open a PR." Agent drafts trigger, tools, and prompt; you review and save.</li>
+      <li><strong>Path B: manual</strong> — if <code>/automate</code> errors, create from scratch in the editor using the settings table above. Same outcome; you fill trigger, repo, and prompt yourself.</li>
+      <li><strong>Save and activate</strong> — finish picker fields (schedule time, repo, branch).</li>
       <li><strong>Confirm a run</strong> — trigger manually if the editor offers it, or wait for the first scheduled run and check the run log.</li>
     </ol>
     <p>You are done when one automation run completes and reports test results for your habit tracker.</p>
@@ -279,7 +279,9 @@
     <p>Stuck on anything? Ask your agent teacher — paste your trigger + prompt and say whether the run failed to start or failed mid-verify.</p>
     <p style="margin-top: 0.75rem;">
       Previous: <a href="0012-cursor-agent-skills.html">Lesson 12 — Skills</a> ·
+      Next: <a href="0014-cloud-agents-deep-dive.html">Lesson 14 — Cloud Agents</a> ·
       Reference: <a href="../reference/automations.html">Automations</a> ·
+      <a href="../reference/cloud-agents.html">Cloud Agents</a> ·
       <a href="../reference/skills.html">Skills</a> ·
       <a href="../reference/hooks.html">Hooks</a> ·
       Mission: <a href="../MISSION.md">MISSION.md</a>
