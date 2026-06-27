@@ -81,7 +81,7 @@
       </tr>
       <tr>
         <td>"Prefer npm test over manual curl"</td>
-        <td>Step-by-step: run test → dev server → e2e → report</td>
+        <td>Step-by-step: run test → e2e → report</td>
       </tr>
       <tr>
         <td>Good for conventions</td>
@@ -155,11 +155,20 @@ description: Run the habit tracker verify loop after a feature change. Use when 
 
 ## Verify checklist
 - [ ] npm test — all API tests green
-- [ ] npm run dev — smoke the UI in browser
-- [ ] npx playwright test — if e2e tests exist
+- [ ] npm run test:e2e — browser happy path (add, toggle, delete)
 
 ## Done when
 All checks pass. If something fails, show the command output and fix before marking done.</pre>
+
+  <p>
+    Skip manual browser smoke here — your Playwright e2e suite already covers the
+    same happy path with explicit assertions. E2e is deterministic; ad-hoc clicking
+    depends on whatever the model decides to test. See the
+    <a href="../reference/ui-verify.html">UI Verify reference</a> — once e2e is
+    stable, it replaces the manual Run step from
+    <a href="0007-ship-a-minimal-ui.html">Lesson 7</a>. Keep manual clicking for
+    new UI slices (layout, feel) while building — not as a gate on every ship.
+  </p>
 
   <p>
     Two fields are required. <code>name</code> must match the folder name
@@ -223,10 +232,11 @@ All checks pass. If something fails, show the command output and fix before mark
   <h2>Starter skill: habit-tracker-ship</h2>
 
   <p>
-    Your habit tracker already has tests, a UI, Playwright e2e, and a shell audit
+    Your habit tracker already has API tests, Playwright e2e, and a shell audit
     hook. Codify the verify loop from
     <a href="../reference/verify-loop.html">Verify Loop reference</a> as a project
-    skill — so every "done" session runs the same checks.
+    skill — so every "done" session runs the same checks: unit tests plus e2e,
+    not a redundant manual smoke pass.
   </p>
 
   <pre class="example">mkdir -p .cursor/skills/habit-tracker-ship
@@ -312,10 +322,10 @@ All checks pass. If something fails, show the command output and fix before mark
   <div class="practice">
     <p><strong>Create one project skill on your habit tracker</strong> — codify the verify loop you already use.</p>
     <ol>
-      <li><strong>Create</strong> <code>.cursor/skills/habit-tracker-ship/SKILL.md</code> using the template above — adjust commands to match your repo (test script name, dev port, e2e command).</li>
+      <li><strong>Create</strong> <code>.cursor/skills/habit-tracker-ship/SKILL.md</code> using the template above — adjust commands to match your repo (test script name, e2e command).</li>
       <li><strong>Write the description</strong> with words you'd actually say: "verify habit tracker", "ship", "check before commit."</li>
       <li><strong>Invoke</strong> — type <code>/habit-tracker-ship</code> or ask Agent to "verify the habit tracker is ready to ship."</li>
-      <li><strong>Confirm</strong> Agent runs your checklist (tests, dev smoke, e2e if present) and reports pass/fail.</li>
+      <li><strong>Confirm</strong> Agent runs your checklist (<code>npm test</code>, <code>npm run test:e2e</code>) and reports pass/fail.</li>
       <li><strong>Commit</strong> the skill folder to git.</li>
     </ol>
     <p>You are done when Agent follows your skill's checklist on a real invocation without you re-pasting the steps.</p>
