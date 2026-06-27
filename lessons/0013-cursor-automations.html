@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 13 — Cursor Automations</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <div class="lesson-meta">Lesson 13 · ~20 minutes</div>
+  <h1>Cursor Automations</h1>
+
+  <p class="epigraph">
+    Skills run when you ask.
+    Automations run when the world changes — or the clock does.
+  </p>
+
+  <p>
+    In <a href="0012-cursor-agent-skills.html">Lesson 12</a> you packaged the
+    habit tracker verify loop as <code>habit-tracker-ship</code> — a skill Agent
+    loads when you are at the keyboard. In
+    <a href="0011-cursor-hooks.html">Lesson 11</a> you added hooks that fire on
+    local agent events. <strong>Automations</strong> are the cloud layer: a
+    cloud agent that wakes up on a schedule or an external event and does work
+    while you are away.
+  </p>
+
+  <p>
+    For a solo builder, that closes the loop. You ship a slice locally, verify
+    with your skill, commit — and an automation can re-run that verify every
+    week, review PRs on your OSS repo, or triage Slack messages without you
+    opening the IDE. Keep the
+    <a href="../reference/automations.html">Automations reference</a> open.
+  </p>
+
+  <h2>Local stack vs cloud automations</h2>
+
+  <table>
+    <thead>
+      <tr><th>Surface</th><th>Runs where</th><th>You start it</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Agent + skills</td>
+        <td>Your machine</td>
+        <td>Yes — chat prompt or <code>/skill-name</code></td>
+      </tr>
+      <tr>
+        <td>Hooks</td>
+        <td>Your machine</td>
+        <td>No — fires on agent events</td>
+      </tr>
+      <tr>
+        <td><strong>Automations</strong></td>
+        <td>Cursor cloud</td>
+        <td>No — trigger fires (cron, PR, Slack, …)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Think of it as <em>when you're there</em> vs <em>when you're not</em>.
+    Rules, skills, and hooks optimize your active sessions. Automations handle
+    maintenance, review, and triage on their own schedule.
+  </p>
+
+  <h2>What an automation is made of</h2>
+
+  <div class="steps">
+    <div class="step">
+      <strong>Trigger</strong>
+      <span>When to run — cron schedule, PR opened, Slack message, webhook POST, Linear issue, Sentry error, …</span>
+    </div>
+    <div class="step">
+      <strong>Tools</strong>
+      <span>What the cloud agent may use — comment on PR, send to Slack, MCP servers, memories, computer use</span>
+    </div>
+    <div class="step">
+      <strong>Prompt</strong>
+      <span>Instructions — same spirit as a cloud agent chat, but written once</span>
+    </div>
+    <div class="step">
+      <strong>Repo scope</strong>
+      <span>None, single repo, or multi-repo — where the agent checks out code</span>
+    </div>
+  </div>
+
+  <p>
+    Official docs:
+    <a href="https://cursor.com/docs/automations">Cursor — Automations</a>.
+    Automations always run as cloud agents in Max Mode and bill to your usage pool.
+  </p>
+
+  <h2>Dashboard GitHub — required for PR triggers</h2>
+
+  <p>
+    You connected GitHub in the Cursor dashboard in
+    <a href="0010-integrate-mcp-into-a-project.html">Lesson 10</a>. That
+    integration powers cloud agents, Bugbot, and automations — it is
+    <em>not</em> the same as GitHub MCP in your local project. PR-triggered
+    automations need the dashboard connection; local Agent can still use
+    <code>gh</code> or GitHub MCP when you are in the IDE.
+  </p>
+
+  <div class="callout">
+    <strong>Private automations open PRs as you</strong><br>
+    Comments and review actions appear as <code>cursor</code>. Slack messages
+    come from the Cursor bot. Plan permissions accordingly on shared repos.
+  </div>
+
+  <h2>Triggers that fit a solo builder</h2>
+
+  <table>
+    <thead>
+      <tr><th>Trigger</th><th>Example use</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Schedule (cron)</strong></td>
+        <td>Weekly <code>npm test</code> + e2e on habit tracker</td>
+      </tr>
+      <tr>
+        <td><strong>PR opened / pushed</strong></td>
+        <td>First-pass review on your app repo or OSS target</td>
+      </tr>
+      <tr>
+        <td><strong>PR commented</strong></td>
+        <td>Draft a response to review feedback overnight</td>
+      </tr>
+      <tr>
+        <td><strong>Webhook</strong></td>
+        <td>Your CI or monitoring POSTs to start a run</td>
+      </tr>
+      <tr>
+        <td><strong>Slack message</strong></td>
+        <td>Triage bugs posted to a public channel</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Cron and Slack triggers default to <strong>no repository</strong>. If the
+    automation should run tests or edit code, explicitly attach your habit
+    tracker repo and branch in settings.
+  </p>
+
+  <h2>Skills meet automations</h2>
+
+  <p>
+    Your committed <code>habit-tracker-ship</code> skill lives in the repo.
+    When a cloud agent checks out that repo, it can discover and follow the same
+    verify checklist you use locally. Reference it by name in the automation
+    prompt — you do not need to re-paste the full steps.
+  </p>
+
+  <pre class="example">When this automation runs on the habit tracker repo:
+
+1. Follow the habit-tracker-ship skill verify checklist.
+2. Run npm test and npm run test:e2e.
+3. If all pass: post a one-line summary (or write a memory note — your choice).
+4. If any fail: summarize failing commands and output. Do not open a PR.</pre>
+
+  <p>
+    Skills = local playbook on demand. Automations = cloud playbook on a
+    trigger. Same workflow, different runtime.
+  </p>
+
+  <h2>Three ways to create one</h2>
+
+  <table>
+    <thead>
+      <tr><th>Path</th><th>Best for</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Agents Window + <code>/automate</code></strong></td>
+        <td>Describe what you want in plain language; Agent drafts trigger, tools, prompt</td>
+      </tr>
+      <tr>
+        <td><a href="https://cursor.com/automations">cursor.com/automations</a></td>
+        <td>Visual editor, templates, managing existing automations</td>
+      </tr>
+      <tr>
+        <td>Cursor Marketplace templates</td>
+        <td>Starting points — PR review, failed CI triage, Sentry investigate</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    The <code>/automate</code> skill walks through trigger → tools → prompt →
+    name, then opens the Automations editor with a draft you review and save.
+    Use the <strong>Agents Window</strong> for that path — it needs the
+    in-app Automations handoff.
+  </p>
+
+  <h2>Starter automation: weekly habit tracker verify</h2>
+
+  <p>
+    A low-risk first automation for your mission: no PR comments, no code
+    changes — just confirm the app still passes tests while you are away.
+  </p>
+
+  <table>
+    <thead>
+      <tr><th>Setting</th><th>Value</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Name</td><td>Habit tracker weekly verify</td></tr>
+      <tr><td>Trigger</td><td>Schedule — once per week (pick a quiet time)</td></tr>
+      <tr><td>Repo</td><td>Single — your habit tracker, default branch</td></tr>
+      <tr><td>Tools</td><td>Base cloud agent only (terminal/git). Skip Slack unless you want alerts.</td></tr>
+      <tr><td>Permissions</td><td>Private — bills to you, only you manage it</td></tr>
+    </tbody>
+  </table>
+
+  <p>
+    Stretch goal after the first one works: a <strong>PR opened</strong>
+    automation on an OSS repo you contribute to — same review instincts from
+    <a href="0009-navigate-pr-review.html">Lesson 9</a>, running in the cloud.
+  </p>
+
+  <h2>Check your understanding</h2>
+
+  <div class="quiz" id="quiz1"
+       data-messages='{"true":"Correct. Automations are cloud agents started by triggers.","false":"Local Agent and hooks run on your machine — not on cron or PR events in the cloud."}'>
+    <h3>1. What runs when a cron trigger fires?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Cloud agents run when triggers fire.</button>
+      <button data-correct="false">Local agents run when triggers fire.</button>
+      <button data-correct="false">Shell hooks run when triggers fire.</button>
+    </div>
+    <div class="feedback" id="quiz1-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz2"
+       data-messages='{"true":"Correct. Dashboard GitHub powers PR-triggered cloud workflows.","false":"Local MCP and hooks do not replace the dashboard GitHub integration for PR automations."}'>
+    <h3>2. PR-opened automation needs which integration?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Dashboard GitHub powers PR trigger automations.</button>
+      <button data-correct="false">Local MCP JSON powers PR trigger automations.</button>
+      <button data-correct="false">Project hooks power all PR trigger automations.</button>
+    </div>
+    <div class="feedback" id="quiz2-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz3"
+       data-messages='{"true":"Correct. Skills load locally on prompt match; automations run in the cloud on triggers.","false":"Rules and skills are local-session mechanisms — they do not replace scheduled cloud runs."}'>
+    <h3>3. Skills vs automations — main difference?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Skills invoke locally when you ask Agent.</button>
+      <button data-correct="false">Automations invoke locally when you ask Agent.</button>
+      <button data-correct="false">Project rules invoke in cloud when triggered.</button>
+    </div>
+    <div class="feedback" id="quiz3-feedback"></div>
+  </div>
+
+  <h2>Do this now</h2>
+
+  <div class="practice">
+    <p><strong>Create your first automation — weekly habit tracker verify</strong></p>
+    <ol>
+      <li><strong>Open the Agents Window</strong> — automations are created and managed there or at <a href="https://cursor.com/automations">cursor.com/automations</a>.</li>
+      <li><strong>Start with <code>/automate</code></strong> — say: "Weekly automation on my habit tracker repo. Run npm test and npm run test:e2e using the habit-tracker-ship skill. Report pass or fail. Do not open a PR."</li>
+      <li><strong>Review the draft</strong> — confirm trigger (weekly cron), single repo + branch, and prompt match the table above.</li>
+      <li><strong>Save and activate</strong> — finish any picker fields the editor still needs (schedule time, repo).</li>
+      <li><strong>Confirm a run</strong> — trigger manually if the editor offers it, or wait for the first scheduled run and check the run log.</li>
+    </ol>
+    <p>You are done when one automation run completes and reports test results for your habit tracker.</p>
+  </div>
+
+  <p class="source">
+    Primary source:
+    <a href="https://cursor.com/docs/automations">Cursor — Automations</a>
+    — triggers, tools, repo scope, billing, and prompt guidance.
+  </p>
+
+  <footer>
+    <p>Stuck on anything? Ask your agent teacher — paste your trigger + prompt and say whether the run failed to start or failed mid-verify.</p>
+    <p style="margin-top: 0.75rem;">
+      Previous: <a href="0012-cursor-agent-skills.html">Lesson 12 — Skills</a> ·
+      Reference: <a href="../reference/automations.html">Automations</a> ·
+      <a href="../reference/skills.html">Skills</a> ·
+      <a href="../reference/hooks.html">Hooks</a> ·
+      Mission: <a href="../MISSION.md">MISSION.md</a>
+    </p>
+  </footer>
+
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>

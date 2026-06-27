@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Automations — Quick Reference</title>
+  <style>
+    :root {
+      --text: #1a1a1a;
+      --muted: #555;
+      --accent: #2563eb;
+      --border: #ddd;
+      --bg: #fafafa;
+      --card: #fff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Palatino Linotype", Palatino, Georgia, serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.55;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+    h1 {
+      font-weight: 400;
+      font-size: 1.75rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+    h2 {
+      font-size: 0.75rem;
+      font-family: system-ui, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin: 2rem 0 0.75rem;
+      font-weight: 600;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      font-family: system-ui, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: #f5f5f5;
+    }
+    tr:last-child td { border-bottom: none; }
+    ol, ul {
+      padding-left: 1.25rem;
+      font-size: 0.95rem;
+    }
+    ol li, ul li { margin-bottom: 0.45rem; }
+    code {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.85em;
+      background: #eee;
+      padding: 0.1em 0.35em;
+    }
+    .flow {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1rem 1.15rem;
+      font-size: 0.92rem;
+      margin-bottom: 1rem;
+    }
+    footer {
+      margin-top: 2.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--accent); }
+    @media print {
+      body { background: white; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Cursor Automations</h1>
+  <p class="subtitle">Cloud agents on triggers — schedule, GitHub, Slack, webhooks, and more.</p>
+
+  <h2>Local vs cloud</h2>
+  <table>
+    <thead>
+      <tr><th>Surface</th><th>Runs where</th><th>Starts when</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Agent (IDE)</td>
+        <td>Your machine</td>
+        <td>You prompt</td>
+      </tr>
+      <tr>
+        <td>Skills / hooks</td>
+        <td>Your machine</td>
+        <td>Prompt match / agent event</td>
+      </tr>
+      <tr>
+        <td><strong>Automations</strong></td>
+        <td>Cursor cloud</td>
+        <td>Trigger fires (cron, PR, Slack, …)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Create an automation</h2>
+  <ol>
+    <li><strong>Agents Window</strong> — open Automations, or type <code>/automate</code> in chat</li>
+    <li><strong>Web</strong> — <a href="https://cursor.com/automations">cursor.com/automations</a></li>
+    <li><strong>Marketplace</strong> — start from a template, customize</li>
+  </ol>
+
+  <h2>Setup order (editor)</h2>
+  <div class="flow">
+    Trigger → Tools → Prompt → Repo scope → Save &amp; activate
+  </div>
+
+  <h2>Common triggers (solo builder)</h2>
+  <table>
+    <thead>
+      <tr><th>Trigger</th><th>Good for</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Cron</strong> (schedule)</td>
+        <td>Weekly test verify, dependency audit, changelog digest</td>
+      </tr>
+      <tr>
+        <td><strong>PR opened / pushed</strong></td>
+        <td>Review incoming PRs on your repo or OSS fork target</td>
+      </tr>
+      <tr>
+        <td><strong>PR commented</strong></td>
+        <td>Triage review feedback when you are away</td>
+      </tr>
+      <tr>
+        <td><strong>Webhook</strong></td>
+        <td>Custom CI, monitoring, internal tools POST to Cursor</td>
+      </tr>
+      <tr>
+        <td><strong>Slack message</strong></td>
+        <td>Bug triage channel, on-call handoff (needs Slack integration)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Tools (optional capabilities)</h2>
+  <table>
+    <thead>
+      <tr><th>Tool</th><th>Agent can</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Comment on PR</td><td>Post review comments (inline or top-level)</td></tr>
+      <tr><td>Request reviewers</td><td>Ask domain experts on a PR</td></tr>
+      <tr><td>Send to Slack</td><td>Post results to a channel</td></tr>
+      <tr><td>Read Slack</td><td>Pull channel context before acting</td></tr>
+      <tr><td>MCP server</td><td>Use dashboard-connected MCP tools in cloud</td></tr>
+      <tr><td>Memories</td><td>Read/write notes across runs (same automation)</td></tr>
+      <tr><td>Computer use</td><td>Browser, screenshots, screen recordings</td></tr>
+      <tr><td>Open PR</td><td>Default for repo-backed automations that change code</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Repository scope</h2>
+  <table>
+    <thead>
+      <tr><th>Scope</th><th>Use when</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>No repo</strong></td>
+        <td>Slack-only, webhook-only, MCP-only — no code checkout</td>
+      </tr>
+      <tr>
+        <td><strong>Single repo</strong></td>
+        <td>Verify tests, fix bugs, review one codebase (habit tracker)</td>
+      </tr>
+      <tr>
+        <td><strong>Multi-repo</strong></td>
+        <td>Cross-repo refactors or shared libraries</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Stack placement</h2>
+  <table>
+    <thead>
+      <tr><th>Layer</th><th>When it runs</th><th>Example</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Rules</td><td>Every local session</td><td>TypeScript + Drizzle</td></tr>
+      <tr><td>Skills</td><td>Local, on demand</td><td><code>habit-tracker-ship</code> verify</td></tr>
+      <tr><td>Hooks</td><td>Local agent events</td><td>Shell audit log</td></tr>
+      <tr><td><strong>Automations</strong></td><td>Cloud, on trigger</td><td>Weekly verify while away</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Prompt tips</h2>
+  <ul>
+    <li>Reference committed project skills by name if the repo has them</li>
+    <li>State pass/fail criteria — when to comment, open PR, or do nothing</li>
+    <li>Match enabled tools (don't ask for Slack if tool is off)</li>
+    <li>Set output format: summary comment, issue body, memory note</li>
+  </ul>
+
+  <h2>Billing &amp; identity</h2>
+  <ul>
+    <li>Automations run as <strong>cloud agents</strong> — billed to your usage pool (private scope)</li>
+    <li>Always <strong>Max Mode</strong> — no toggle off</li>
+    <li>Private automations open PRs as <strong>your GitHub account</strong>; comments appear as <code>cursor</code></li>
+    <li>Requires <strong>dashboard GitHub</strong> for PR triggers — not the same as local GitHub MCP</li>
+  </ul>
+
+  <h2>Solo builder starters</h2>
+  <table>
+    <thead>
+      <tr><th>Automation</th><th>Trigger</th><th>Repo</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Habit tracker weekly verify</td>
+        <td>Cron — weekly</td>
+        <td>Single — habit tracker</td>
+      </tr>
+      <tr>
+        <td>OSS PR triage</td>
+        <td>PR opened</td>
+        <td>Single — target repo</td>
+      </tr>
+      <tr>
+        <td>Review thread responder</td>
+        <td>PR commented</td>
+        <td>From PR context</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <footer>
+    From <a href="../lessons/0013-cursor-automations.html">Lesson 13</a> ·
+    <a href="https://cursor.com/docs/automations">Cursor Automations docs</a> ·
+    <a href="skills.html">Skills</a> ·
+    <a href="hooks.html">Hooks</a> ·
+    <a href="mcp-setup.html">MCP Setup</a>
+  </footer>
+</body>
+</html>

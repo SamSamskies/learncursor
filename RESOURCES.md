@@ -16,8 +16,10 @@
   Scripts on the agent loop — gate shell commands, format after edits, audit tool use. Use for: Lesson 11 deterministic automation.
 - [Agent Skills](https://cursor.com/docs/skills)
   Reusable SKILL.md workflows loaded on demand — verify loops, ship checklists, specialized procedures. Use for: Lesson 12 skills vs rules.
+- [Automations](https://cursor.com/docs/automations)
+  Cloud agents on triggers — cron, GitHub/GitLab PR events, Slack, webhooks, Linear, Sentry, PagerDuty. Use for: Lesson 13 scheduled verify and PR triage.
 - [GitHub integration (dashboard)](https://cursor.com/docs/integrations/github)
-  Cloud Agents, Bugbot, automations — not the same as GitHub MCP. Use for: Lesson 10 dashboard vs MCP distinction.
+  Cloud Agents, Bugbot, automations — not the same as GitHub MCP. Use for: Lesson 10 dashboard vs MCP distinction; Lesson 13 PR triggers.
 - [Cursor CLI + MCP](https://cursor.com/docs/cli/mcp)
   Running agents from the terminal with the same MCP config as the editor. Use for: scripting and headless workflows later.
 
