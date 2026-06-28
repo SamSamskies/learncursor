@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PR Review Agents — Quick Reference</title>
+  <style>
+    :root {
+      --text: #1a1a1a;
+      --muted: #555;
+      --accent: #2563eb;
+      --border: #ddd;
+      --bg: #fafafa;
+      --card: #fff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Palatino Linotype", Palatino, Georgia, serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.55;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+    h1 {
+      font-weight: 400;
+      font-size: 1.75rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+    h2 {
+      font-size: 0.75rem;
+      font-family: system-ui, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin: 2rem 0 0.75rem;
+      font-weight: 600;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      font-family: system-ui, sans-serif;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      background: #f4f4f4;
+    }
+    tr:last-child td { border-bottom: none; }
+    code {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.85em;
+      background: #eee;
+      padding: 0.1em 0.35em;
+      border-radius: 3px;
+    }
+    .flow {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1rem 1.15rem;
+      font-size: 0.92rem;
+      margin-bottom: 1rem;
+    }
+    ul { padding-left: 1.25rem; font-size: 0.95rem; }
+    li { margin-bottom: 0.4rem; }
+    footer {
+      margin-top: 2.5rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--accent); }
+    @media print {
+      body { background: white; padding: 0; }
+      table, .flow { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>PR Review Agents</h1>
+  <p class="subtitle">Bugbot → Security Agents → Approval Agents — one pipeline, three layers</p>
+
+  <div class="flow">
+    <strong>Pipeline</strong><br>
+    Local <code>/review</code> → open PR → Bugbot on GitHub → Security Reviewer (optional) → Approval Agent (team) → merge
+  </div>
+
+  <h2>Three agents compared</h2>
+  <table>
+    <thead>
+      <tr><th>Agent</th><th>Focus</th><th>Where it runs</th><th>Solo builder?</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Bugbot</strong></td>
+        <td>Bugs, quality, some security</td>
+        <td>GitHub PR + local <code>/review-bugbot</code></td>
+        <td>Yes — individual usage billing</td>
+      </tr>
+      <tr>
+        <td><strong>Security Agents</strong></td>
+        <td>Vulnerabilities, threat model</td>
+        <td>Automations (PR or cron) + <code>/review-security</code></td>
+        <td>Local skill yes; cloud automations team-billed</td>
+      </tr>
+      <tr>
+        <td><strong>Approval Agents</strong></td>
+        <td>Auto-approve or route reviewers</td>
+        <td>PR triggers on team repos</td>
+        <td>Team feature — know the pattern</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Pre-push (local)</h2>
+  <table>
+    <thead>
+      <tr><th>Skill</th><th>Reviews</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>/review</code></td><td>Prompts you to pick Bugbot and/or Security</td></tr>
+      <tr><td><code>/review-bugbot</code></td><td>Branch changes vs base (default)</td></tr>
+      <tr><td><code>/review-security</code></td><td>Same diff scope — security lens</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size: 0.92rem; color: var(--muted); margin-bottom: 1rem;">
+    Same diff reviewed locally → Bugbot on GitHub skips duplicate review (patch ID sync).
+  </p>
+
+  <h2>Bugbot on GitHub</h2>
+  <ul>
+    <li>Auto on each PR push (configurable: mention-only, once per PR, incremental)</li>
+    <li>Manual: comment <code>cursor review</code> or <code>bugbot run</code></li>
+    <li>Check: <code>Cursor Bugbot</code> — success = clean; neutral = findings (default)</li>
+    <li>Rules: <code>.cursor/BUGBOT.md</code> (nested paths supported)</li>
+    <li>Autofix: cloud agent pushes fix branch or same branch (on-demand billing)</li>
+  </ul>
+
+  <h2>Security Agents (two types)</h2>
+  <table>
+    <thead>
+      <tr><th>Type</th><th>Trigger</th><th>Use for</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Security Reviewer</td><td>PR opened / updated</td><td>Block vulns before merge</td></tr>
+      <tr><td>Vulnerability Scanner</td><td>Cron</td><td>Find old issues at rest</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Approval Agents (team)</h2>
+  <ul>
+    <li>Waits for Bugbot + Security checks when enabled</li>
+    <li>Findings needing human review → no auto-approve</li>
+    <li>Policy files: <code>APPROVAL_POLICY.md</code> (per directory), <code>.cursor/approval-policies/ROUTING.md</code></li>
+    <li>Conflicts → stricter policy wins; policy edits in PR → human review</li>
+  </ul>
+
+  <h2>Solo substitute for Approval Agents</h2>
+  <ol>
+    <li><code>/review</code> locally before push</li>
+    <li>Open PR → read Bugbot comments</li>
+    <li>Fix → push → re-run verify</li>
+    <li>You click merge when checks + maintainer feedback are green</li>
+  </ol>
+
+  <footer>
+    From <a href="../lessons/0015-pr-review-agents.html">Lesson 15</a> ·
+    <a href="https://cursor.com/docs/bugbot">Bugbot</a> ·
+    <a href="https://cursor.com/docs/security-agents">Security Agents</a> ·
+    <a href="https://cursor.com/docs/approval-agents">Approval Agents</a> ·
+    <a href="pr-review-loop.html">PR Review Loop</a> ·
+    <a href="oss-workflow.html">OSS Workflow</a>
+  </footer>
+</body>
+</html>

@@ -33,8 +33,10 @@
 - **Habit-tracker config stack:** rules (always-on) + hooks (shell audit) + skills (ship verify) — all three layers live
 - **Lesson 13 complete:** weekly habit tracker automation — created manually at cursor.com/automations; `/automate` skill threw errors in Agents Window (manual path worked)
 - **Full config stack:** rules + hooks + skills + automations all live on habit tracker
-- **Lesson 14 (current):** Cloud agents deep dive — VM lifecycle, dev environments, run logs, local vs cloud, dashboard MCP
-- **Next branches:** OSS PR automation (L13 stretch), DB MCP, or capstone fresh-app workflow
+- **Lesson 14 complete:** Cloud agents deep dive — environment.json, AGENTS.md cloud section, snapshot environment on habit tracker
+- **Lesson 15 complete:** `/review-bugbot` local on habit tracker; Bugbot enabled in dashboard; [PR #1](https://github.com/SamSamskies/habit-tracker/pull/1) reviewed and merged; `.cursor/BUGBOT.md` added
+- **Lesson 16 (current):** Capstone — fresh app in one focused session (idea → plan → bootstrap → build → verify → minimal UI → `/review-bugbot` → push)
+- **After capstone:** optional DB MCP; deepen habit tracker or new app session two
 
 ## Model selection for Plan Mode
 

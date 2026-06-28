@@ -24,6 +24,12 @@
   Dev environments — agent-driven setup, snapshots, `.cursor/environment.json`, secrets, install scripts. Use for: Lesson 14 environment configuration.
 - [Cloud agent capabilities](https://cursor.com/docs/cloud-agent/capabilities)
   Computer use, MCP in cloud, CI autofix, remote desktop, PR artifacts. Use for: Lesson 14 when cloud differs from local.
+- [Bugbot](https://cursor.com/docs/bugbot)
+  PR review, `/review-bugbot` local sync, BUGBOT.md rules, Autofix. Use for: Lesson 15 PR review stack.
+- [Security Agents](https://cursor.com/docs/security-agents)
+  Security Reviewer (PR) and Vulnerability Scanner (cron). Use for: Lesson 15 security layer.
+- [Approval Agents](https://cursor.com/docs/approval-agents)
+  Auto-approve, reviewer routing, APPROVAL_POLICY.md. Use for: Lesson 15 team gate layer.
 - [GitHub integration (dashboard)](https://cursor.com/docs/integrations/github)
   Cloud Agents, Bugbot, automations — not the same as GitHub MCP. Use for: Lesson 10 dashboard vs MCP distinction; Lesson 13 PR triggers.
 - [Cursor CLI + MCP](https://cursor.com/docs/cli/mcp)

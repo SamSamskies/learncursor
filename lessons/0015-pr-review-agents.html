@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 15 — PR Review Agents</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <div class="lesson-meta">Lesson 15 · ~20 minutes</div>
+  <h1>PR Review Agents</h1>
+
+  <p class="epigraph">
+    Lesson 9 taught you to respond to review comments.
+    This lesson teaches you to catch issues before they become comments.
+  </p>
+
+  <p>
+    In <a href="0009-navigate-pr-review.html">Lesson 9</a> you fixed CodeRabbit
+    feedback on your bitcoin-connect PR. In
+    <a href="0014-cloud-agents-deep-dive.html">Lesson 14</a> you configured cloud
+    verify for habit tracker. Now Cursor's own review stack closes the loop:
+    <strong>Bugbot</strong> (general PR review),
+    <strong>Security Agents</strong> (vulnerability-focused),
+    and <strong>Approval Agents</strong> (team auto-approve gate).
+    Keep the
+    <a href="../reference/pr-review-agents.html">PR Review Agents reference</a>
+    open.
+  </p>
+
+  <div class="callout">
+    <strong>One lesson, three layers — on purpose.</strong><br>
+    Approval Agents explicitly consume Bugbot and Security findings. Teaching
+    them together shows the full pipeline. For your solo workflow, Bugbot +
+    local <code>/review</code> are the actionable parts; Security and Approval
+    matter when you join a team or harden your own repos.
+  </div>
+
+  <h2>The pipeline</h2>
+
+  <table>
+    <thead>
+      <tr><th>Stage</th><th>Agent</th><th>What it decides</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Before push</td>
+        <td><code>/review-bugbot</code>, <code>/review-security</code></td>
+        <td>Fix issues while diffs are still local</td>
+      </tr>
+      <tr>
+        <td>On PR</td>
+        <td>Bugbot</td>
+        <td>Bugs, quality, fix suggestions on GitHub</td>
+      </tr>
+      <tr>
+        <td>On PR or schedule</td>
+        <td>Security Reviewer / Scanner</td>
+        <td>Vulnerabilities — tunable threat model</td>
+      </tr>
+      <tr>
+        <td>On PR (team)</td>
+        <td>Approval Agent</td>
+        <td>Auto-approve or assign human reviewers</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Official docs:
+    <a href="https://cursor.com/docs/bugbot">Bugbot</a>,
+    <a href="https://cursor.com/docs/security-agents">Security Agents</a>,
+    <a href="https://cursor.com/docs/approval-agents">Approval Agents</a>.
+  </p>
+
+  <h2>Layer 1 — Bugbot</h2>
+
+  <p>
+    Bugbot reviews pull request diffs and leaves inline comments with explanations
+    and fix suggestions. You already have GitHub connected through the dashboard
+    (from <a href="0010-integrate-mcp-into-a-project.html">Lesson 10</a>) — that
+    same integration powers Bugbot on your PRs.
+  </p>
+
+  <h3>On GitHub</h3>
+
+  <ul>
+    <li>Runs automatically on each PR update (unless you set mention-only)</li>
+    <li>Manual trigger: comment <code>cursor review</code> or <code>bugbot run</code></li>
+    <li>Reads existing PR comments — avoids duplicating CodeRabbit-style feedback</li>
+    <li>Publishes a <code>Cursor Bugbot</code> check — success when clean; findings default to neutral</li>
+    <li><strong>Fix in Cursor</strong> / <strong>Fix in Web</strong> links jump you into an agent with context</li>
+  </ul>
+
+  <h3>Before you push — <code>/review-bugbot</code></h3>
+
+  <p>
+    Cursor 3.7+ ships review skills in the IDE. Type
+    <code>/review-bugbot</code> (or <code>/review</code> to pick agents) in Agent
+    chat. By default it reviews <strong>branch changes</strong> — everything since
+    the merge-base with your default branch, including uncommitted edits.
+  </p>
+
+  <div class="callout">
+    <strong>Patch ID sync — the killer feature for solo builders.</strong><br>
+    When you run <code>/review-bugbot</code> locally, then open a PR with the
+    same diff, Bugbot on GitHub recognizes it already reviewed that patch and
+    skips the remote run — leaving a comment that says so. Fewer duplicate bot
+    comments, faster merge.
+  </div>
+
+  <h3>Project rules for Bugbot — <code>BUGBOT.md</code></h3>
+
+  <p>
+    Like project rules for Agent, Bugbot reads
+    <code>.cursor/BUGBOT.md</code> files. The root file always applies; nested
+    files apply when reviewing changes under that path. Use them for repo-specific
+    expectations — e.g. "flag missing tests when <code>server/</code> changes."
+  </p>
+
+  <h3>Bugbot Autofix (optional)</h3>
+
+  <p>
+    When Bugbot finds issues on a PR, Autofix can spawn a cloud agent to fix them
+    and push to a new branch (recommended) or the same branch. Requires on-demand
+    billing. Solo pattern: start with Autofix off; use Fix in Cursor when you
+    want to stay in control.
+  </p>
+
+  <h2>Layer 2 — Security Agents</h2>
+
+  <p>
+    Bugbot catches general bugs and some security issues. Security Agents are
+    dedicated — prompt-tuned for vulnerabilities, with checks you can enable or
+    disable per agent. Cursor built them because a general reviewer cannot block
+    CI on security-only findings without blocking every style nit.
+    <a href="https://cursor.com/blog/security-agents">Blog: securing with autonomous agents</a>.
+  </p>
+
+  <h3>Two agent types</h3>
+
+  <table>
+    <thead>
+      <tr><th>Type</th><th>Trigger</th><th>Best for</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Security Reviewer</strong></td>
+        <td>PR opened / updated (Automations)</td>
+        <td>Catch vulns in incoming changes</td>
+      </tr>
+      <tr>
+        <td><strong>Vulnerability Scanner</strong></td>
+        <td>Cron (Automations)</td>
+        <td>Find pre-existing issues in the whole repo</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Both run on the Automations platform (cloud agents). Configure from the
+    Security Agents dashboard — same trigger model you learned in
+    <a href="0013-cursor-automations.html">Lesson 13</a>.
+  </p>
+
+  <h3>Before you push — <code>/review-security</code></h3>
+
+  <p>
+    Same diff scope as Bugbot: branch changes vs base by default. Run both before
+    a sensitive change (auth, payments, user data). Type
+    <code>/review</code> to run either or both in one flow.
+  </p>
+
+  <h3>Solo vs team</h3>
+
+  <p>
+    <code>/review-security</code> in the IDE works on individual plans. Scheduled
+    Security Reviewer / Scanner automations bill to the <strong>team usage pool</strong>.
+    For habit tracker or personal repos, local pre-push review is enough unless
+    you want weekly cron scans — then treat it like your verify automation.
+  </p>
+
+  <h2>Layer 3 — Approval Agents</h2>
+
+  <p>
+    Approval Agents sit on top of PRs. They <strong>auto-approve</strong> when
+    your criteria are met, or <strong>assign reviewers</strong> when more eyes
+    are needed. They do not replace thoughtful human review — they automate the
+    boring "LGTM on a typo fix" cases on teams with many PRs.
+  </p>
+
+  <h3>How they use Bugbot and Security</h3>
+
+  <p>
+    In the Approval Agents dashboard, enable review signals:
+  </p>
+
+  <ul>
+    <li><strong>Bugbot Review Context</strong> — waits for Bugbot, reads findings</li>
+    <li><strong>Security Review Context</strong> — waits for Security Agents (team plan)</li>
+    <li><strong>Risk Score</strong> — classifies PR risk; set max threshold for auto-approve</li>
+  </ul>
+
+  <p>
+    If Bugbot or Security report findings that need human review, the Approval
+    Agent will <strong>not</strong> auto-approve — even if the diff looks small.
+    When policies conflict, the <strong>stricter</strong> instruction wins.
+  </p>
+
+  <h3>Policy files in the repo</h3>
+
+  <table>
+    <thead>
+      <tr><th>File</th><th>Purpose</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>APPROVAL_POLICY.md</code></td>
+        <td>Per-directory rules — closest ancestor wins</td>
+      </tr>
+      <tr>
+        <td><code>.cursor/approval-policies/ROUTING.md</code></td>
+        <td>Top-level routing by product / path boundary</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Safety guard: if a PR edits approval policy files themselves, the agent uses
+    the base-branch version and defaults to human review — so nobody sneaks relaxed
+    rules through in the same PR.
+  </p>
+
+  <h3>What solo builders do instead</h3>
+
+  <p>
+    Approval Agents are a <strong>team</strong> feature. Your equivalent workflow:
+  </p>
+
+  <ol>
+    <li>Run <code>/review</code> locally before push</li>
+    <li>Open PR — read Bugbot (and maintainer) comments</li>
+    <li>Fix with the Lesson 9 loop — one commit per concern</li>
+    <li>Merge when checks are green and you trust the diff</li>
+  </ol>
+
+  <p>
+    You already did steps 2–4 on bitcoin-connect. Adding step 1 catches Bugbot-class
+    issues before CodeRabbit or maintainers see them.
+  </p>
+
+  <h2>Local vs GitHub vs team — quick map</h2>
+
+  <table>
+    <thead>
+      <tr><th>Surface</th><th>Bugbot</th><th>Security</th><th>Approval</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>IDE <code>/review-*</code></td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>No</td>
+      </tr>
+      <tr>
+        <td>GitHub PR comments</td>
+        <td>Yes</td>
+        <td>Via automation</td>
+        <td>Via automation</td>
+      </tr>
+      <tr>
+        <td>cursor.com/agents</td>
+        <td>Yes</td>
+        <td>Yes</td>
+        <td>Dashboard only</td>
+      </tr>
+      <tr>
+        <td>Your habit tracker weekly verify</td>
+        <td>No — different job</td>
+        <td>No — different job</td>
+        <td>No</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Do not confuse PR review agents with your habit tracker verify automation.
+    Verify runs tests on a schedule. Bugbot reviews <em>code diffs</em> on PRs.
+    Different triggers, different outputs — both belong in a mature repo.
+  </p>
+
+  <h2>Check your understanding</h2>
+
+  <div class="quiz" id="quiz1"
+       data-messages='{"true":"Correct. Bugbot reviews PR diffs for bugs and quality.","false":"Bugbot on PRs does not run your cron verify automation."}'>
+    <h3>1. What does Bugbot do on a pull request?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Bugbot reviews pull request diffs for bugs and quality.</button>
+      <button data-correct="false">Bugbot runs npm test inside scheduled cloud verify automation.</button>
+      <button data-correct="false">Bugbot replaces GitHub branch protection and auto merges PRs.</button>
+    </div>
+    <div class="feedback" id="quiz1-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz2"
+       data-messages='{"true":"Correct. Local /review catches issues before the PR opens.","false":"/review is for pre-push local review, not post-merge only."}'>
+    <h3>2. Best time to run /review-bugbot?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Run review locally before you open any pull request.</button>
+      <button data-correct="false">Run review only after pull request fully merges upstream.</button>
+      <button data-correct="false">Run review only from web dashboard never local agent.</button>
+    </div>
+    <div class="feedback" id="quiz2-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz3"
+       data-messages='{"true":"Correct. Approval Agents gate merge on team criteria plus AI findings.","false":"Approval Agents are team PR gates, not a Bugbot replacement on Pro."}'>
+    <h3>3. What do Approval Agents do?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Approval Agents auto approve pull requests when team criteria match.</button>
+      <button data-correct="false">Approval Agents replace Bugbot entirely on solo personal GitHub accounts.</button>
+      <button data-correct="false">Approval Agents run hooks json before every single git push.</button>
+    </div>
+    <div class="feedback" id="quiz3-feedback"></div>
+  </div>
+
+  <h2>Do this now</h2>
+
+  <div class="practice">
+    <p><strong>Run a pre-push review on habit tracker or a small branch</strong></p>
+    <ol>
+      <li><strong>Pick a repo</strong> — habit tracker with uncommitted changes, or a feature branch with a few commits. Make sure you are on the branch you would PR.</li>
+      <li><strong>Run <code>/review-bugbot</code></strong> in Agent — read the findings table (Severity, Location, Finding). Fix anything valid before push.</li>
+      <li><strong>Optional: <code>/review-security</code></strong> — if your diff touches auth, API routes, or user input, run security review on the same diff.</li>
+      <li><strong>Enable Bugbot</strong> — Cursor dashboard → Bugbot → confirm habit tracker (or your OSS fork) is enabled. Note personal settings: mention-only vs auto, incremental review.</li>
+      <li><strong>Optional: <code>.cursor/BUGBOT.md</code></strong> — one rule for habit tracker, e.g. "require test changes when <code>src/routes/</code> changes." Commit and push.</li>
+      <li><strong>Open or update a PR</strong> — if you ran local review first, watch for Bugbot's skip comment on GitHub. Triage any new findings with the Lesson 9 loop.</li>
+    </ol>
+    <p>You are done when you have run at least one local <code>/review-bugbot</code>, know where Bugbot is enabled in the dashboard, and can explain what Approval Agents add that you handle manually as a solo builder.</p>
+  </div>
+
+  <p class="source">
+    Primary source:
+    <a href="https://cursor.com/docs/bugbot">Cursor — Bugbot</a>
+    — PR review, local <code>/review</code> sync, BUGBOT.md rules, and Autofix.
+  </p>
+
+  <footer>
+    <p>Stuck on anything? Ask your agent teacher — paste Bugbot findings or a PR URL and say whether you ran local review first.</p>
+    <p style="margin-top: 0.75rem;">
+      Previous: <a href="0014-cloud-agents-deep-dive.html">Lesson 14 — Cloud Agents</a> ·
+      Reference: <a href="../reference/pr-review-agents.html">PR Review Agents</a> ·
+      <a href="../reference/pr-review-loop.html">PR Review Loop</a> ·
+      <a href="../reference/oss-workflow.html">OSS Workflow</a> ·
+      Mission: <a href="../MISSION.md">MISSION.md</a>
+    </p>
+  </footer>
+
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>

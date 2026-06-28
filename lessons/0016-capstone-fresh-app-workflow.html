@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 16 — Capstone: Fresh App in One Session</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <div class="lesson-meta">Lesson 16 · ~2–3 hours (one focused session)</div>
+  <h1>Capstone: Fresh App in One Session</h1>
+
+  <p class="epigraph">
+    Fifteen lessons taught you the pieces.
+    This lesson makes you run the whole machine once, from scratch.
+  </p>
+
+  <p>
+    You built habit tracker slice by slice across Lessons 5–7, then layered
+    rules, hooks, skills, automations, cloud verify, and Bugbot on top. That
+    was the right way to <em>learn</em> each tool. The mission's first success
+    criterion is different: <strong>start a new idea and reach a working first
+    version in one focused session</strong>. This capstone is that session.
+    Keep the
+    <a href="../reference/fresh-app-workflow.html">Fresh App Workflow reference</a>
+    open — it is your checklist.
+  </p>
+
+  <div class="callout">
+    <strong>Not another habit tracker.</strong><br>
+    Pick a small new idea. Copy <em>patterns</em> from habit tracker (TypeScript,
+  Drizzle, verify loop), not the repo itself. The win is proving the workflow
+    transfers.
+  </div>
+
+  <h2>What "working first version" means</h2>
+
+  <p>
+    Borrowing from
+    <a href="0007-ship-a-minimal-ui.html">Lesson 7</a>: one core user action
+    works end-to-end in a browser (or CLI if the app is CLI-only). Tests or a
+    verify command pass. You can demo it to someone in under a minute. Everything
+    else — auth, polish, deploy, hooks, automations — is <em>after</em> the
+    capstone.
+  </p>
+
+  <table>
+    <thead>
+      <tr><th>In scope</th><th>Out of scope (add later)</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Plan → scaffold → core API/data → minimal UI → verify</td>
+        <td>Production deploy, OAuth, mobile apps</td>
+      </tr>
+      <tr>
+        <td>Project rules in <code>.cursor/rules/</code></td>
+        <td>Hooks, skills, automations (you know how — skip for speed)</td>
+      </tr>
+      <tr>
+        <td>Local <code>/review-bugbot</code> before push</td>
+        <td>Cloud environment.json (unless you want cloud agents day one)</td>
+      </tr>
+      <tr>
+        <td>Optional: <code>BUGBOT.md</code> with one rule</td>
+        <td>Full design system, e2e suite (one smoke test is enough)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>The six phases</h2>
+
+  <h3>Phase 1 — Spark (5 min)</h3>
+
+  <p>
+    Write one sentence: <em>who</em> uses it, <em>what problem</em>, <em>one core
+    action</em>. Then cut until it fits ~2 hours.
+  </p>
+
+  <pre class="example">Bad:  "A social network for pet owners with messaging and maps."
+Good: "I log one mood per day and see a seven-day streak in the browser."</pre>
+
+  <p>
+    Starter ideas if you are stuck: daily mood log, bookmark saver, simple
+    expense tracker, pomodoro timer with history, recipe box with search.
+  </p>
+
+  <h3>Phase 2 — Plan (20–30 min)</h3>
+
+  <p>
+    Open a <strong>new empty folder</strong>. Switch to
+    <a href="0006-plan-mode-for-bigger-slices.html">Plan Mode</a>. Lock
+    <strong>Opus or GPT-5.x</strong> — not Auto
+    (<a href="../reference/plan-mode.html">Plan Mode reference</a>).
+  </p>
+
+  <pre class="example">Plan a [your one-sentence app].
+
+Constraints:
+- Solo builder, single session (~2 hours build time after plan)
+- Stack: TypeScript, [pick: Express + Drizzle + SQLite | Next.js app router | your choice]
+- First slice: one core CRUD or action + minimal UI to demo it
+- Include: folder layout, verify command (npm test or npm run verify), what "done" means
+
+Ask me questions before you finalize the plan.</pre>
+
+  <p>
+    Read the plan like a PR description. Push back on scope creep. Click
+    <strong>Build</strong> only when the verify command and first slice are
+    explicit. Check the model dropdown — it may reset to Auto after Build.
+  </p>
+
+  <h3>Phase 3 — Bootstrap (15–20 min)</h3>
+
+  <p>
+    First build pass should produce:
+  </p>
+
+  <ul>
+    <li>Git init + <code>.gitignore</code></li>
+    <li><code>.cursor/rules/</code> — stack, test command, "read diffs" reminder
+      (<a href="0003-set-up-project-rules.html">Lesson 3</a>)</li>
+    <li>Scaffold matching the plan</li>
+    <li>Initial commit</li>
+  </ul>
+
+  <p>
+    Reuse your habit tracker rule <em>structure</em> if helpful — you are not
+    cloning the repo, just the pattern of what belongs in rules.
+  </p>
+
+  <h3>Phase 4 — Build + verify (45–60 min)</h3>
+
+  <p>
+    Implement the plan's first slice one step at a time. After each meaningful
+    change, run the
+    <a href="0004-verify-and-iterate.html">verify loop</a>:
+  </p>
+
+  <ol>
+    <li>Run tests / verify command</li>
+    <li>Read the diff — does it match intent?</li>
+    <li>Fix failures before asking for the next feature</li>
+  </ol>
+
+  <p>
+    Use <code>@</code> mentions to point Agent at the right files
+    (<a href="0005-point-agent-at-context.html">Lesson 5</a>). Tab and Inline
+    Edit for typos — Agent for multi-file work
+    (<a href="0001-choose-the-right-surface.html">Lesson 1</a>).
+  </p>
+
+  <h3>Phase 5 — Ship the slice (30–45 min)</h3>
+
+  <p>
+    Add the thinnest UI that proves the core action works — same bar as
+    <a href="0007-ship-a-minimal-ui.html">Lesson 7</a>. Open the app in the
+    browser. Click through the happy path yourself.
+  </p>
+
+  <p>
+    Optional: if Playwright MCP is installed, ask Agent to smoke-test the happy
+    path (<a href="0010-integrate-mcp-into-a-project.html">Lesson 10</a>). Do
+    not let e2e setup eat the session — manual click-through counts.
+  </p>
+
+  <h3>Phase 6 — Review + push (10–15 min)</h3>
+
+  <p>
+    Run <code>/review-bugbot</code> on branch changes
+    (<a href="0015-pr-review-agents.html">Lesson 15</a>). Fix valid findings.
+    Optional: add <code>.cursor/BUGBOT.md</code> with one repo-specific rule.
+    Push to GitHub. Open a PR if you want remote Bugbot — you already know the
+    patch-ID sync trick from lesson 15.
+  </p>
+
+  <h2>When you get stuck</h2>
+
+  <table>
+    <thead>
+      <tr><th>Symptom</th><th>Reach for</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Agent keeps breaking unrelated files</td>
+        <td>Narrower prompt + <code>@</code> specific files; smaller slice</td>
+      </tr>
+      <tr>
+        <td>Tests fail and Agent loops</td>
+        <td>Paste error output; say "fix only X, do not refactor"</td>
+      </tr>
+      <tr>
+        <td>Scope ballooning</td>
+        <td>Re-read Phase 1 sentence; defer everything not in it</td>
+      </tr>
+      <tr>
+        <td>Plan Mode wants too much</td>
+        <td>"Remove Y and Z from v1 — only ship [core action]"</td>
+      </tr>
+      <tr>
+        <td>2 hours gone, no UI</td>
+        <td>Skip polish; ship read-only list + one write action</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Check your understanding</h2>
+
+  <div class="quiz" id="quiz1"
+       data-messages='{"true":"Correct. Plan Mode with a frontier model comes first.","false":"Bootstrap and build come after an approved plan."}'>
+    <h3>1. First Cursor surface for a brand-new app?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Open Plan Mode and lock Opus before writing code.</button>
+      <button data-correct="false">Open Agent on Auto and scaffold the full repo first.</button>
+      <button data-correct="false">Open Inline Edit and start typing components now.</button>
+    </div>
+    <div class="feedback" id="quiz1-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz2"
+       data-messages='{"true":"Correct. Rules go in during bootstrap, before feature work.","false":"Rules belong in bootstrap, not after the capstone ships."}'>
+    <h3>2. When do you add project rules?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Add project rules during bootstrap right after scaffold.</button>
+      <button data-correct="false">Add project rules only after capstone session fully ends.</button>
+      <button data-correct="false">Add project rules never because rules slow agents down.</button>
+    </div>
+    <div class="feedback" id="quiz2-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz3"
+       data-messages='{"true":"Correct. One core action working end-to-end is the bar.","false":"Working v1 is one action end-to-end, not production deploy."}'>
+    <h3>3. What defines done for this capstone?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">One core user action works end-to-end with tests green.</button>
+      <button data-correct="false">Production deploy with OAuth and full test coverage done.</button>
+      <button data-correct="false">Hooks skills automations and cloud verify all configured.</button>
+    </div>
+    <div class="feedback" id="quiz3-feedback"></div>
+  </div>
+
+  <h2>Do this now</h2>
+
+  <div class="practice">
+    <p><strong>Run the full workflow on a new app idea</strong></p>
+    <ol>
+      <li><strong>Spark</strong> — write your one-sentence pitch. Reply to your agent teacher with it if you want a scope check.</li>
+      <li><strong>Plan</strong> — new folder, Plan Mode, frontier model locked. Approve plan with explicit verify command.</li>
+      <li><strong>Bootstrap</strong> — scaffold + <code>.cursor/rules/</code> + initial commit.</li>
+      <li><strong>Build + verify</strong> — first slice only. Green tests before UI.</li>
+      <li><strong>Ship slice</strong> — minimal UI, manual happy-path demo.</li>
+      <li><strong>Review</strong> — <code>/review-bugbot</code>, fix findings, push (PR optional).</li>
+    </ol>
+    <p>
+      You are done when you can demo the core action in a browser, tests pass,
+      rules are committed, and you ran local Bugbot review. Tell your agent
+      teacher the repo URL and what you would add in session two.
+    </p>
+  </div>
+
+  <p class="source">
+    Primary source:
+    <a href="https://cursor.com/docs/get-started/quickstart">Cursor Quickstart</a>
+    — official orientation for explain → change → review → Plan Mode; this lesson
+    sequences those steps into a solo capstone.
+  </p>
+
+  <footer>
+    <p>Stuck on anything? Ask your agent teacher — paste your one-sentence pitch, plan, or verify errors.</p>
+    <p style="margin-top: 0.75rem;">
+      Previous: <a href="0015-pr-review-agents.html">Lesson 15 — PR Review Agents</a> ·
+      Reference: <a href="../reference/fresh-app-workflow.html">Fresh App Workflow</a> ·
+      <a href="../reference/cursor-surfaces.html">Cursor Surfaces</a> ·
+      <a href="../reference/verify-loop.html">Verify Loop</a> ·
+      Mission: <a href="../MISSION.md">MISSION.md</a>
+    </p>
+  </footer>
+
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>

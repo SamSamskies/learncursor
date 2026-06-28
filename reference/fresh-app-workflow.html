@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fresh App Workflow — Quick Reference</title>
+  <style>
+    :root {
+      --text: #1a1a1a;
+      --muted: #555;
+      --accent: #2563eb;
+      --border: #ddd;
+      --bg: #fafafa;
+      --card: #fff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Palatino Linotype", Palatino, Georgia, serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.55;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+    h1 {
+      font-weight: 400;
+      font-size: 1.75rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+    h2 {
+      font-size: 0.75rem;
+      font-family: system-ui, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin: 2rem 0 0.75rem;
+      font-weight: 600;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      font-family: system-ui, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: #f5f5f5;
+    }
+    tr:last-child td { border-bottom: none; }
+    ol {
+      padding-left: 1.25rem;
+      font-size: 0.95rem;
+    }
+    ol li { margin-bottom: 0.45rem; }
+    code {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.85em;
+      background: #eee;
+      padding: 0.1em 0.35em;
+      border-radius: 3px;
+    }
+    .flow {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1.25rem 1.35rem;
+      margin: 1rem 0;
+      font-size: 0.95rem;
+    }
+    .flow strong {
+      font-family: system-ui, sans-serif;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+    }
+    .flow ol { margin-top: 0.5rem; }
+    footer {
+      margin-top: 2.5rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--accent); }
+    @media print {
+      body { background: white; padding: 0; }
+      .flow, table { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Fresh App Workflow</h1>
+  <p class="subtitle">One focused session — idea to working first version</p>
+
+  <h2>Time budget</h2>
+  <table>
+    <thead>
+      <tr><th>Phase</th><th>Minutes</th><th>Surface</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Spark + Plan</td><td>20–30</td><td>Plan Mode · Opus or GPT-5.x</td></tr>
+      <tr><td>Bootstrap</td><td>15–20</td><td>Agent · Composer or Auto</td></tr>
+      <tr><td>Build core slice</td><td>45–60</td><td>Agent · Composer or Auto</td></tr>
+      <tr><td>Verify loop</td><td>15–20</td><td>Agent + terminal</td></tr>
+      <tr><td>Minimal UI</td><td>30–45</td><td>Plan or Agent</td></tr>
+      <tr><td>Pre-push review</td><td>10–15</td><td><code>/review-bugbot</code></td></tr>
+    </tbody>
+  </table>
+
+  <h2>Session flow</h2>
+
+  <div class="flow">
+    <strong>1 — Spark</strong>
+    <ol>
+      <li>One sentence: who uses it, what problem, one core action.</li>
+      <li>Cut scope until buildable in ~2 hours.</li>
+    </ol>
+  </div>
+
+  <div class="flow">
+    <strong>2 — Plan</strong>
+    <ol>
+      <li>Plan Mode · lock frontier model (not Auto).</li>
+      <li>Answer agent questions · approve plan before Build.</li>
+      <li>Plan must name: stack, folder layout, first slice, verify command.</li>
+    </ol>
+  </div>
+
+  <div class="flow">
+    <strong>3 — Bootstrap</strong>
+    <ol>
+      <li>New repo · <code>.cursor/rules/</code> with stack + verify expectations.</li>
+      <li>Scaffold from plan · initial commit.</li>
+    </ol>
+  </div>
+
+  <div class="flow">
+    <strong>4 — Build + verify</strong>
+    <ol>
+      <li>One feature slice at a time · <code>@</code> files for context.</li>
+      <li>After each slice: run tests · read diff · fix before next slice.</li>
+    </ol>
+  </div>
+
+  <div class="flow">
+    <strong>5 — Ship slice</strong>
+    <ol>
+      <li>Minimal UI in browser · one happy path end-to-end.</li>
+      <li>Smoke test manually or with Playwright MCP.</li>
+    </ol>
+  </div>
+
+  <div class="flow">
+    <strong>6 — Review + push</strong>
+    <ol>
+      <li><code>/review-bugbot</code> on branch changes · fix findings.</li>
+      <li>Optional: <code>.cursor/BUGBOT.md</code> · push · open PR.</li>
+    </ol>
+  </div>
+
+  <h2>Done when</h2>
+  <table>
+    <thead>
+      <tr><th>Check</th><th>Pass?</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>App runs locally without hand-fixing files</td><td></td></tr>
+      <tr><td>One core user action works in the browser or CLI</td><td></td></tr>
+      <tr><td>Tests or verify command green</td><td></td></tr>
+      <tr><td>Project rules committed</td><td></td></tr>
+      <tr><td>Local Bugbot review run (or no diff to review)</td><td></td></tr>
+    </tbody>
+  </table>
+
+  <h2>Add later (not capstone)</h2>
+  <table>
+    <thead>
+      <tr><th>Layer</th><th>When</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Hooks</td><td>Repeating shell mistakes or audit needs</td></tr>
+      <tr><td>Skills</td><td>Ship checklist you run every release</td></tr>
+      <tr><td>Automations</td><td>Weekly verify or PR triage</td></tr>
+      <tr><td>Cloud environment</td><td>Cloud agents need reproducible installs</td></tr>
+      <tr><td>DB MCP</td><td>Inspecting live data during agent sessions</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Model picks (Pro)</h2>
+  <table>
+    <thead>
+      <tr><th>Phase</th><th>Model</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Plan</td><td>Opus or GPT-5.x — locked</td></tr>
+      <tr><td>Build</td><td>Composer 2.5 or Auto</td></tr>
+      <tr><td>Small fixes</td><td>Inline Edit (Cmd+K)</td></tr>
+    </tbody>
+  </table>
+
+  <footer>
+  <p>
+    Lessons:
+    <a href="../lessons/0006-plan-mode-for-bigger-slices.html">Plan Mode</a> ·
+    <a href="../lessons/0004-verify-and-iterate.html">Verify Loop</a> ·
+    <a href="../lessons/0016-capstone-fresh-app-workflow.html">Capstone</a>
+  </p>
+  </footer>
+</body>
+</html>
