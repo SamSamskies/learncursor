@@ -134,11 +134,25 @@
   <div class="flow">
     Trigger / prompt → VM boot → install (<code>npm install</code>) → agent loop → PR / comment / summary
   </div>
+
+  <h3>What the run log shows</h3>
+  <table>
+    <thead>
+      <tr><th>Visible on PASS</th><th>Meaning</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Environment ready</strong></td><td>Boot + install succeeded (collapsed when cached)</td></tr>
+      <tr><td>Results table</td><td>Commands run, summarized — not full stdout</td></tr>
+      <tr><td>Skill path in transcript</td><td>Committed skill was discovered</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Where to dig deeper</h3>
   <ul>
-    <li>Hover repo name on run page → which environment was used</li>
-    <li>Status: running, waiting for you, done, failed</li>
-    <li>Intervene: add follow-up message or take remote desktop control</li>
-    <li>Handoff: move cloud ↔ local in Agents Window</li>
+    <li>Environment name — hover repo link on run page, or Dashboard → Environments</li>
+    <li>Install script — on environment config page, not every run log</li>
+    <li>Raw shell — expand Environment ready; failures show more than passes</li>
+    <li>Intervene: follow-up message or remote desktop control</li>
   </ul>
 
   <h2>Development environment</h2>

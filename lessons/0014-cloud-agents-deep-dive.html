@@ -293,16 +293,71 @@
   <h2>Reading a run log</h2>
 
   <p>
-    When your weekly automation completes (or fails), open the run in
-    cursor.com/agents or the Agents Window. Read top to bottom:
+    Automation runs show a <strong>summary transcript</strong>, not a raw terminal
+    dump. On a successful verify like yours, Cursor collapses the boring parts
+    and highlights the outcome. Here is what each visible piece means:
   </p>
 
-  <ol>
-    <li><strong>Environment</strong> — which snapshot or config; any warning banner?</li>
-    <li><strong>Install step</strong> — did dependency setup finish?</li>
-    <li><strong>Agent transcript</strong> — which commands ran; did it find your skill?</li>
-    <li><strong>Outcome</strong> — pass/fail summary, PR link, or error</li>
-  </ol>
+  <table>
+    <thead>
+      <tr><th>What you see</th><th>What it means</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Environment ready</strong> (+ duration)</td>
+        <td>VM boot + install finished successfully. When install is cached or fast, there is no separate <code>npm install</code> line — this status <em>is</em> the install result.</td>
+      </tr>
+      <tr>
+        <td>Prompt box at top</td>
+        <td>Your automation instructions — confirms the agent received them</td>
+      </tr>
+      <tr>
+        <td>Skill path mentioned</td>
+        <td>Agent found your committed skill (same as local auto-discovery)</td>
+      </tr>
+      <tr>
+        <td>Results table (<code>npm test</code>, e2e)</td>
+        <td>Commands the agent ran, summarized as pass/fail — not full stdout</td>
+      </tr>
+      <tr>
+        <td>Worked for Ns</td>
+        <td>Agent loop time after environment was ready</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Where the "hidden" details live</h3>
+
+  <table>
+    <thead>
+      <tr><th>Detail</th><th>Where to find it</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Environment name</strong></td>
+        <td>Hover <code>SamSamskies/habit-tracker</code> (repo name, top-right of run page) — tooltip shows environment. Or: Dashboard → Cloud Agents → Environments → find the repo-linked config.</td>
+      </tr>
+      <tr>
+        <td><strong>Install command + script</strong></td>
+        <td>On the environment config page — not repeated in every run log when install succeeds</td>
+      </tr>
+      <tr>
+        <td><strong>Raw shell output</strong></td>
+        <td>Click to expand <strong>Environment ready</strong> if expandable; on clean PASS runs the UI often skips verbose tool traces. Failures show more detail.</td>
+      </tr>
+      <tr>
+        <td><strong>Warnings</strong></td>
+        <td>Yellow banner on run page — snapshot expired, fallback image, etc.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>Success runs are summarized; failure runs are verbose.</strong><br>
+    Your screenshot is a textbook PASS: Environment ready → skill loaded →
+    15/15 unit + 3/3 e2e → no PR. You do not need to see every shell line to
+    trust the result — the table and breakdown are the audit trail.
+  </div>
 
   <p>
     Common failures for verify automations:
@@ -379,12 +434,12 @@
     <p><strong>Inspect and improve your habit tracker cloud setup</strong></p>
     <ol>
       <li><strong>Open the control plane</strong> — go to <a href="https://cursor.com/agents">cursor.com/agents</a> or the Agents Window. Find your weekly verify automation's latest run (or trigger a manual run from the automation editor).</li>
-      <li><strong>Read the run log</strong> — note environment name, install step result, commands the agent ran, and pass/fail outcome. Paste anything unclear to your agent teacher.</li>
+      <li><strong>Read the run log</strong> — on a PASS run look for: <strong>Environment ready</strong> (install succeeded), skill reference in the prompt, results table (<code>npm test</code> / e2e counts), and final outcome. Environment <em>name</em> is on hover of the repo link (top-right) or in Dashboard → Environments — not always inline in the transcript.</li>
       <li><strong>Check the environment</strong> — Cloud Agents dashboard → Environments. Does your habit tracker repo have one? If not, start agent-driven setup or add <code>.cursor/environment.json</code> with <code>"install": "npm install"</code> (plus Playwright browser install if e2e needs it).</li>
       <li><strong>Add cloud hints</strong> — in your habit tracker repo, add a <code>## Cursor Cloud specific instructions</code> section to AGENTS.md: how to run tests headless, any secrets the cloud VM needs from the dashboard.</li>
       <li><strong>Re-run</strong> — trigger the automation manually or kick off a one-off cloud agent: "Follow habit-tracker-ship. Run npm test and npm run test:e2e. Report pass or fail. Do not open a PR."</li>
     </ol>
-    <p>You are done when you can explain what happened in a cloud run (environment → install → tests → outcome) and your verify passes or you know exactly why it failed.</p>
+    <p>You are done when you can read a PASS or FAIL run: what Environment ready means, what the results table proves, and where to find environment config in the dashboard if something breaks.</p>
   </div>
 
   <p class="source">
