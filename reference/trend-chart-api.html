@@ -120,7 +120,7 @@
     Exact string match on <code>markers.name</code>. A marker is <strong>trendable</strong> when the same name appears in ≥2 panels with numeric values.
   </p>
 
-  <h2>Suggested routes</h2>
+  <h2>Routes (shipped)</h2>
   <table>
     <thead>
       <tr><th>Method</th><th>Path</th><th>Returns</th></tr>
@@ -128,6 +128,8 @@
     <tbody>
       <tr><td>GET</td><td><code>/api/trends/markers</code></td><td>Names trendable across panels</td></tr>
       <tr><td>GET</td><td><code>/api/trends?marker=Hemoglobin</code></td><td>Time series for one marker</td></tr>
+      <tr><td>GET</td><td><code>/api/trends/insights?marker=…</code></td><td>Cached insight markdown (fingerprint-validated)</td></tr>
+      <tr><td>POST</td><td><code>/api/trends/insights</code></td><td>Stream NDJSON tokens from Ollama; persist on complete</td></tr>
     </tbody>
   </table>
 
@@ -156,18 +158,27 @@
 // Group names with COUNT(DISTINCT panel_id) >= 2
 // for the markers list endpoint.</pre>
 
-  <h2>UI minimum</h2>
+  <h2>UI (shipped)</h2>
   <table>
     <thead>
       <tr><th>Element</th><th>Notes</th></tr>
     </thead>
     <tbody>
-      <tr><td>Marker dropdown</td><td>From <code>/api/trends/markers</code>; empty state if &lt;2 panels</td></tr>
-      <tr><td>Line chart</td><td>X = date, Y = value; label with unit</td></tr>
-      <tr><td>Reference band</td><td>Shaded <code>refLow</code>–<code>refHigh</code> from latest point (optional v1)</td></tr>
-      <tr><td>Placement</td><td>New <code>Trends</code> section in main area or tab beside panel view</td></tr>
+      <tr><td>Panel / Trends tabs</td><td>Trends tab loads marker list on switch</td></tr>
+      <tr><td>Marker dropdown</td><td>From <code>/api/trends/markers</code>; shows count e.g. <code>Creatinine (2)</code></td></tr>
+      <tr><td>Line chart</td><td>Recharts; X = date, Y = value; flag-colored points</td></tr>
+      <tr><td>Reference band</td><td>Shaded <code>refLow</code>–<code>refHigh</code> from latest point</td></tr>
+      <tr><td>Trend insights</td><td>GET cached on marker select; <strong>Refresh insights</strong> POST streams markdown via <code>react-markdown</code></td></tr>
     </tbody>
   </table>
+
+  <h2>Insights cache</h2>
+  <pre>fingerprint = hash(marker + sorted points)
+Store in trend_insights table.
+Invalidate when fingerprint changes (new panel, edited value).</pre>
+  <p style="font-size: 0.92rem; margin-bottom: 0.75rem;">
+    Ollama uses <code>chatStreaming</code> for markdown prose (not JSON). Prompt should stay non-diagnostic — describe direction and reference range, not medical advice.
+  </p>
 
   <h2>Out of scope (v1)</h2>
   <table>

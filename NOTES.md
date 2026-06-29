@@ -36,8 +36,9 @@
 - **Lesson 14 complete:** Cloud agents deep dive — environment.json, AGENTS.md cloud section, snapshot environment on habit tracker
 - **Lesson 15 complete:** `/review-bugbot` local on habit tracker; Bugbot enabled in dashboard; [PR #1](https://github.com/SamSamskies/habit-tracker/pull/1) reviewed and merged; `.cursor/BUGBOT.md` added
 - **Lesson 16 complete:** Capstone — [LocalLab](https://github.com/SamSamskies/locallab): privacy-first blood work analyzer; local Ollama extraction; TypeScript + Express + Drizzle + Vite; `.cursor/rules/` committed; `npm run verify` green; v1 = text PDF upload + structured markers + insights UI (trends/OCR/editing deferred)
-- **Lesson 17 (current):** LocalLab session two — trend charts (marker time series across panels)
-- **After lesson 17:** marker name normalization, OCR, or layer hooks/skills on LocalLab
+- **Lesson 17 complete:** LocalLab session two — trend charts + trend insights (Ollama streaming, SQLite cache); [PR #3](https://github.com/SamSamskies/locallab/pull/3) merged; Bugbot reviewed
+- **Curriculum paused** (user, Jun 2026) — lesson 18 (DB MCP) drafted then scrapped; user will reach out when ready for more
+- **Backlog when resuming:** DB MCP, marker normalization (exact match fine for now), OCR, habit-tracker config stack on LocalLab
 
 ## Model selection for Plan Mode
 
