@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Session Two Slice — Quick Reference</title>
+  <style>
+    :root {
+      --text: #1a1a1a;
+      --muted: #555;
+      --accent: #2563eb;
+      --border: #ddd;
+      --bg: #fafafa;
+      --card: #fff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Palatino Linotype", Palatino, Georgia, serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.55;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+    h1 {
+      font-weight: 400;
+      font-size: 1.75rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+    h2 {
+      font-size: 0.75rem;
+      font-family: system-ui, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin: 2rem 0 0.75rem;
+      font-weight: 600;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      font-family: system-ui, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: #f5f5f5;
+    }
+    tr:last-child td { border-bottom: none; }
+    code {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.85em;
+      background: #eee;
+      padding: 0.1em 0.35em;
+      border-radius: 3px;
+    }
+    pre {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.8rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1rem;
+      overflow-x: auto;
+      margin: 0.75rem 0;
+    }
+    footer {
+      margin-top: 2.5rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--accent); }
+    @media print {
+      body { background: white; padding: 0; }
+      table, pre { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Session Two Slice</h1>
+  <p class="subtitle">One feature on an existing app — backend first, then UI</p>
+
+  <h2>Capstone vs session two</h2>
+  <table>
+    <thead>
+      <tr><th>Capstone (Lesson 16)</th><th>Session two</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>New repo, full scaffold</td><td>Existing repo, one vertical slice</td></tr>
+      <tr><td>Plan everything</td><td>Plan one feature with explicit API + UI contract</td></tr>
+      <tr><td>Core action only</td><td>Extends data the user already has</td></tr>
+      <tr><td>~2–3 hours</td><td>~1–2 hours for a tight slice</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Slice template</h2>
+  <pre>One sentence: [user] can [action] using [existing data].
+
+In scope:  API route + Zod schema + test + minimal UI
+Out of scope: auth, polish, unrelated refactors</pre>
+
+  <h2>Build order</h2>
+  <table>
+    <thead>
+      <tr><th>Step</th><th>Why</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1. Shared types + route</td><td>Contract both sides agree on</td></tr>
+      <tr><td>2. Query / service + unit test</td><td>Verify loop before React</td></tr>
+      <tr><td>3. Wire route in <code>index.ts</code></td><td><code>curl</code> or test hits real HTTP</td></tr>
+      <tr><td>4. <code>api.ts</code> client</td><td>Frontend fetch matches schema</td></tr>
+      <tr><td>5. UI component</td><td>Thinnest surface that proves the slice</td></tr>
+      <tr><td>6. <code>npm run verify</code></td><td>Green before demo</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Cursor surfaces</h2>
+  <table>
+    <thead>
+      <tr><th>Task</th><th>Surface</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Slice touches 3+ files</td><td>Plan Mode → Build</td></tr>
+      <tr><td>One route mirroring existing pattern</td><td>Agent + <code>@server/routes/panels.ts</code></td></tr>
+      <tr><td>Chart color / label tweak</td><td>Inline Edit</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Done when</h2>
+  <table>
+    <thead>
+      <tr><th>Check</th><th>Pass?</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>New API tested (unit or integration)</td><td></td></tr>
+      <tr><td><code>npm run verify</code> green</td><td></td></tr>
+      <tr><td>Happy path demoable in browser</td><td></td></tr>
+      <tr><td>Diff scoped to the slice — no drive-by refactors</td><td></td></tr>
+    </tbody>
+  </table>
+
+  <footer>
+    <p>
+      Lessons:
+      <a href="../lessons/0017-locallab-trend-charts.html">Lesson 17 — Trend Charts</a> ·
+      <a href="../lessons/0016-capstone-fresh-app-workflow.html">Capstone</a> ·
+      <a href="verify-loop.html">Verify Loop</a>
+    </p>
+  </footer>
+</body>
+</html>

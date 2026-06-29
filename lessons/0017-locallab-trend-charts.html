@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 17 — LocalLab Trend Charts</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <div class="lesson-meta">Lesson 17 · ~1–2 hours · session two</div>
+  <h1>LocalLab: Trend Charts</h1>
+
+  <p class="epigraph">
+    Session one stored markers panel by panel.
+    Session two connects them across time.
+  </p>
+
+  <p>
+    In <a href="0016-capstone-fresh-app-workflow.html">Lesson 16</a> you shipped
+    <a href="https://github.com/SamSamskies/locallab">LocalLab</a> v1 — upload a PDF,
+    extract markers with Ollama, view a table and insights. Your README already defers
+    trend charts. This is that slice: pick a marker, see how its value changed across
+    panels you have uploaded.
+  </p>
+
+  <p>
+    This is a <strong>session two</strong> feature, not a new app. Keep the
+    <a href="../reference/session-two-slice.html">Session Two Slice reference</a>
+    and
+    <a href="../reference/trend-chart-api.html">Trend Chart API reference</a>
+    open while you work.
+  </p>
+
+  <div class="callout">
+    <strong>One-sentence slice</strong><br>
+    "I pick a marker name and see a line chart of its values over time across my uploaded panels."
+  </div>
+
+  <h2>What "done" means</h2>
+
+  <table>
+    <thead>
+      <tr><th>In scope</th><th>Out of scope</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>GET /api/trends/markers</code> — names with ≥2 data points</td>
+        <td>Fuzzy marker name matching ("Hgb" ↔ "Hemoglobin")</td>
+      </tr>
+      <tr>
+        <td><code>GET /api/trends?marker=…</code> — dated points + unit</td>
+        <td>Editing markers or custom reference ranges</td>
+      </tr>
+      <tr>
+        <td>Unit test for the trends query</td>
+        <td>E2e tests (manual demo with 2 PDFs is enough)</td>
+      </tr>
+      <tr>
+        <td>Marker picker + line chart in the web UI</td>
+        <td>Multi-marker overlay, export, print styles</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Phase 1 — Open the repo (5 min)</h2>
+
+  <p>
+    Clone or open LocalLab in Cursor. Run <code>npm install</code>,
+    <code>npm run db:push</code>, <code>npm run dev</code>. Confirm v1 still works —
+    upload a panel, see the marker table. You are extending a live app, not starting
+    over.
+  </p>
+
+  <h2>Phase 2 — Plan the slice (15–20 min)</h2>
+
+  <p>
+    Switch to <a href="0006-plan-mode-for-bigger-slices.html">Plan Mode</a>.
+    Lock <strong>Opus or GPT-5.x</strong> — this slice touches API, shared schema,
+    tests, and React
+    (<a href="../reference/plan-mode.html">Plan Mode reference</a>).
+  </p>
+
+  <pre class="example">Add trend charts to LocalLab.
+
+Slice: user picks a marker and sees a line chart of values over time across uploaded panels.
+
+Constraints:
+- Backend first: GET /api/trends/markers and GET /api/trends?marker=NAME
+- Use collectedAt on panel, fallback to createdAt for x-axis
+- Exact marker name match only (no fuzzy matching in v1)
+- Add Zod schemas in server/shared/schema.ts
+- Unit test with seeded in-memory or test DB data
+- Frontend: marker dropdown + line chart (Recharts is fine)
+- npm run verify must pass
+- Do not refactor unrelated files
+
+@server/db/schema.ts @server/routes/panels.ts @server/shared/schema.ts @web/src/App.tsx
+
+Ask questions before finalizing. Name the verify command and "done" criteria.</pre>
+
+  <p>
+    Push back if the plan adds auth, migrations, or a chart library you did not ask
+    for. Approve only when routes, response shapes, and test strategy are explicit.
+  </p>
+
+  <h2>Phase 3 — Backend + verify (30–40 min)</h2>
+
+  <p>
+    Build in order from the
+    <a href="../reference/session-two-slice.html">session two reference</a>:
+  </p>
+
+  <ol>
+    <li>Shared Zod types for trend responses</li>
+    <li><code>server/routes/trends.ts</code> (or extend panels router — follow plan)</li>
+    <li>Drizzle join: <code>markers</code> → <code>panels</code>, filter null values</li>
+    <li>Unit test — two panels, same marker name, assert sorted points</li>
+    <li>Wire route in <code>server/index.ts</code></li>
+    <li>Run <code>npm run verify</code> — green before touching React</li>
+  </ol>
+
+  <p>
+    Use the
+    <a href="0004-verify-and-iterate.html">verify loop</a> after each step.
+    Point Agent at existing patterns with <code>@</code> mentions
+    (<a href="0005-point-agent-at-context.html">Lesson 5</a>).
+  </p>
+
+  <h2>Phase 4 — Frontend (25–35 min)</h2>
+
+  <p>
+    Thinnest UI that proves the slice:
+  </p>
+
+  <ul>
+    <li><code>fetchTrendMarkers()</code> and <code>fetchTrend(marker)</code> in <code>web/src/api.ts</code></li>
+    <li><code>TrendsView</code> component — dropdown + line chart</li>
+    <li>Wire into <code>App.tsx</code> — a "Trends" tab or section beside panel detail</li>
+    <li>Empty states: no panels yet, or no marker appears in 2+ panels</li>
+  </ul>
+
+  <p>
+    Optional polish: shaded reference band using <code>refLow</code>/<code>refHigh</code>
+    from the latest point. Skip if it threatens the time budget.
+  </p>
+
+  <h2>Phase 5 — Demo (10 min)</h2>
+
+  <p>
+    Trends need <strong>two panels with the same marker name</strong>. Upload two
+    blood-work PDFs (or re-use ones you already have). Open Trends, pick a marker,
+    confirm the line moves across dates.
+  </p>
+
+  <p>
+    If LLM extracted different spellings for the same analyte, that is expected v1
+    pain — note it for a future "normalize marker names" slice, do not scope-creep
+    now.
+  </p>
+
+  <h2>Phase 6 — Review + push (10 min)</h2>
+
+  <p>
+    Run <code>/review-bugbot</code> on branch changes
+    (<a href="0015-pr-review-agents.html">Lesson 15</a>). Fix valid findings.
+    Commit with a message that names the slice. Push — open a PR if you want remote
+    Bugbot.
+  </p>
+
+  <h2>When you get stuck</h2>
+
+  <table>
+    <thead>
+      <tr><th>Symptom</th><th>Reach for</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Empty marker list despite 2 panels</td>
+        <td>Check exact <code>markers.name</code> strings in SQLite — names must match</td>
+      </tr>
+      <tr>
+        <td>Chart shows one point</td>
+        <td>Need ≥2 panels with same name and non-null <code>value</code></td>
+      </tr>
+      <tr>
+        <td>Agent refactors half the app</td>
+        <td>"Fix only trends route; do not touch upload flow"</td>
+      </tr>
+      <tr>
+        <td>Recharts types or sizing errors</td>
+        <td>Wrap chart in a div with explicit height; paste error to Agent</td>
+      </tr>
+      <tr>
+        <td>Test DB setup unclear</td>
+        <td>Mirror pattern from <code>server/extract.test.ts</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Check your understanding</h2>
+
+  <div class="quiz" id="quiz1"
+       data-messages='{"true":"Correct. Backend and tests come before the chart UI.","false":"UI first breaks the verify loop for API slices."}'>
+    <h3>1. Build order for this slice?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Build API route and tests before adding the chart UI.</button>
+      <button data-correct="false">Build chart UI first then add API routes to match it.</button>
+      <button data-correct="false">Build API and chart UI in parallel without any tests.</button>
+    </div>
+    <div class="feedback" id="quiz1-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz2"
+       data-messages='{"true":"Correct. Exact name match is the v1 scope boundary.","false":"Fuzzy matching is explicitly out of scope for v1."}'>
+    <h3>2. How are markers matched across panels?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Exact string match on marker name across two panels.</button>
+      <button data-correct="false">Fuzzy match that maps abbreviations to full names.</button>
+      <button data-correct="false">Category field only with no regard for marker name.</button>
+    </div>
+    <div class="feedback" id="quiz2-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz3"
+       data-messages='{"true":"Correct. collectedAt with createdAt fallback drives the x-axis.","false":"Use collectedAt first; createdAt is the fallback date."}'>
+    <h3>3. Which date goes on the chart x-axis?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Panel collectedAt date with createdAt as the fallback.</button>
+      <button data-correct="false">Marker created timestamp from when the row was inserted.</button>
+      <button data-correct="false">Upload timestamp only ignoring the lab collection date.</button>
+    </div>
+    <div class="feedback" id="quiz3-feedback"></div>
+  </div>
+
+  <h2>Do this now</h2>
+
+  <div class="practice">
+    <p><strong>Ship trend charts on LocalLab</strong></p>
+    <ol>
+      <li><strong>Open</strong> — clone LocalLab, confirm v1 runs.</li>
+      <li><strong>Plan</strong> — Plan Mode with the prompt above; approve API contract.</li>
+      <li><strong>Backend</strong> — routes + Zod + test; <code>npm run verify</code> green.</li>
+      <li><strong>Frontend</strong> — marker picker + line chart wired into App.</li>
+      <li><strong>Demo</strong> — two panels, same marker, line across dates.</li>
+      <li><strong>Review</strong> — <code>/review-bugbot</code>, commit, push.</li>
+    </ol>
+    <p>
+      Tell your agent teacher when done — share a screenshot or describe the chart,
+      and note any marker-naming quirks you hit with real PDFs.
+    </p>
+  </div>
+
+  <p class="source">
+    Primary source:
+    <a href="https://recharts.org/en-US/guide">Recharts — Getting Started</a>
+    — composable React charts; use for line chart + reference area once the API returns
+    dated points. API shape follows your existing Drizzle schema
+    (<a href="https://orm.drizzle.team/docs/joins">Drizzle joins</a>).
+  </p>
+
+  <footer>
+    <p>Stuck on anything? Ask your agent teacher — paste plan output, test failures, or chart errors.</p>
+    <p style="margin-top: 0.75rem;">
+      Previous: <a href="0016-capstone-fresh-app-workflow.html">Lesson 16 — Capstone</a> ·
+      Reference: <a href="../reference/trend-chart-api.html">Trend Chart API</a> ·
+      <a href="../reference/session-two-slice.html">Session Two Slice</a> ·
+      <a href="../reference/verify-loop.html">Verify Loop</a> ·
+      Repo: <a href="https://github.com/SamSamskies/locallab">LocalLab</a>
+    </p>
+  </footer>
+
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trend Chart API — Quick Reference</title>
+  <style>
+    :root {
+      --text: #1a1a1a;
+      --muted: #555;
+      --accent: #2563eb;
+      --border: #ddd;
+      --bg: #fafafa;
+      --card: #fff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Palatino Linotype", Palatino, Georgia, serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.55;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+    h1 {
+      font-weight: 400;
+      font-size: 1.75rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+    h2 {
+      font-size: 0.75rem;
+      font-family: system-ui, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin: 2rem 0 0.75rem;
+      font-weight: 600;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      font-family: system-ui, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: #f5f5f5;
+    }
+    tr:last-child td { border-bottom: none; }
+    code {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.85em;
+      background: #eee;
+      padding: 0.1em 0.35em;
+      border-radius: 3px;
+    }
+    pre {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.78rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1rem;
+      overflow-x: auto;
+      line-height: 1.5;
+      margin: 0.75rem 0;
+    }
+    footer {
+      margin-top: 2.5rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--accent); }
+    @media print {
+      body { background: white; padding: 0; }
+      table, pre { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Trend Chart API</h1>
+  <p class="subtitle">LocalLab — marker time series across panels</p>
+
+  <h2>Data model (existing)</h2>
+  <table>
+    <thead>
+      <tr><th>Table</th><th>Fields used for trends</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>panels</code></td><td><code>id</code>, <code>collected_at</code>, <code>created_at</code></td></tr>
+      <tr><td><code>markers</code></td><td><code>panel_id</code>, <code>name</code>, <code>value</code>, <code>unit</code>, <code>ref_low</code>, <code>ref_high</code></td></tr>
+    </tbody>
+  </table>
+
+  <h2>Date for x-axis</h2>
+  <pre>effectiveDate = panel.collectedAt ?? panel.createdAt</pre>
+  <p style="font-size: 0.92rem; margin-bottom: 1rem;">
+    Sort points ascending by <code>effectiveDate</code>. Skip markers where <code>value</code> is null.
+  </p>
+
+  <h2>Marker matching (v1)</h2>
+  <p style="font-size: 0.92rem; margin-bottom: 0.75rem;">
+    Exact string match on <code>markers.name</code>. A marker is <strong>trendable</strong> when the same name appears in ≥2 panels with numeric values.
+  </p>
+
+  <h2>Suggested routes</h2>
+  <table>
+    <thead>
+      <tr><th>Method</th><th>Path</th><th>Returns</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>GET</td><td><code>/api/trends/markers</code></td><td>Names trendable across panels</td></tr>
+      <tr><td>GET</td><td><code>/api/trends?marker=Hemoglobin</code></td><td>Time series for one marker</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Response shape</h2>
+  <pre>// GET /api/trends/markers
+["Hemoglobin", "Glucose", "TSH"]
+
+// GET /api/trends?marker=Hemoglobin
+{
+  "marker": "Hemoglobin",
+  "unit": "g/dL",
+  "points": [
+    {
+      "date": "2024-01-15",
+      "value": 14.2,
+      "panelId": 1,
+      "refLow": 12.0,
+      "refHigh": 16.0
+    }
+  ]
+}</pre>
+
+  <h2>Drizzle query sketch</h2>
+  <pre>// Join markers → panels, filter by name,
+// select value + effectiveDate + ref range.
+// Group names with COUNT(DISTINCT panel_id) >= 2
+// for the markers list endpoint.</pre>
+
+  <h2>UI minimum</h2>
+  <table>
+    <thead>
+      <tr><th>Element</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Marker dropdown</td><td>From <code>/api/trends/markers</code>; empty state if &lt;2 panels</td></tr>
+      <tr><td>Line chart</td><td>X = date, Y = value; label with unit</td></tr>
+      <tr><td>Reference band</td><td>Shaded <code>refLow</code>–<code>refHigh</code> from latest point (optional v1)</td></tr>
+      <tr><td>Placement</td><td>New <code>Trends</code> section in main area or tab beside panel view</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Out of scope (v1)</h2>
+  <table>
+    <thead>
+      <tr><th>Defer</th><th>Why</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Fuzzy name matching ("Hgb" vs "Hemoglobin")</td><td>LLM naming varies — hard problem</td></tr>
+      <tr><td>Per-user reference ranges</td><td>README already lists this</td></tr>
+      <tr><td>Multi-marker overlay chart</td><td>Different units — separate charts</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Demo data</h2>
+  <p style="font-size: 0.92rem;">
+    Upload two PDFs that share at least one marker name (e.g. CBC panels from different dates).
+    If names differ between extractions, re-upload or pick markers that matched exactly.
+  </p>
+
+  <footer>
+    <p>
+      Lesson: <a href="../lessons/0017-locallab-trend-charts.html">Lesson 17 — Trend Charts</a> ·
+      Repo: <a href="https://github.com/SamSamskies/locallab">LocalLab</a>
+    </p>
+  </footer>
+</body>
+</html>

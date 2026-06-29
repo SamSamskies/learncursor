@@ -35,8 +35,9 @@
 - **Full config stack:** rules + hooks + skills + automations all live on habit tracker
 - **Lesson 14 complete:** Cloud agents deep dive — environment.json, AGENTS.md cloud section, snapshot environment on habit tracker
 - **Lesson 15 complete:** `/review-bugbot` local on habit tracker; Bugbot enabled in dashboard; [PR #1](https://github.com/SamSamskies/habit-tracker/pull/1) reviewed and merged; `.cursor/BUGBOT.md` added
-- **Lesson 16 (current):** Capstone — fresh app in one focused session (idea → plan → bootstrap → build → verify → minimal UI → `/review-bugbot` → push)
-- **After capstone:** optional DB MCP; deepen habit tracker or new app session two
+- **Lesson 16 complete:** Capstone — [LocalLab](https://github.com/SamSamskies/locallab): privacy-first blood work analyzer; local Ollama extraction; TypeScript + Express + Drizzle + Vite; `.cursor/rules/` committed; `npm run verify` green; v1 = text PDF upload + structured markers + insights UI (trends/OCR/editing deferred)
+- **Lesson 17 (current):** LocalLab session two — trend charts (marker time series across panels)
+- **After lesson 17:** marker name normalization, OCR, or layer hooks/skills on LocalLab
 
 ## Model selection for Plan Mode
 
