@@ -20,6 +20,10 @@
   Cloud agents on triggers — cron, GitHub/GitLab PR events, Slack, webhooks, Linear, Sentry, PagerDuty. Use for: Lesson 13 scheduled verify and PR triage.
 - [Cloud Agents](https://cursor.com/docs/cloud-agent)
   Isolated VM agents — starting runs, Agents Window, capabilities, troubleshooting. Use for: Lesson 14 deep dive.
+- [Cursor for iOS](https://cursor.com/docs/cloud-agent/mobile)
+  Native iPhone app — cloud agents, Remote Control, PR review, Live Activities. Same backend as cursor.com/agents. Use for: Lesson 18 mobile control plane.
+- [Build from anywhere with Cursor for iOS](https://cursor.com/blog/ios-mobile-app)
+  Launch blog — voice input, Design Mode, Composer 2.5 mobile discount through July 5, 2026. Use for: Lesson 18 context and promo details.
 - [Cloud agent setup](https://cursor.com/docs/cloud-agent/setup)
   Dev environments — agent-driven setup, snapshots, `.cursor/environment.json`, secrets, install scripts. Use for: Lesson 14 environment configuration.
 - [Cloud agent capabilities](https://cursor.com/docs/cloud-agent/capabilities)

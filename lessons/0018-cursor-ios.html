@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 18 — Cursor for iOS</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <div class="lesson-meta">Lesson 18 · ~12 minutes</div>
+  <h1>Cursor for iOS</h1>
+
+  <p class="epigraph">
+    Your phone is not a tiny IDE. It is the control plane for agents that
+    already know how to build.
+  </p>
+
+  <p>
+    Cursor for iOS launched June 29, 2026 in public beta. If you completed
+    <a href="0014-cloud-agents-deep-dive.html">Lesson 14</a>, you already know
+    cloud agents: isolated VMs, Max Mode, PRs, the Agents Window. The iOS app
+    is the same backend — <a href="https://cursor.com/agents">cursor.com/agents</a>
+    in your pocket. Agents you start on your phone show up on desktop; agents
+    you start at your desk show up in the mobile inbox.
+  </p>
+
+  <p>
+    For your mission — solo app building without being chained to a desk — this
+    is the surface for <em>kick off, walk away, review, merge</em>. Keep the
+    <a href="../reference/cursor-ios.html">Cursor iOS reference</a> handy.
+  </p>
+
+  <h2>What it is (and is not)</h2>
+
+  <table>
+    <thead>
+      <tr><th>On your phone</th><th>Still on the web / desktop</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Start cloud agents on any repo + branch</td>
+        <td>Full editor, terminal, file browser</td>
+      </tr>
+      <tr>
+        <td>Watch live transcripts, send follow-ups</td>
+        <td>Configure secrets and cloud environments</td>
+      </tr>
+      <tr>
+        <td>Review diffs, merge PRs, Fix with Agent</td>
+        <td>Add or manage MCP servers (pick per run on mobile)</td>
+      </tr>
+      <tr>
+        <td>Voice input, slash commands, skills, Design Mode</td>
+        <td>Automations, rules, and skills <em>configuration</em></td>
+      </tr>
+      <tr>
+        <td>Push notifications + Live Activities (up to 8 agents)</td>
+        <td>Billing, usage, team admin</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Official docs:
+    <a href="https://cursor.com/docs/cloud-agent/mobile">Cursor for iOS</a>.
+    Requires a paid plan with cloud agents (Pro and above). iPhone, iOS 26+,
+    English. Android is planned.
+  </p>
+
+  <h2>Three ways to use it</h2>
+
+  <div class="steps">
+    <div class="step">
+      <strong>Cloud agent</strong>
+      <span>Pick a repo, choose <strong>Cloud</strong> as the worker, describe the task. The agent runs in Cursor's cloud VM — same as the web. Lock your phone; it keeps working.</span>
+    </div>
+    <div class="step">
+      <strong>Remote Control</strong>
+      <span>Start Agent on your Mac, run <code>/remote-control</code>, then continue from your phone. The agent loop moves to the cloud but terminal, edits, and tests run on your Mac. Your repo and secrets stay local.</span>
+    </div>
+    <div class="step">
+      <strong>Review only</strong>
+      <span>Open an existing agent or PR from the inbox. Read the diff, comment, squash-merge, or tap <strong>Fix with Agent</strong> on a failing check — no new task required.</span>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>Remote Control needs setup on desktop first.</strong><br>
+    Cursor 3.9.8+, enable under Agents Window → Settings → Agents. Your Mac
+    must stay awake and online. Git-backed workspace required. See
+    <a href="https://cursor.com/docs/cloud-agent/mobile#remote-control">Remote Control docs</a>.
+  </div>
+
+  <h2>Solo builder mobile workflows</h2>
+
+  <table>
+    <thead>
+      <tr><th>Situation</th><th>Reach for</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Idea on a walk — "add dark mode toggle"</td>
+        <td>Cloud agent on your app repo; check inbox later</td>
+      </tr>
+      <tr>
+        <td>Mid-session at desk, stepping away</td>
+        <td><code>/remote-control</code> on the open Agent chat</td>
+      </tr>
+      <tr>
+        <td>Weekly verify automation finished overnight</td>
+        <td>Inbox → read results table → merge or send follow-up</td>
+      </tr>
+      <tr>
+        <td>Teammate's PR needs a quick review</td>
+        <td>Diff + merge from phone; no agent needed</td>
+      </tr>
+      <tr>
+        <td>CI red on an agent's PR</td>
+        <td><strong>Fix with Agent</strong> hands the failure back</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Agents started on mobile are tagged <code>source: iosApp</code> so you can
+    tell where a run originated. Through July 5, 2026, Composer 2.5 runs are
+    75% off in the mobile app
+    (<a href="https://cursor.com/blog/ios-mobile-app">launch blog</a>).
+  </p>
+
+  <h2>First launch checklist</h2>
+
+  <ol>
+    <li>Install from the <a href="https://apps.apple.com/app/cursor/id6767085653">App Store</a></li>
+    <li>Sign in with your Cursor account (SSO if your org requires it)</li>
+    <li>Confirm GitHub/GitLab is connected — <a href="https://cursor.com/docs/integrations/github">dashboard</a> if not</li>
+    <li>Pick a repo you know well (your habit tracker or LocalLab)</li>
+    <li>Start a small cloud task: "Run tests and report pass/fail. Do not open a PR."</li>
+    <li>Lock the phone; wait for the push notification</li>
+  </ol>
+
+  <h2>Check your understanding</h2>
+
+  <div class="quiz" id="quiz1"
+       data-messages='{"true":"Correct. iOS is a mobile control plane for agents.","false":"The app directs agents — it is not a full IDE or admin console."}'>
+    <h3>1. What is Cursor iOS primarily?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">A control plane for directing agents from mobile.</button>
+      <button data-correct="false">A full IDE with terminal and editor panels.</button>
+      <button data-correct="false">An admin dashboard for billing and team settings.</button>
+    </div>
+    <div class="feedback" id="quiz1-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz2"
+       data-messages='{"true":"Correct. Cloud agents run on remote development machines.","false":"Cloud agents do not run on your phone or Mac unless you choose that worker."}'>
+    <h3>2. Where does a cloud agent started on iPhone run?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">The agent runs on a cloud development machine.</button>
+      <button data-correct="false">The agent runs inside your iPhone app sandbox.</button>
+      <button data-correct="false">The agent runs only on your local Mac machine.</button>
+    </div>
+    <div class="feedback" id="quiz2-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz3"
+       data-messages='{"true":"Correct. Secrets and MCP management stay on the web.","false":"Diff review and PR merge are core mobile workflows — they work in the app."}'>
+    <h3>3. What stays on the web, not in the app?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Secrets setup and MCP server management live on web.</button>
+      <button data-correct="false">Diff review and pull request merging live on web.</button>
+      <button data-correct="false">Voice input and slash command prompting live on web.</button>
+    </div>
+    <div class="feedback" id="quiz3-feedback"></div>
+  </div>
+
+  <h2>Do this now</h2>
+
+  <div class="practice">
+    <p><strong>One mobile agent, end to end</strong></p>
+    <ol>
+      <li><strong>Install</strong> — get Cursor from the App Store and sign in.</li>
+      <li><strong>Pick a repo</strong> — choose a project with cloud environment already set up (from Lesson 14).</li>
+      <li><strong>Start small</strong> — cloud worker, prompt: <code>Run the test suite. Report pass/fail counts only. Do not open a PR.</code></li>
+      <li><strong>Walk away</strong> — lock the phone. Confirm you get a notification when the turn finishes.</li>
+      <li><strong>Cross-check</strong> — open the same run at <a href="https://cursor.com/agents">cursor.com/agents</a> or the desktop Agents Window. Same transcript, same result.</li>
+    </ol>
+    <p>Optional stretch: at your desk, start an Agent on a real task, run <code>/remote-control</code>, then send one follow-up from your phone.</p>
+    <p>You are done when you have seen one agent start on mobile, finish while your phone was locked, and appear on desktop.</p>
+  </div>
+
+  <p class="source">
+    Primary source:
+    <a href="https://cursor.com/docs/cloud-agent/mobile">Cursor for iOS — official docs</a>
+    — capabilities, Remote Control, device handoff, and what stays on the web.
+  </p>
+
+  <footer>
+    <p>Stuck on anything? Ask your agent teacher — say whether you hit setup, Remote Control, or review/merge.</p>
+    <p style="margin-top: 0.75rem;">
+      Previous: <a href="0017-locallab-trend-charts.html">Lesson 17</a> ·
+      Related: <a href="0014-cloud-agents-deep-dive.html">Lesson 14 — Cloud Agents</a> ·
+      Reference: <a href="../reference/cursor-ios.html">Cursor iOS</a> ·
+      <a href="../reference/cloud-agents.html">Cloud Agents</a> ·
+      Mission: <a href="../MISSION.md">MISSION.md</a>
+    </p>
+  </footer>
+
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>

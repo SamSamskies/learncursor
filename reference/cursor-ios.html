@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cursor iOS — Quick Reference</title>
+  <style>
+    :root {
+      --text: #1a1a1a;
+      --muted: #555;
+      --accent: #2563eb;
+      --border: #ddd;
+      --bg: #fafafa;
+      --card: #fff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Palatino Linotype", Palatino, Georgia, serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.55;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+    h1 {
+      font-weight: 400;
+      font-size: 1.75rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+    h2 {
+      font-size: 0.75rem;
+      font-family: system-ui, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin: 2rem 0 0.75rem;
+      font-weight: 600;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      font-family: system-ui, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: #f5f5f5;
+    }
+    tr:last-child td { border-bottom: none; }
+    ul, ol { padding-left: 1.25rem; font-size: 0.95rem; }
+    li { margin-bottom: 0.45rem; }
+    code {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.85em;
+      background: #eee;
+      padding: 0.1em 0.35em;
+    }
+    .flow {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1rem 1.15rem;
+      font-size: 0.92rem;
+      margin-bottom: 1rem;
+    }
+    footer {
+      margin-top: 2.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--accent); }
+    @media print { body { background: white; } }
+  </style>
+</head>
+<body>
+  <h1>Cursor iOS</h1>
+  <p class="subtitle">Mobile control plane — same agents as web and desktop · public beta (June 2026)</p>
+
+  <h2>Requirements</h2>
+  <ul>
+    <li>iPhone, iOS 26.0+, English</li>
+    <li>Paid plan with cloud agents: Pro, Pro+, Ultra, Teams, Enterprise</li>
+    <li>GitHub/GitLab connected via dashboard</li>
+    <li><a href="https://apps.apple.com/app/cursor/id6767085653">App Store</a></li>
+  </ul>
+
+  <h2>Three mobile modes</h2>
+  <table>
+    <thead>
+      <tr><th>Mode</th><th>Worker</th><th>When</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Cloud agent</strong></td>
+        <td>Cloud VM (or Self-Hosted Pool)</td>
+        <td>Away from desk; long tasks; same as cursor.com/agents</td>
+      </tr>
+      <tr>
+        <td><strong>Remote Control</strong></td>
+        <td>Your Mac (tools local, loop in cloud)</td>
+        <td>Hand off an open desktop Agent session via <code>/remote-control</code></td>
+      </tr>
+      <tr>
+        <td><strong>My Machines</strong></td>
+        <td>Registered Mac</td>
+        <td>Start from phone; execution on your machine</td>
+      </tr>
+      <tr>
+        <td><strong>Review</strong></td>
+        <td>—</td>
+        <td>Read diffs, merge PRs, Fix with Agent on failing checks</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>On mobile vs web-only</h2>
+  <table>
+    <thead>
+      <tr><th>Mobile app</th><th>Web / desktop only</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Start agents, follow-ups, live stream</td><td>Editor, terminal, file tree</td></tr>
+      <tr><td>Diff review, merge, deployments</td><td>Secrets + environment config</td></tr>
+      <tr><td>Voice, slash commands, skills (use)</td><td>MCP server add/manage (pick per run on mobile)</td></tr>
+      <tr><td>Design Mode (annotate images)</td><td>Automations / rules / skills config</td></tr>
+      <tr><td>Push + Live Activities (8 agents)</td><td>Billing, admin, usage</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Device handoff</h2>
+  <div class="flow">
+    Mobile ↔ desktop ↔ web share one inbox. Agents started anywhere appear everywhere.
+    Mobile runs tagged <code>source: iosApp</code>.
+  </div>
+
+  <h2>Remote Control checklist</h2>
+  <ol>
+    <li>Cursor desktop <strong>3.9.8+</strong></li>
+    <li>Enable: Agents Window → Settings → Agents</li>
+    <li>Git remote on workspace; Mac awake + online</li>
+    <li>Run <code>/remote-control</code> in Agent input, then send next message</li>
+    <li>Open session in iOS inbox</li>
+  </ol>
+
+  <h2>Solo builder prompts (mobile-safe)</h2>
+  <ul>
+    <li><code>Run tests. Report pass/fail. Do not open a PR.</code></li>
+    <li><code>Fix the failing CI check on this PR. Push to the same branch.</code></li>
+    <li><code>Investigate issue #N. Summarize root cause. Do not implement yet.</code></li>
+  </ul>
+
+  <footer>
+    From <a href="../lessons/0018-cursor-ios.html">Lesson 18</a> ·
+    <a href="cloud-agents.html">Cloud Agents</a> ·
+    <a href="https://cursor.com/docs/cloud-agent/mobile">Official docs</a> ·
+    <a href="https://cursor.com/blog/ios-mobile-app">Launch blog</a>
+  </footer>
+</body>
+</html>
