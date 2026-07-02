@@ -39,6 +39,20 @@
 - **Lesson 17 complete:** LocalLab session two — trend charts + trend insights (Ollama streaming, SQLite cache); [PR #3](https://github.com/SamSamskies/locallab/pull/3) merged; Bugbot reviewed
 - **Curriculum paused** (user, Jun 2026) — lesson 18 (DB MCP) drafted then scrapped; user will reach out when ready for more
 - **Backlog when resuming:** DB MCP, marker normalization (exact match fine for now), OCR, habit-tracker config stack on LocalLab
+- **Lesson 18 in progress:** Cursor iOS (mobile control plane for cloud agents) — resume curriculum here
+
+## Post–Lesson 18 curriculum (user, Jul 2026)
+
+After Lesson 18, cover these six topics — identified as gaps vs the full Cursor power-user checklist (Rules, Agent Mode, Planning Mode, Context Management, Model Selection, and MCP Integration already done):
+
+1. **Memories** — automation tool for notes across runs; only mentioned in Lessons 13–14, never practiced
+2. **Background Agents** — local multitask/background runs (cloud agents covered in Lesson 14)
+3. **YOLO Mode** — auto-run terminal commands; pairs with verify loop from Lesson 4
+4. **Custom Modes** — user-defined agent modes beyond Agent / Plan / Ask
+5. **Terminal Integration** — `@terminal`, Cursor CLI, integrated vs external terminal workflows
+6. **Git Workflows** — Cursor-specific git: `@git`, agent-driven commits/PRs (OSS Lessons 8–9 gave practice but not as a feature deep dive)
+
+Suggested order: YOLO Mode → Terminal Integration → Git Workflows → Background Agents → Custom Modes → Memories (Memories last — most useful once automations are familiar).
 
 ## Model selection for Plan Mode
 
