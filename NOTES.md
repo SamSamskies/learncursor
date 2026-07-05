@@ -41,7 +41,8 @@
 - **Backlog when resuming:** DB MCP, marker normalization (exact match fine for now), OCR, habit-tracker config stack on LocalLab
 - **Lesson 18 complete:** Cursor iOS — cloud agent from phone (locked → notification → desktop cross-check) + Remote Control handoff via `/remote-control` in Agents Window; settings toggle only in Agents Window (not Editor settings)
 - **Lesson 19 complete:** YOLO Mode / Run Modes — Auto-review default, permissions.json, stack with hooks + verify loop
-- **Lesson 20 in progress:** Terminal Integration — @Terminals, integrated vs external terminal, Cursor CLI
+- **Lesson 20 complete:** Terminal Integration — @Terminals, integrated vs external terminal, Cursor CLI; verify + headless CLI read
+- **Lesson 21 ready:** Git Workflows — @Commit, @Branch, SCM vs Agent commits, gh PR drafting
 
 ## Post–Lesson 18 curriculum (user, Jul 2026)
 

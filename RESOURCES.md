@@ -30,6 +30,8 @@
   Shift+Tab modes, worktrees, approval flow, keyboard shortcuts. Use for: Lesson 20 interactive CLI.
 - [Headless CLI](https://cursor.com/docs/cli/headless)
   `-p`, `--force`, output formats for scripts and CI. Use for: Lesson 20 automation path.
+- [Prompting agents — git diffs](https://cursor.com/docs/agent/prompting)
+  `@Commit (Diff of Working State)` and `@Branch (Diff with Main)` for attached diffs. Use for: Lesson 21 git @ mentions.
 - [Cursor for iOS](https://cursor.com/docs/cloud-agent/mobile)
   Native iPhone app — cloud agents, Remote Control, PR review, Live Activities. Same backend as cursor.com/agents. Use for: Lesson 18 mobile control plane.
 - [Build from anywhere with Cursor for iOS](https://cursor.com/blog/ios-mobile-app)

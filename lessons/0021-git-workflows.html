@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 21 — Git Workflows</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <div class="lesson-meta">Lesson 21 · ~15 minutes</div>
+  <h1>Git Workflows</h1>
+
+  <p class="epigraph">
+    OSS Lessons 8–9 taught you to fix review comments.
+    This lesson teaches the Cursor git surfaces you use every session.
+  </p>
+
+  <p>
+    <a href="0020-terminal-integration.html">Lesson 20</a> covered where commands
+    run. Git in Cursor is the same pattern — three surfaces, pick consciously.
+    You already commit and open PRs; this lesson names the Cursor-specific tools:
+    <code>@Commit</code>, <code>@Branch</code>, the SCM panel, and Agent +
+    <code>gh</code>. It ties into your verify loop from
+    <a href="0004-verify-and-iterate.html">Lesson 4</a>, Run Modes from
+    <a href="0019-yolo-mode.html">Lesson 19</a>, and OSS practice from
+    <a href="0008-contribute-to-open-source.html">Lessons 8–9</a>.
+  </p>
+
+  <p>
+    Keep the
+    <a href="../reference/git-workflows.html">Git Workflows reference</a>
+    open.
+  </p>
+
+  <h2>Three git surfaces</h2>
+
+  <table>
+    <thead>
+      <tr><th>Surface</th><th>Who acts</th><th>Reach for when</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>SCM panel</strong></td>
+        <td>You — stage, commit, push</td>
+        <td>Default after verify — fast, no tokens, full control</td>
+      </tr>
+      <tr>
+        <td><strong>Git @ mentions</strong></td>
+        <td>Agent reads attached diffs</td>
+        <td>Draft commit message, review branch, write PR body</td>
+      </tr>
+      <tr>
+        <td><strong>Agent + <code>gh</code></strong></td>
+        <td>Agent runs CLI (with approval)</td>
+        <td>Create PR, read checks, triage review threads</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Primary source:
+    <a href="https://cursor.com/docs/agent/prompting">Prompting agents</a>
+    — git diffs under @ mentions.
+    You do not need GitHub MCP for this workflow; paste a PR URL or let Agent
+    run <code>gh</code> (<a href="0010-integrate-mcp-into-a-project.html">Lesson 10</a>).
+  </p>
+
+  <h2>Two git @ mentions</h2>
+
+  <p>
+    Type <code>@</code> in Agent chat and pick from the git section. Official names:
+  </p>
+
+  <table>
+    <thead>
+      <tr><th>Mention</th><th>What Agent sees</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>@Commit (Diff of Working State)</code></td>
+        <td>Everything unstaged and staged — your working tree diff</td>
+      </tr>
+      <tr>
+        <td><code>@Branch (Diff with Main)</code></td>
+        <td>Your branch vs base — merge-base aware (formerly <code>@PR</code>)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>Know the diff → attach it.</strong><br>
+    Same rule as <code>@filename</code> from
+    <a href="0005-point-agent-at-context.html">Lesson 5</a>. If you want Agent to
+    review <em>your</em> changes, don't make it guess — attach
+    <code>@Commit</code> or <code>@Branch</code>.
+  </div>
+
+  <pre class="example">Review scope only — anything beyond the task?
+Do not edit files. Reply with bullet list or "clean."
+@Commit (Diff of Working State)</pre>
+
+  <pre class="example">Branch is pushed. Draft one-line gh pr create command:
+--title conventional commit style --body with ## Summary and ## Test plan
+@Branch (Diff with Main)</pre>
+
+  <h2>The commit rule</h2>
+
+  <p>
+    Your user rule: <strong>Agent commits only when you explicitly ask.</strong>
+    That is the right default for a solo builder — verify green, read the diff,
+    then commit. Agent is great at drafting messages and spotting scope creep;
+    the SCM panel (or an explicit "commit now" prompt) is where the write happens.
+  </p>
+
+  <div class="steps">
+    <div class="step">
+      <strong>Verify</strong>
+      <span>Run done-when yourself — same loop as Lesson 4</span>
+    </div>
+    <div class="step">
+      <strong>Review</strong>
+      <span><code>@Commit</code> for scope check or message draft — no git write</span>
+    </div>
+    <div class="step">
+      <strong>Commit</strong>
+      <span>SCM panel, or tell Agent explicitly: "Commit with this message"</span>
+    </div>
+    <div class="step">
+      <strong>Push + PR</strong>
+      <span>Push yourself; <code>@Branch</code> for PR body; run or approve <code>gh pr create</code></span>
+    </div>
+  </div>
+
+  <p>
+    Run Modes from Lesson 19 auto-run read-only git (<code>status</code>,
+    <code>diff</code>) but <code>git commit</code> often still needs approval —
+    or gets stuck on some builds. SCM panel avoids that friction entirely.
+  </p>
+
+  <h2>Stack with rails you already have</h2>
+
+  <table>
+    <thead>
+      <tr><th>Layer</th><th>Git job</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>.cursor/permissions.json</code></td>
+        <td>Block instructions — force-push, destructive commands</td>
+      </tr>
+      <tr>
+        <td>Hooks (<a href="0011-cursor-hooks.html">Lesson 11</a>)</td>
+        <td>Hard deny on shell patterns hooks catch</td>
+      </tr>
+      <tr>
+        <td><code>/review-bugbot</code> (<a href="0015-pr-review-agents.html">Lesson 15</a>)</td>
+        <td>Review branch diff before opening PR</td>
+      </tr>
+      <tr>
+        <td>One commit per fix (<a href="0009-navigate-pr-review.html">Lesson 9</a>)</td>
+        <td>Separate prompts → separate commits on review follow-ups</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Solo-builder moments</h2>
+
+  <table>
+    <thead>
+      <tr><th>Moment</th><th>Surface</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Feature slice done, tests green</td>
+        <td>SCM commit → push</td>
+      </tr>
+      <tr>
+        <td>"Did I change too much?"</td>
+        <td><code>@Commit</code> scope review</td>
+      </tr>
+      <tr>
+        <td>Ready to open PR on LocalLab</td>
+        <td>Push → <code>@Branch</code> → <code>gh pr create</code></td>
+      </tr>
+      <tr>
+        <td>Address CodeRabbit comment</td>
+        <td>Fix → verify → SCM commit → reply on thread</td>
+      </tr>
+      <tr>
+        <td>Agent Review before push</td>
+        <td><code>@Branch</code> or built-in Review with base branch picker</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Check your understanding</h2>
+
+  <div class="quiz" id="quiz1"
+       data-messages='{"true":"Correct. @Commit attaches your working tree diff — ideal before committing.","false":"@Branch is for the full branch vs main — not uncommitted work."}'>
+    <h3>1. Review uncommitted changes before committing?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">@Commit attaches working state diff.</button>
+      <button data-correct="false">@Branch compares full branch to main.</button>
+      <button data-correct="false">@Codebase searches files by keyword.</button>
+    </div>
+    <div class="feedback" id="quiz1-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz2"
+       data-messages='{"true":"Correct. Your rule — verify, review diff, commit only when you ask.","false":"Auto-commit after verify skips diff review — risky."}'>
+    <h3>2. When should Agent run git commit?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Only when you explicitly ask Agent.</button>
+      <button data-correct="false">Automatically after every verify passes.</button>
+      <button data-correct="false">Never — Agent cannot run git ever.</button>
+    </div>
+    <div class="feedback" id="quiz2-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz3"
+       data-messages='{"true":"Correct. Push first so @Branch sees the remote branch context.","false":"@Commit alone creates the GitHub pull request."}'>
+    <h3>3. Draft a PR with @Branch and gh?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Push branch then @Branch for gh command.</button>
+      <button data-correct="false">@Commit before push opens pull request.</button>
+      <button data-correct="false">GitHub MCP required for every pull request.</button>
+    </div>
+    <div class="feedback" id="quiz3-feedback"></div>
+  </div>
+
+  <h2>Do this now</h2>
+
+  <div class="practice">
+    <p><strong>Draft with @, commit with SCM</strong> — LocalLab, habit tracker, or this workspace.</p>
+    <ol>
+      <li><strong>Branch + change</strong> — create a feature branch. Make one trivial, safe edit (comment, doc line, test name).</li>
+      <li><strong>Verify</strong> — run your done-when command if the repo has one; otherwise skip.</li>
+      <li><strong>@Commit review</strong> — Agent prompt: <code>Review my uncommitted changes. Suggest a one-line commit message. Do not run git commit or git add.</code> Add <code>@Commit (Diff of Working State)</code>.</li>
+      <li><strong>Commit yourself</strong> — use the SCM panel (Source Control) with Agent's suggested message, or your own.</li>
+      <li><strong>Push + @Branch</strong> — push the branch. Prompt: <code>Draft a single-line gh pr create command with --title and --body (## Summary, ## Test plan). Do not run it.</code> Add <code>@Branch (Diff with Main)</code>. Read the command — run it only if you want an open PR.</li>
+    </ol>
+    <p>You are done when Agent reviewed via <code>@Commit</code>, you committed through SCM, and <code>@Branch</code> produced a sensible <code>gh pr create</code> draft.</p>
+  </div>
+
+  <p class="source">
+    Primary source:
+    <a href="https://cursor.com/docs/agent/prompting">Prompting agents</a>
+    (@Commit, @Branch git diffs).
+  </p>
+
+  <footer>
+    <p>Stuck on anything? Ask your agent teacher — say whether @Commit, commit approval, or gh tripped you up.</p>
+    <p style="margin-top: 0.75rem;">
+      Previous: <a href="0020-terminal-integration.html">Lesson 20 — Terminal Integration</a> ·
+      Next: Background Agents (planned) ·
+      Reference: <a href="../reference/git-workflows.html">Git Workflows</a> ·
+      <a href="../reference/context-mentions.html">@ Context</a> ·
+      <a href="../reference/oss-workflow.html">OSS Workflow</a> ·
+      Mission: <a href="../MISSION.md">MISSION.md</a>
+    </p>
+  </footer>
+
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>

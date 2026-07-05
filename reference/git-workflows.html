@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Git Workflows — Quick Reference</title>
+  <style>
+    :root {
+      --text: #1a1a1a;
+      --muted: #555;
+      --accent: #2563eb;
+      --border: #ddd;
+      --bg: #fafafa;
+      --card: #fff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Palatino Linotype", Palatino, Georgia, serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.55;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+    h1 {
+      font-weight: 400;
+      font-size: 1.75rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+    h2 {
+      font-size: 0.75rem;
+      font-family: system-ui, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin: 2rem 0 0.75rem;
+      font-weight: 600;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      font-family: system-ui, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: #f5f5f5;
+    }
+    tr:last-child td { border-bottom: none; }
+    pre {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1rem 1.15rem;
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.78rem;
+      line-height: 1.6;
+      overflow-x: auto;
+      margin-bottom: 1rem;
+      white-space: pre-wrap;
+    }
+    code {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.85em;
+      background: #eee;
+      padding: 0.1em 0.35em;
+    }
+    ul { padding-left: 1.25rem; font-size: 0.95rem; }
+    li { margin-bottom: 0.45rem; }
+    footer {
+      margin-top: 2.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--accent); }
+    @media print { body { background: white; } }
+  </style>
+</head>
+<body>
+  <h1>Git Workflows</h1>
+  <p class="subtitle">Three surfaces — SCM panel, git @ mentions, Agent + gh.</p>
+
+  <h2>Git @ mentions</h2>
+  <table>
+    <thead>
+      <tr><th>Mention</th><th>Attaches</th><th>Use when</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>@Commit (Diff of Working State)</code></td>
+        <td>Uncommitted changes</td>
+        <td>Draft commit message, pre-commit review, scope check</td>
+      </tr>
+      <tr>
+        <td><code>@Branch (Diff with Main)</code></td>
+        <td>Full branch vs base (merge-base aware)</td>
+        <td>PR description, branch review before push, Agent Review base</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size: 0.95rem; margin-bottom: 0.75rem;">
+    Former name: <code>@PR (Diff with Main Branch)</code> → now <code>@Branch</code>.
+    Push the branch before using <code>@Branch</code> for PR drafting — un-pushed
+    branches may only get a commit suggestion.
+  </p>
+
+  <h2>Three git surfaces</h2>
+  <table>
+    <thead>
+      <tr><th>Surface</th><th>Best for</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>SCM panel</strong> (Source Control)</td>
+        <td>Stage, commit, push — fast, deterministic, no tokens</td>
+      </tr>
+      <tr>
+        <td><strong>Agent + @Commit / @Branch</strong></td>
+        <td>Draft messages, review diffs, PR bodies, pre-push sanity check</td>
+      </tr>
+      <tr>
+        <td><strong>Agent + <code>gh</code></strong></td>
+        <td>Create PRs, read review threads — paste URL or let Agent run CLI</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Commit rule (solo builder)</h2>
+  <pre>Verify green  →  review diff  →  commit (you or explicit ask)
+Never let Agent commit silently — user rule + permissions.json rails.</pre>
+
+  <h2>Prompt templates</h2>
+  <pre>// Draft only — no git write
+Review my uncommitted changes. Suggest a commit message.
+Do not run git commit.
+@Commit (Diff of Working State)
+
+// PR body after push
+Branch is pushed. Draft gh pr create as one line:
+--title "feat: …" --body with ## Summary and ## Test plan
+@Branch (Diff with Main)
+
+// Pre-push review
+Anything risky in this branch diff? List only blockers.
+@Branch (Diff with Main)</pre>
+
+  <h2>Stack with other layers</h2>
+  <table>
+    <thead>
+      <tr><th>Layer</th><th>Git role</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Verify loop</td>
+        <td>Run done-when before every commit</td>
+      </tr>
+      <tr>
+        <td>Run Modes</td>
+        <td><code>git status</code>/<code>diff</code> auto-run; commit may need approval</td>
+      </tr>
+      <tr>
+        <td><code>permissions.json</code></td>
+        <td>Block instructions for force-push, destructive git</td>
+      </tr>
+      <tr>
+        <td>Hooks</td>
+        <td>Hard deny on matching shell patterns</td>
+      </tr>
+      <tr>
+        <td>Bugbot / <code>/review-bugbot</code></td>
+        <td>Catch issues before PR comments</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>gh essentials (Agent can run)</h2>
+  <pre>gh pr create --title "…" --body "$(cat <<'EOF'
+## Summary
+…
+EOF
+)"
+gh pr view 42 --comments
+gh pr checks</pre>
+
+  <footer>
+    From <a href="../lessons/0021-git-workflows.html">Lesson 21</a> ·
+    <a href="context-mentions.html">@ Context</a> ·
+    <a href="oss-workflow.html">OSS Workflow</a> ·
+    <a href="run-modes.html">Run Modes</a> ·
+    <a href="https://cursor.com/docs/agent/prompting">Prompting agents</a>
+  </footer>
+</body>
+</html>
