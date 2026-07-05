@@ -155,11 +155,25 @@
   <h2>Remote Control checklist</h2>
   <ol>
     <li>Cursor desktop <strong>3.9.8+</strong></li>
-    <li>Enable: Agents Window → Settings → Agents</li>
+    <li>Open <strong>Agents Window</strong> (Cmd+Shift+P → Open Agents Window) — not the Editor sidebar</li>
+    <li>Enable: <strong>Agents Window</strong> → Settings → Agents → Remote Control (toggle is <em>not</em> in Editor settings)</li>
     <li>Git remote on workspace; Mac awake + online</li>
     <li>Run <code>/remote-control</code> in Agent input, then send next message</li>
     <li>Open session in iOS inbox</li>
   </ol>
+
+  <h2>What shows on iOS</h2>
+  <table>
+    <thead>
+      <tr><th>Session type</th><th>On iOS inbox?</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Cloud agent (any surface)</td><td>Yes — automatically</td></tr>
+      <tr><td>Remote Control handoff</td><td>Yes — after <code>/remote-control</code> + follow-up</td></tr>
+      <tr><td>Move to Cloud</td><td>Yes — after handoff to cloud VM</td></tr>
+      <tr><td>Local agent (Editor or Agents, no handoff)</td><td>No — desktop only</td></tr>
+    </tbody>
+  </table>
 
   <h2>Solo builder prompts (mobile-safe)</h2>
   <ul>

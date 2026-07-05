@@ -39,7 +39,7 @@
 - **Lesson 17 complete:** LocalLab session two — trend charts + trend insights (Ollama streaming, SQLite cache); [PR #3](https://github.com/SamSamskies/locallab/pull/3) merged; Bugbot reviewed
 - **Curriculum paused** (user, Jun 2026) — lesson 18 (DB MCP) drafted then scrapped; user will reach out when ready for more
 - **Backlog when resuming:** DB MCP, marker normalization (exact match fine for now), OCR, habit-tracker config stack on LocalLab
-- **Lesson 18 in progress:** Cursor iOS (mobile control plane for cloud agents) — resume curriculum here
+- **Lesson 18 complete:** Cursor iOS — cloud agent from phone (locked → notification → desktop cross-check) + Remote Control handoff via `/remote-control` in Agents Window; settings toggle only in Agents Window (not Editor settings)
 
 ## Post–Lesson 18 curriculum (user, Jul 2026)
 
