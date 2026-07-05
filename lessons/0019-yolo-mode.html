@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 19 — YOLO Mode (Run Modes)</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <div class="lesson-meta">Lesson 19 · ~15 minutes</div>
+  <h1>YOLO Mode (Run Modes)</h1>
+
+  <p class="epigraph">
+    Speed without supervision is how you rm -rf a Tuesday.
+    Auto-run with rails is how you ship by lunch.
+  </p>
+
+  <p>
+    Every time Agent runs <code>npm test</code>, you click approve. Every
+    <code>mkdir</code>, another click. That friction kills the solo-builder
+    loop from <a href="0004-verify-and-iterate.html">Lesson 4</a> — Agent should
+    run your verify command, read the output, fix, and repeat without you
+    babysitting the terminal.
+  </p>
+
+  <p>
+    <strong>YOLO mode</strong> is the old community name for letting Agent run
+    commands without asking. In Cursor 3.6+ it lives under
+    <strong>Run Modes</strong> in Settings → Agents → Approvals &amp; Execution.
+    The modern default is <strong>Auto-review</strong> — not zero prompts, but
+    far fewer than clicking every time. Keep the
+    <a href="../reference/run-modes.html">Run Modes reference</a> open.
+  </p>
+
+  <h2>Three modes (pick consciously)</h2>
+
+  <table>
+    <thead>
+      <tr><th>Mode</th><th>What auto-runs</th><th>Sandbox</th><th>Solo builder</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Auto-review</strong></td>
+        <td>Allowlisted + sandboxed commands; classifier reviews the rest</td>
+        <td>Yes</td>
+        <td><strong>Start here</strong> — recommended default</td>
+      </tr>
+      <tr>
+        <td><strong>Allowlist</strong></td>
+        <td>Only commands you explicitly list</td>
+        <td>Optional</td>
+        <td>When you want a tiny, fixed command set</td>
+      </tr>
+      <tr>
+        <td><strong>Run Everything</strong></td>
+        <td>Every tool call, zero prompts</td>
+        <td>No</td>
+        <td>Old YOLO — fast, risky; trusted repos only</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Primary source:
+    <a href="https://cursor.com/docs/agent/run-modes">Run Modes — official docs</a>.
+    Cloud agents ignore Run Modes — they run in their own VM
+    (<a href="0014-cloud-agents-deep-dive.html">Lesson 14</a>).
+  </p>
+
+  <h2>How Auto-review decides</h2>
+
+  <div class="steps">
+    <div class="step">
+      <strong>1. Allowlist</strong>
+      <span>Commands you've pre-approved run immediately</span>
+    </div>
+    <div class="step">
+      <strong>2. Sandbox</strong>
+      <span>Supported shell commands run in a restricted environment — limited file/network reach</span>
+    </div>
+    <div class="step">
+      <strong>3. Classifier</strong>
+      <span>Everything else gets an LLM safety review — allow, block, or ask you</span>
+    </div>
+  </div>
+
+  <p>
+    The classifier is <em>not</em> a security boundary — it can misjudge. That's
+    why you stack Run Modes with hooks from
+    <a href="0011-cursor-hooks.html">Lesson 11</a> and your verify loop from
+    Lesson 4. Run Modes control <em>when</em> Agent asks; hooks <em>block</em>
+    specific actions deterministically; you still read diffs before accepting.
+  </p>
+
+  <h2>Run Modes vs hooks vs verify</h2>
+
+  <table>
+    <thead>
+      <tr><th>Layer</th><th>Job</th><th>Example</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Run Mode</td>
+        <td>Reduce approval clicks</td>
+        <td>Auto-review sandboxes <code>npm test</code></td>
+      </tr>
+      <tr>
+        <td>Hook</td>
+        <td>Hard block on shell events</td>
+        <td>Deny <code>git push --force</code> to main</td>
+      </tr>
+      <tr>
+        <td>Verify loop</td>
+        <td>You confirm done-when</td>
+        <td>Run <code>npm run verify</code> yourself before merge</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Steer Auto-review with permissions.json</h2>
+
+  <p>
+    Tell Cursor in plain English which commands should lean toward approval or
+    blocking. Per-project file — commit it so every session inherits the policy:
+  </p>
+
+  <pre class="example">{
+  "autoRun": {
+    "allow_instructions": [
+      "npm test and npm run verify are safe to auto-run."
+    ],
+    "block_instructions": [
+      "Every git push --force should require my approval.",
+      "Every command that drops database tables should require approval."
+    ]
+  }
+}</pre>
+
+  <p>
+    Path: <code>.cursor/permissions.json</code> in your active repo. Cursor merges
+    it with <code>~/.cursor/permissions.json</code> if both exist. You can also
+    ask Agent: <em>"Add block instructions for force-push to my permissions.json."</em>
+  </p>
+
+  <div class="callout">
+    <strong>Built-in protections still apply.</strong><br>
+    Even in Run Everything mode, Cursor blocks auto file deletion, writes outside
+    the workspace, and browser tools unless you override. Hooks add project-specific
+    gates on top.
+  </div>
+
+  <h2>When to reach for true YOLO (Run Everything)</h2>
+
+  <table>
+    <thead>
+      <tr><th>Situation</th><th>Reach for</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Greenfield throwaway spike in a sandbox dir</td>
+        <td>Run Everything — speed over safety</td>
+      </tr>
+      <tr>
+        <td>Active app repo with git history (habit tracker, LocalLab)</td>
+        <td>Auto-review + hooks + verify loop</td>
+      </tr>
+      <tr>
+        <td>Agent keeps asking for the same three commands</td>
+        <td>Allowlist those commands, or add allow_instructions</td>
+      </tr>
+      <tr>
+        <td>Agent hangs after running a command</td>
+        <td>Legacy Terminal setting; simplify zsh prompt when <code>CURSOR_AGENT</code> is set</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Terminal troubleshooting:
+    <a href="https://cursor.com/docs/agent/terminal">Terminal docs</a> —
+    heavy shell themes (Powerlevel10k) can break command-completion detection.
+  </p>
+
+  <h2>Check your understanding</h2>
+
+  <div class="quiz" id="quiz1"
+       data-messages='{"true":"Correct. Auto-review is the recommended default with sandbox + classifier.","false":"Run Everything is the old YOLO — zero prompts, full risk."}'>
+    <h3>1. Recommended default Run Mode today?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Auto-review uses sandbox plus classifier.</button>
+      <button data-correct="false">Run Everything skips every approval prompt.</button>
+      <button data-correct="false">Ask Every Time on every shell command.</button>
+    </div>
+    <div class="feedback" id="quiz1-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz2"
+       data-messages='{"true":"Correct. Legacy YOLO = Run Everything, no sandbox, no classifier.","false":"Auto-review still screens non-sandboxed calls."}'>
+    <h3>2. What did old YOLO mode become?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Run Everything means zero approval prompts.</button>
+      <button data-correct="false">Auto-review means classifier screens calls.</button>
+      <button data-correct="false">Allowlist runs only prelisted commands.</button>
+    </div>
+    <div class="feedback" id="quiz2-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz3"
+       data-messages='{"true":"Correct. Hooks deterministically gate shell — Run Modes only reduce prompts.","false":"Rules are prose suggestions — Agent can still ignore them."}'>
+    <h3>3. Hard block on destructive git push?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Shell gate hook blocks destructive git.</button>
+      <button data-correct="false">Project rule prose instructs Agent gently.</button>
+      <button data-correct="false">Inline Edit reviews each changed file.</button>
+    </div>
+    <div class="feedback" id="quiz3-feedback"></div>
+  </div>
+
+  <h2>Do this now</h2>
+
+  <div class="practice">
+    <p><strong>Auto-run your verify loop on a repo you actively build</strong> — habit tracker or LocalLab.</p>
+    <ol>
+      <li><strong>Check your mode</strong> — Settings → Agents → Approvals &amp; Execution. Confirm <strong>Auto-review</strong> (or note what you're on).</li>
+      <li><strong>Add permissions.json</strong> — create <code>.cursor/permissions.json</code> with at least one <code>block_instruction</code> for destructive git (see example above). Commit it.</li>
+      <li><strong>Count clicks</strong> — open Agent on that repo. Prompt: <code>Run npm run verify (or npm test). If anything fails, fix it and re-run until green. Do not change unrelated files.</code> Count how many times Cursor asks you to approve a command.</li>
+      <li><strong>Compare</strong> — if you still get excessive prompts for the same safe commands, add an <code>allow_instruction</code> for your verify script.</li>
+      <li><strong>Stack hooks</strong> — if you already have a force-push gate hook (Lesson 11), confirm it still fires under Auto-review.</li>
+    </ol>
+    <p>You are done when Agent runs your verify command with zero or minimal approval clicks, and you still read the diff before accepting.</p>
+  </div>
+
+  <p class="source">
+    Primary source:
+    <a href="https://cursor.com/docs/agent/run-modes">Run Modes — official docs</a>
+    — Auto-review, sandboxing, permissions.json, and built-in protections.
+  </p>
+
+  <footer>
+    <p>Stuck on anything? Ask your agent teacher — say whether you hit settings, permissions.json, or terminal hangs.</p>
+    <p style="margin-top: 0.75rem;">
+      Previous: <a href="0018-cursor-ios.html">Lesson 18 — Cursor iOS</a> ·
+      Next: Terminal Integration (planned) ·
+      Reference: <a href="../reference/run-modes.html">Run Modes</a> ·
+      <a href="../reference/verify-loop.html">Verify Loop</a> ·
+      <a href="../reference/hooks.html">Hooks</a> ·
+      Mission: <a href="../MISSION.md">MISSION.md</a>
+    </p>
+  </footer>
+
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>
