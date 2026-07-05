@@ -162,15 +162,18 @@ agent "fix the failing test in tests/habits.test.ts"
 agent --mode=plan "add export to CSV endpoint"
 
 # Headless — scripts, cron, CI (read-only example)
-agent -p "list open TODO comments in src/" --output-format text
+agent -p --trust "list open TODO comments in src/" --output-format text
 
 # Headless with file writes (use carefully)
-agent -p --force "fix eslint errors in src/routes/"</pre>
+agent -p --trust --force "fix eslint errors in src/routes/"</pre>
 
   <p>
     <strong>Interactive</strong> (<code>agent</code>) mirrors the editor chat:
     you approve commands and review diffs. <strong>Print mode</strong>
-    (<code>-p</code>) sends output to stdout — for automation. Add
+    (<code>-p</code>) sends output to stdout — for automation. Pass
+    <code>--trust</code> in print mode so the CLI can access the workspace
+    without stopping for "Workspace Trust Required" (interactive
+    <code>agent</code> prompts you once instead). Add
     <code>--force</code> only when a script should apply file changes without
     manual approval.
   </p>
@@ -255,7 +258,7 @@ agent -p --force "fix eslint errors in src/routes/"</pre>
       <li><strong>Attach output</strong> — open Agent. Prompt: <code>Fix the failing test shown in my terminal. Change only what's needed.</code> Add <code>@Terminals</code>. Confirm Agent sees the exact error.</li>
       <li><strong>Verify yourself</strong> — run done-when in the integrated terminal after Agent fixes it.</li>
       <li><strong>Check the CLI</strong> — in an external terminal, run <code>agent about</code> (or <code>agent status</code>). If not installed: <code>curl https://cursor.com/install -fsS | bash</code>.</li>
-      <li><strong>One headless read</strong> — from the repo root: <code>agent -p "How many test files are in this project? Reply with a number only." --output-format text</code>. No file changes — just confirm the CLI sees the repo.</li>
+      <li><strong>One headless read</strong> — from the repo root: <code>agent -p --trust "How many test files are in this project? Reply with a number only." --output-format text</code>. Without <code>--trust</code>, print mode stops with a workspace trust prompt. No file changes — just confirm the CLI sees the repo.</li>
     </ol>
     <p>You are done when Agent fixed the failure using <code>@Terminals</code>, you ran verify green yourself, and <code>agent about</code> returned your account info.</p>
   </div>
