@@ -40,7 +40,8 @@
 - **Curriculum paused** (user, Jun 2026) — lesson 18 (DB MCP) drafted then scrapped; user will reach out when ready for more
 - **Backlog when resuming:** DB MCP, marker normalization (exact match fine for now), OCR, habit-tracker config stack on LocalLab
 - **Lesson 18 complete:** Cursor iOS — cloud agent from phone (locked → notification → desktop cross-check) + Remote Control handoff via `/remote-control` in Agents Window; settings toggle only in Agents Window (not Editor settings)
-- **Lesson 19 in progress:** YOLO Mode / Run Modes — Auto-review default, permissions.json, stack with hooks + verify loop
+- **Lesson 19 complete:** YOLO Mode / Run Modes — Auto-review default, permissions.json, stack with hooks + verify loop
+- **Lesson 20 in progress:** Terminal Integration — @Terminals, integrated vs external terminal, Cursor CLI
 
 ## Post–Lesson 18 curriculum (user, Jul 2026)
 

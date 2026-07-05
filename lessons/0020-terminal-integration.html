@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 20 — Terminal Integration</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <div class="lesson-meta">Lesson 20 · ~15 minutes</div>
+  <h1>Terminal Integration</h1>
+
+  <p class="epigraph">
+    The terminal is not one thing. It is three surfaces — and picking
+    the right one keeps Agent fast without fighting your hooks.
+  </p>
+
+  <p>
+    <a href="0019-yolo-mode.html">Lesson 19</a> let Agent auto-run your verify
+    commands. But where do those commands run? In Cursor's integrated terminal.
+    When do you open Terminal.app instead? When do you reach for the
+    <code>agent</code> CLI? This lesson ties terminal surfaces to the workflows
+    you already use — verify loop from
+    <a href="0004-verify-and-iterate.html">Lesson 4</a>, hook testing from
+    <a href="0011-cursor-hooks.html">Lesson 11</a>, and
+    <code>@</code> context from
+    <a href="0005-point-agent-at-context.html">Lesson 5</a>.
+  </p>
+
+  <p>
+    Keep the
+    <a href="../reference/terminal-integration.html">Terminal Integration reference</a>
+    open.
+  </p>
+
+  <h2>Three terminal surfaces</h2>
+
+  <table>
+    <thead>
+      <tr><th>Surface</th><th>Who runs commands</th><th>Reach for when</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Integrated terminal</strong></td>
+        <td>You or Agent inside Cursor</td>
+        <td>Default — build, verify, watch Agent fix failures</td>
+      </tr>
+      <tr>
+        <td><strong>External terminal</strong></td>
+        <td>You in Terminal.app / iTerm</td>
+        <td>Hook script tests, manual verify, bypass live hooks</td>
+      </tr>
+      <tr>
+        <td><strong>Cursor CLI</strong></td>
+        <td><code>agent</code> from any shell</td>
+        <td>Quick agent session, headless scripts, resume chats</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Primary source:
+    <a href="https://cursor.com/docs/agent/terminal">Terminal — official docs</a>
+    and
+    <a href="https://cursor.com/docs/cli/overview">Cursor CLI overview</a>.
+  </p>
+
+  <h2>Integrated terminal — Agent's home base</h2>
+
+  <p>
+    When Agent runs <code>npm test</code>, output appears in Cursor's integrated
+    terminal panel. Your Run Mode from Lesson 19 controls whether it asks first.
+    The sandbox restricts file and network access for supported commands.
+  </p>
+
+  <div class="steps">
+    <div class="step">
+      <strong>Watch</strong>
+      <span>Open the terminal panel while Agent works — catch hangs and truncated output early</span>
+    </div>
+    <div class="step">
+      <strong>Verify</strong>
+      <span>Run done-when yourself after Agent finishes — don't trust "tests passed" alone</span>
+    </div>
+    <div class="step">
+      <strong>Attach</strong>
+      <span>Type <code>@Terminals</code> in chat to send terminal output as context</span>
+    </div>
+  </div>
+
+  <p>
+    Official prompting guide lists <code>@Terminals</code> alongside
+    <code>@filename</code> and git diffs —
+    <a href="https://cursor.com/docs/agent/prompting">Prompting agents</a>.
+    Use it when a command already failed and Agent needs the exact stack trace,
+    not when you want Agent to discover the problem from scratch.
+  </p>
+
+  <pre class="example">This test failed in my terminal. Fix only the failing test.
+@Terminals
+Done-when: npm test — all green.</pre>
+
+  <h2>External terminal — when Cursor gets in the way</h2>
+
+  <p>
+    Lesson 11 taught a pattern worth repeating: test hook scripts in
+    <strong>Terminal.app</strong> before wiring <code>hooks.json</code>. Once a
+    <code>beforeShellExecution</code> hook is live, it intercepts matching commands
+    in the integrated terminal too — including innocent test lines that happen to
+    contain <code>git push --force</code>.
+  </p>
+
+  <table>
+    <thead>
+      <tr><th>Task</th><th>Terminal</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Pipe sample JSON into a hook script</td>
+        <td>External — before hooks.json exists</td>
+      </tr>
+      <tr>
+        <td>Run <code>npm run verify</code> yourself after Agent</td>
+        <td>Either — your call</td>
+      </tr>
+      <tr>
+        <td>Agent auto-runs verify under Auto-review</td>
+        <td>Integrated — Agent drives it</td>
+      </tr>
+      <tr>
+        <td>Debug why a hook blocked Agent</td>
+        <td>External — reproduce without Agent in the loop</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>Truncated or garbled output?</strong><br>
+    Heavy shell themes (Powerlevel10k) break Agent's command-completion detection.
+    Set <code>CURSOR_AGENT</code> in your shell config to skip the theme when
+    Cursor runs. Full fix in
+    <a href="../reference/run-modes.html">Run Modes reference</a> and
+    <a href="https://cursor.com/docs/agent/terminal">Terminal docs</a>.
+  </div>
+
+  <h2>Cursor CLI — Agent outside the editor</h2>
+
+  <p>
+    The CLI installs a single command — <code>agent</code> — that shares your
+    Cursor account, rules, skills, and MCP config with the editor. Same modes;
+    different shell.
+  </p>
+
+  <pre class="example"># Install once (macOS)
+curl https://cursor.com/install -fsS | bash
+
+# Interactive — approve edits and commands in the shell
+agent
+agent "fix the failing test in tests/habits.test.ts"
+
+# Plan mode from the terminal
+agent --mode=plan "add export to CSV endpoint"
+
+# Headless — scripts, cron, CI (read-only example)
+agent -p "list open TODO comments in src/" --output-format text
+
+# Headless with file writes (use carefully)
+agent -p --force "fix eslint errors in src/routes/"</pre>
+
+  <p>
+    <strong>Interactive</strong> (<code>agent</code>) mirrors the editor chat:
+    you approve commands and review diffs. <strong>Print mode</strong>
+    (<code>-p</code>) sends output to stdout — for automation. Add
+    <code>--force</code> only when a script should apply file changes without
+    manual approval.
+  </p>
+
+  <p>
+    Resume prior sessions with <code>agent ls</code> and <code>agent resume</code>.
+    Cloud handoff works too — prepend <code>&amp;</code> to a message to push work
+    to a cloud agent (<a href="0014-cloud-agents-deep-dive.html">Lesson 14</a>).
+  </p>
+
+  <h2>Which surface for your mission?</h2>
+
+  <table>
+    <thead>
+      <tr><th>Solo-builder moment</th><th>Surface</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Ship a feature slice in Cursor</td>
+        <td>Integrated terminal + Agent</td>
+      </tr>
+      <tr>
+        <td>Test failed — paste exact error to Agent</td>
+        <td><code>@Terminals</code> in integrated workflow</td>
+      </tr>
+      <tr>
+        <td>Write or debug a shell hook</td>
+        <td>External terminal first</td>
+      </tr>
+      <tr>
+        <td>Quick fix from another directory</td>
+        <td><code>agent "..."</code> in external terminal</td>
+      </tr>
+      <tr>
+        <td>Nightly script that triages TODOs</td>
+        <td><code>agent -p</code> headless</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Check your understanding</h2>
+
+  <div class="quiz" id="quiz1"
+       data-messages='{"true":"Correct. Pipe JSON into the script in Terminal.app before hooks.json goes live.","false":"Integrated terminal is for Agent-driven verify — not pre-wiring hook tests."}'>
+    <h3>1. Test a hook script before wiring hooks.json?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">External terminal pipes JSON into script.</button>
+      <button data-correct="false">Integrated terminal runs Agent verify commands.</button>
+      <button data-correct="false">Cursor CLI headless mode applies file edits.</button>
+    </div>
+    <div class="feedback" id="quiz1-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz2"
+       data-messages='{"true":"Correct. @Terminals attaches output you already have — ideal for debugging failures.","false":"When file names are unknown, skip @ and let Agent search."}'>
+    <h3>2. Best use of @Terminals in Agent chat?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Debug failures with output already in terminal.</button>
+      <button data-correct="false">Replace Agent search when file names unknown.</button>
+      <button data-correct="false">Attach rules instead of project context files.</button>
+    </div>
+    <div class="feedback" id="quiz2-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz3"
+       data-messages='{"true":"Correct. -p is print/headless mode for scripts and CI pipelines.","false":"Interactive agent approves each command — that is not -p."}'>
+    <h3>3. Cursor CLI print mode best used when?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Scripts and CI need non-interactive agent output.</button>
+      <button data-correct="false">Exploring unfamiliar repos in interactive chat mode.</button>
+      <button data-correct="false">Interactive chat approves each command one time.</button>
+    </div>
+    <div class="feedback" id="quiz3-feedback"></div>
+  </div>
+
+  <h2>Do this now</h2>
+
+  <div class="practice">
+    <p><strong>Debug with @Terminals, then peek at the CLI</strong> — habit tracker or LocalLab.</p>
+    <ol>
+      <li><strong>Break something on purpose</strong> — in the integrated terminal, run your verify command (<code>npm test</code> or <code>npm run verify</code>) after introducing a trivial typo in a test file (or pick an existing failure).</li>
+      <li><strong>Attach output</strong> — open Agent. Prompt: <code>Fix the failing test shown in my terminal. Change only what's needed.</code> Add <code>@Terminals</code>. Confirm Agent sees the exact error.</li>
+      <li><strong>Verify yourself</strong> — run done-when in the integrated terminal after Agent fixes it.</li>
+      <li><strong>Check the CLI</strong> — in an external terminal, run <code>agent about</code> (or <code>agent status</code>). If not installed: <code>curl https://cursor.com/install -fsS | bash</code>.</li>
+      <li><strong>One headless read</strong> — from the repo root: <code>agent -p "How many test files are in this project? Reply with a number only." --output-format text</code>. No file changes — just confirm the CLI sees the repo.</li>
+    </ol>
+    <p>You are done when Agent fixed the failure using <code>@Terminals</code>, you ran verify green yourself, and <code>agent about</code> returned your account info.</p>
+  </div>
+
+  <p class="source">
+    Primary sources:
+    <a href="https://cursor.com/docs/agent/prompting">Prompting agents</a> (@Terminals),
+    <a href="https://cursor.com/docs/agent/terminal">Terminal</a> (integrated shell),
+    <a href="https://cursor.com/docs/cli/overview">Cursor CLI overview</a>.
+  </p>
+
+  <footer>
+    <p>Stuck on anything? Ask your agent teacher — say whether you hit @Terminals, hook conflicts, or CLI install.</p>
+    <p style="margin-top: 0.75rem;">
+      Previous: <a href="0019-yolo-mode.html">Lesson 19 — YOLO Mode</a> ·
+      Next: Git Workflows (planned) ·
+      Reference: <a href="../reference/terminal-integration.html">Terminal Integration</a> ·
+      <a href="../reference/context-mentions.html">@ Context</a> ·
+      <a href="../reference/run-modes.html">Run Modes</a> ·
+      Mission: <a href="../MISSION.md">MISSION.md</a>
+    </p>
+  </footer>
+
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>

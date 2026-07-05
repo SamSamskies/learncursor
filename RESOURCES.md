@@ -23,7 +23,13 @@
 - [Run Modes](https://cursor.com/docs/agent/run-modes)
   Auto-review, Allowlist, Run Everything — sandbox, permissions.json, built-in protections. Formerly “YOLO mode.” Use for: Lesson 19 auto-run with rails.
 - [Terminal (Agent)](https://cursor.com/docs/agent/terminal)
-  Shell integration, sandbox env vars, CURSOR_AGENT prompt workaround. Use for: Lesson 19 terminal hangs.
+  Shell integration, sandbox env vars, CURSOR_AGENT prompt workaround. Use for: Lesson 20 integrated terminal.
+- [Cursor CLI overview](https://cursor.com/docs/cli/overview)
+  Install `agent`, interactive vs print mode, modes, resume, cloud handoff. Use for: Lesson 20 CLI surface.
+- [Using Agent in CLI](https://cursor.com/docs/cli/using)
+  Shift+Tab modes, worktrees, approval flow, keyboard shortcuts. Use for: Lesson 20 interactive CLI.
+- [Headless CLI](https://cursor.com/docs/cli/headless)
+  `-p`, `--force`, output formats for scripts and CI. Use for: Lesson 20 automation path.
 - [Cursor for iOS](https://cursor.com/docs/cloud-agent/mobile)
   Native iPhone app — cloud agents, Remote Control, PR review, Live Activities. Same backend as cursor.com/agents. Use for: Lesson 18 mobile control plane.
 - [Build from anywhere with Cursor for iOS](https://cursor.com/blog/ios-mobile-app)
