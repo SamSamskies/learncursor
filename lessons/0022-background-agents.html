@@ -212,15 +212,15 @@
   <h2>Do this now</h2>
 
   <div class="practice">
-    <p><strong>Parallelize two independent slices</strong> — habit-tracker PR #2 is a ready-made pair.</p>
+    <p><strong>Parallelize two independent slices</strong> — port habit-tracker's config stack to LocalLab.</p>
     <ol>
-      <li><strong>Checkout the branch</strong> — <code>git checkout add-delete-confirmation</code> on habit-tracker (or any repo with two unrelated todos).</li>
-      <li><strong>Queue two prompts</strong> — in the Agents Window, draft two <em>independent</em> requests. Example A: <code>Fix Bugbot issue: guard confirmDelete so a second call while the dialog is open returns the existing promise. Verify with npm test.</code> Example B: <code>Add a one-line comment above confirmDelete explaining the re-entry guard. No logic changes.</code></li>
+      <li><strong>Branch on LocalLab</strong> — open <a href="https://github.com/SamSamskies/locallab">LocalLab</a> and create a feature branch (e.g. <code>add-cursor-config</code>). Habit tracker already has rules, hooks, and skills — LocalLab only has rules so far.</li>
+      <li><strong>Queue two prompts</strong> — in the Agents Window, draft two <em>independent</em> requests. Example A: <code>Create .cursor/skills/locallab-ship/SKILL.md — codify the verify loop (npm run verify). Mirror habit-tracker's habit-tracker-ship skill. No app logic changes.</code> Example B: <code>Add an observe-only shell audit hook in .cursor/hooks.json — log agent shell commands to .cursor/shell-audit.log. Mirror habit tracker's hook setup. No other changes.</code></li>
       <li><strong>/multitask</strong> — type <code>/multitask</code> and send both (or ask Cursor to multitask on the queued messages). Watch the sidebar for separate subagent runs.</li>
-      <li><strong>Review each diff</strong> — read both summaries; inspect file changes separately. Run <code>npm test</code> and <code>npm run test:e2e</code> yourself.</li>
-      <li><strong>Commit via SCM</strong> — one commit for the guard fix; optional second commit for the comment. Push to update <a href="https://github.com/SamSamskies/habit-tracker/pull/2">PR #2</a>.</li>
+      <li><strong>Review each diff</strong> — read both summaries; inspect file changes separately. Run <code>npm run verify</code> yourself.</li>
+      <li><strong>Commit via SCM</strong> — one commit for the skill; one for the hooks. Push and open a PR if you want it on GitHub.</li>
     </ol>
-    <p>You are done when two subagents finished in parallel, you verified green, and PR #2 reflects the Bugbot fix.</p>
+    <p>You are done when two subagents finished in parallel, <code>npm run verify</code> is green, and LocalLab has both a ship skill and a shell audit hook.</p>
   </div>
 
   <p class="source">

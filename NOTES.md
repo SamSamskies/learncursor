@@ -43,7 +43,7 @@
 - **Lesson 19 complete:** YOLO Mode / Run Modes — Auto-review default, permissions.json, stack with hooks + verify loop
 - **Lesson 20 complete:** Terminal Integration — @Terminals, integrated vs external terminal, Cursor CLI; verify + headless CLI read
 - **Lesson 21 complete:** Git Workflows — @Commit, @Branch, SCM commit, gh PR; [habit-tracker PR #2](https://github.com/SamSamskies/habit-tracker/pull/2) delete confirmation dialog; Bugbot flagged concurrent confirmDelete stacking
-- **Lesson 22 ready:** Background Agents — /multitask, worktrees, Build in Parallel vs Cloud Agents
+- **Lesson 22 ready:** Background Agents — /multitask, worktrees, Build in Parallel vs Cloud Agents; practice = parallel port of habit-tracker skill + hook to LocalLab (PR #2 task retired — already merged)
 
 ## Post–Lesson 18 curriculum (user, Jul 2026)
 
