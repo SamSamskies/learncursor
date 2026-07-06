@@ -74,6 +74,16 @@
   </p>
 
   <p>
+    <code>/multitask</code> is a <strong>hint</strong> to parallelize — not a guarantee.
+    The parent agent decides how to split work. Common outcomes:
+  </p>
+  <ul>
+    <li><strong>One subagent, parent does the rest</strong> — parent spawns a helper (e.g. explore/bash) for one piece, then edits files itself sequentially. Both tasks done; not truly parallel.</li>
+    <li><strong>Multiple subagents, one checkout</strong> — fine when slices touch different files (e.g. <code>.cursor/skills/</code> vs <code>.cursor/hooks.json</code>). No worktrees needed.</li>
+    <li><strong>Worktrees</strong> — <em>never automatic</em>. You create them manually in the Agents Window when parallel subagents would edit overlapping files.</li>
+  </ul>
+
+  <p>
     <strong>Separate conversations are not a queue.</strong> Drafting two agent
     chats without sending does not stack work — each chat is isolated. The queue
     lives inside <em>one</em> conversation: messages you add while an agent is
@@ -224,21 +234,17 @@
     <p><strong>Parallelize two independent slices</strong> — port habit-tracker's config stack to LocalLab.</p>
     <ol>
       <li><strong>Branch on LocalLab</strong> — open <a href="https://github.com/SamSamskies/locallab">LocalLab</a> and create a feature branch (e.g. <code>add-cursor-config</code>). Habit tracker already has rules, hooks, and skills — LocalLab only has rules so far.</li>
-      <li><strong>Send one /multitask prompt</strong> — easiest path. In a single Agents Window chat, send:
-        <pre class="example">/multitask
-
-Two independent slices on LocalLab — separate files, no overlap:
-
-1. Create .cursor/skills/locallab-ship/SKILL.md — codify npm run verify. Mirror habit-tracker's habit-tracker-ship skill. No app logic changes.
-2. Add observe-only shell audit hook in .cursor/hooks.json — log to .cursor/shell-audit.log. Mirror habit tracker. No other changes.
-
-Run npm run verify when each slice is done.</pre>
-        <p style="margin-top: 0.75rem;"><em>Alternative — queue in one chat:</em> send task 1 normally; while the agent is running, type task 2 and press <strong>Option+Enter</strong> (explicit queue) or Enter per your Settings → Chat → Queue messages default. When both are queued in that thread, send <code>/multitask on the queued messages</code>.</p>
-      </li>
-      <li><strong>Watch subagents</strong> — separate runs appear in the sidebar. Read both summaries; inspect file changes separately. Run <code>npm run verify</code> yourself.</li>
+      <li><strong>Plan → Build in Parallel</strong> — most reliable path for two slices. Open Plan Mode (<code>Shift+Tab</code>), lock a frontier model, and plan two independent steps:
+        <ul>
+          <li>Step 1: <code>.cursor/skills/locallab-ship/SKILL.md</code> (mirror habit-tracker-ship, <code>npm run verify</code>)</li>
+          <li>Step 2: <code>.cursor/hooks.json</code> shell audit hook (mirror habit tracker, observe-only)</li>
+        </ul>
+        Review the plan, then click <strong>Build in Parallel</strong> (not Build Locally). Cursor should dispatch independent steps as parallel subagents.</li>
+      <li><strong>If you used <code>/multitask</code> instead</strong> — that's fine too. Expect variance: one subagent plus parent doing both tasks on one checkout is normal for non-overlapping files. Worktrees are only needed when slices edit the same files — not for this exercise.</li>
+      <li><strong>Verify</strong> — read subagent summaries if any; inspect the full diff. Run <code>npm run verify</code> yourself.</li>
       <li><strong>Commit via SCM</strong> — one commit for the skill; one for the hooks. Push and open a PR if you want it on GitHub.</li>
     </ol>
-    <p>You are done when two subagents finished in parallel, <code>npm run verify</code> is green, and LocalLab has both a ship skill and a shell audit hook.</p>
+    <p>You are done when both artifacts exist, <code>npm run verify</code> is green, and you can explain what actually ran (how many subagents, one checkout vs worktrees).</p>
   </div>
 
   <p class="source">

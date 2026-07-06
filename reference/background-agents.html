@@ -119,9 +119,9 @@
 
   <h2>/multitask triggers</h2>
   <ul>
-    <li>Type <code>/multitask</code> in the Agents Window before a prompt (one message listing independent slices)</li>
-    <li>While an agent runs in <em>one</em> chat, queue follow-ups with Option+Enter; then ask Cursor to multitask on those queued messages</li>
-    <li>Plan Mode → <strong>Build in Parallel</strong> (independent plan steps at once)</li>
+    <li>Type <code>/multitask</code> before a prompt — parent <em>may</em> spawn subagents; decomposition is not guaranteed</li>
+    <li>Plan Mode → <strong>Build in Parallel</strong> — more reliable for independent plan steps</li>
+    <li>Worktrees — manual setup in Agents Window; only when parallel edits would overlap</li>
   </ul>
 
   <h2>Foreground vs background subagent</h2>
