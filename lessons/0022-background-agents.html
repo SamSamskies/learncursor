@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 22 — Background Agents</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <div class="lesson-meta">Lesson 22 · ~15 minutes</div>
+  <h1>Background Agents</h1>
+
+  <p class="epigraph">
+    One agent queue is a bottleneck.
+    <code>/multitask</code> turns the queue into a fleet.
+  </p>
+
+  <p>
+    <a href="0014-cloud-agents-deep-dive.html">Lesson 14</a> covered agents that run
+    in Cursor's cloud — close your laptop, wake up to a PR. This lesson is the
+    <strong>local</strong> side of parallelism: async subagents in the Agents Window,
+    triggered by <code>/multitask</code> or Plan's <strong>Build in Parallel</strong>.
+    It pairs with worktrees for filesystem isolation and with your verify loop from
+    <a href="0004-verify-and-iterate.html">Lesson 4</a>.
+  </p>
+
+  <p>
+    Keep the
+    <a href="../reference/background-agents.html">Background Agents reference</a>
+    open.
+  </p>
+
+  <h2>Three runtimes — pick consciously</h2>
+
+  <table>
+    <thead>
+      <tr><th>Runtime</th><th>Blocks you?</th><th>Reach for when</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Foreground Agent</strong></td>
+        <td>You watch each step</td>
+        <td>Default — one slice, tight feedback loop</td>
+      </tr>
+      <tr>
+        <td><strong>Background subagents</strong></td>
+        <td>No — parent stays interactive</td>
+        <td>Independent tasks; don't wait on the queue</td>
+      </tr>
+      <tr>
+        <td><strong>Cloud Agent</strong></td>
+        <td>Runs off-machine</td>
+        <td>Long jobs, automations, mobile handoff</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Primary source:
+    <a href="https://cursor.com/help/ai-features/multi-agent">Multi-agent coding</a>
+    — Agents Window, subagents, <code>/multitask</code>.
+    Changelog detail:
+    <a href="https://cursor.com/changelog/04-24-26">Multitask &amp; worktrees</a>.
+  </p>
+
+  <h2>What /multitask does</h2>
+
+  <p>
+    In the <strong>Agents Window</strong>, type <code>/multitask</code> before your
+    prompt (or ask Cursor to multitask on messages already queued). Instead of
+    running prompts one-by-one, Cursor spawns <strong>async subagents</strong> —
+    each with its own context window — and returns summaries to the parent chat.
+  </p>
+
+  <div class="steps">
+    <div class="step">
+      <strong>Queue parallelization</strong>
+      <span>Three stacked prompts → three subagents at once, not three waits</span>
+    </div>
+    <div class="step">
+      <strong>Auto-decomposition</strong>
+      <span>One large prompt → Cursor splits independent chunks across a fleet</span>
+    </div>
+    <div class="step">
+      <strong>Build in Parallel</strong>
+      <span>Plan Mode alternative — independent plan steps run simultaneously</span>
+    </div>
+  </div>
+
+  <p>
+    Each subagent only returns a <em>summary</em> to the parent — your main context
+    stays free for planning and review. Built-in subagents handle research, shell,
+    and browser work; the parent coordinates.
+  </p>
+
+  <h2>Worktrees — isolation when edits overlap</h2>
+
+  <p>
+    Background subagents editing the same checkout can step on each other. Worktrees
+    give each task its own branch and filesystem copy inside the Agents Window.
+    Run isolated work in the background; when ready, promote the branch to your
+    local foreground with one click and verify there.
+  </p>
+
+  <table>
+    <thead>
+      <tr><th>Situation</th><th>Isolation</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Research-only subagent (no file edits)</td>
+        <td>None needed</td>
+      </tr>
+      <tr>
+        <td>Two fixes in different directories</td>
+        <td><code>/multitask</code> often fine on one checkout</td>
+      </tr>
+      <tr>
+        <td>Two features touching same files</td>
+        <td>Worktree per branch — or serialize</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Stack with your existing workflow</h2>
+
+  <table>
+    <thead>
+      <tr><th>Layer</th><th>Still applies?</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Verify loop (<a href="0004-verify-and-iterate.html">Lesson 4</a>)</td>
+        <td>Yes — verify each subagent's diff before commit</td>
+      </tr>
+      <tr>
+        <td>Run Modes (<a href="0019-yolo-mode.html">Lesson 19</a>)</td>
+        <td>Yes — subagents inherit your approval settings</td>
+      </tr>
+      <tr>
+        <td>Hooks (<a href="0011-cursor-hooks.html">Lesson 11</a>)</td>
+        <td>Yes — local subagents hit <code>hooks.json</code></td>
+      </tr>
+      <tr>
+        <td>Git workflow (<a href="0021-git-workflows.html">Lesson 21</a>)</td>
+        <td>Yes — one commit per subagent slice; SCM commit yourself</td>
+      </tr>
+      <tr>
+        <td>Bugbot (<a href="0015-pr-review-agents.html">Lesson 15</a>)</td>
+        <td>Yes — parallel fixes still need review before merge</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>When /multitask is worth it</h2>
+
+  <table>
+    <thead>
+      <tr><th>Use it</th><th>Skip it</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Bugbot fix + unrelated test cleanup</td>
+        <td>Single-file typo — just prompt normally</td>
+      </tr>
+      <tr>
+        <td>Frontend polish while API tests run</td>
+        <td>Refactor where step 2 needs step 1's types</td>
+      </tr>
+      <tr>
+        <td>Queued prompts you are tired of waiting on</td>
+        <td>First time touching unfamiliar code — stay foreground</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Check your understanding</h2>
+
+  <div class="quiz" id="quiz1"
+       data-messages='{"true":"Correct. /multitask spawns async subagents — the parent stays interactive.","false":"Foreground Agent blocks until each prompt finishes sequentially."}'>
+    <h3>1. What changes when you use /multitask?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Async subagents run work in parallel.</button>
+      <button data-correct="false">Prompts still run one at a time.</button>
+      <button data-correct="false">All work moves to the cloud VM.</button>
+    </div>
+    <div class="feedback" id="quiz1-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz2"
+       data-messages='{"true":"Correct. Worktrees isolate filesystem per branch — essential for overlapping edits.","false":"Research-only subagents still need worktree isolation."}'>
+    <h3>2. When do worktrees matter most?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Parallel subagents edit overlapping files.</button>
+      <button data-correct="false">Subagent only reads docs, no edits.</button>
+      <button data-correct="false">You run verify in external terminal.</button>
+    </div>
+    <div class="feedback" id="quiz2-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz3"
+       data-messages='{"true":"Correct. Cloud = off-machine long runs; /multitask = local parallel subagents.","false":"/multitask closes laptop and runs in Ubuntu VM."}'>
+    <h3>3. /multitask vs Cloud Agent?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Multitask is local parallel subagents.</button>
+      <button data-correct="false">Multitask runs in cloud Ubuntu VM.</button>
+      <button data-correct="false">Cloud Agent is only for cron automations.</button>
+    </div>
+    <div class="feedback" id="quiz3-feedback"></div>
+  </div>
+
+  <h2>Do this now</h2>
+
+  <div class="practice">
+    <p><strong>Parallelize two independent slices</strong> — habit-tracker PR #2 is a ready-made pair.</p>
+    <ol>
+      <li><strong>Checkout the branch</strong> — <code>git checkout add-delete-confirmation</code> on habit-tracker (or any repo with two unrelated todos).</li>
+      <li><strong>Queue two prompts</strong> — in the Agents Window, draft two <em>independent</em> requests. Example A: <code>Fix Bugbot issue: guard confirmDelete so a second call while the dialog is open returns the existing promise. Verify with npm test.</code> Example B: <code>Add a one-line comment above confirmDelete explaining the re-entry guard. No logic changes.</code></li>
+      <li><strong>/multitask</strong> — type <code>/multitask</code> and send both (or ask Cursor to multitask on the queued messages). Watch the sidebar for separate subagent runs.</li>
+      <li><strong>Review each diff</strong> — read both summaries; inspect file changes separately. Run <code>npm test</code> and <code>npm run test:e2e</code> yourself.</li>
+      <li><strong>Commit via SCM</strong> — one commit for the guard fix; optional second commit for the comment. Push to update <a href="https://github.com/SamSamskies/habit-tracker/pull/2">PR #2</a>.</li>
+    </ol>
+    <p>You are done when two subagents finished in parallel, you verified green, and PR #2 reflects the Bugbot fix.</p>
+  </div>
+
+  <p class="source">
+    Primary source:
+    <a href="https://cursor.com/help/ai-features/multi-agent">Multi-agent coding</a>
+    (<code>/multitask</code>, subagents, Agents Window).
+  </p>
+
+  <footer>
+    <p>Stuck on anything? Ask your agent teacher — say whether /multitask, worktrees, or reviewing parallel diffs tripped you up.</p>
+    <p style="margin-top: 0.75rem;">
+      Previous: <a href="0021-git-workflows.html">Lesson 21 — Git Workflows</a> ·
+      Next: Custom Modes (planned) ·
+      Reference: <a href="../reference/background-agents.html">Background Agents</a> ·
+      <a href="../reference/cloud-agents.html">Cloud Agents</a> ·
+      <a href="../reference/pr-review-loop.html">PR Review Loop</a> ·
+      Mission: <a href="../MISSION.md">MISSION.md</a>
+    </p>
+  </footer>
+
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>

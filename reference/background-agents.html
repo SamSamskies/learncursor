@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Background Agents — Quick Reference</title>
+  <style>
+    :root {
+      --text: #1a1a1a;
+      --muted: #555;
+      --accent: #2563eb;
+      --border: #ddd;
+      --bg: #fafafa;
+      --card: #fff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Palatino Linotype", Palatino, Georgia, serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.55;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+    h1 {
+      font-weight: 400;
+      font-size: 1.75rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+    h2 {
+      font-size: 0.75rem;
+      font-family: system-ui, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin: 2rem 0 0.75rem;
+      font-weight: 600;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      font-family: system-ui, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: #f5f5f5;
+    }
+    tr:last-child td { border-bottom: none; }
+    ol, ul {
+      padding-left: 1.25rem;
+      font-size: 0.95rem;
+    }
+    li { margin-bottom: 0.45rem; }
+    code {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.85em;
+      background: #eee;
+      padding: 0.1em 0.35em;
+    }
+    pre {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 0.85rem 1rem;
+      font-size: 0.82rem;
+      overflow-x: auto;
+      margin-bottom: 1rem;
+    }
+    a { color: var(--accent); }
+    .back { font-size: 0.88rem; margin-top: 2.5rem; }
+    @media print { body { background: white; } }
+  </style>
+</head>
+<body>
+  <h1>Background Agents</h1>
+  <p class="subtitle">Local parallelism — <code>/multitask</code>, subagents, worktrees</p>
+
+  <h2>Three agent runtimes (recap)</h2>
+  <table>
+    <thead>
+      <tr><th>Runtime</th><th>Where</th><th>Reach for when</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Foreground Agent</strong></td>
+        <td>Agents Window, your working tree</td>
+        <td>Default — one task, you watch diffs</td>
+      </tr>
+      <tr>
+        <td><strong>Background subagents</strong></td>
+        <td>Spawned by <code>/multitask</code> or Plan "Build in Parallel"</td>
+        <td>Independent chunks; keep chatting while work runs</td>
+      </tr>
+      <tr>
+        <td><strong>Cloud Agent</strong></td>
+        <td>Ubuntu VM, fresh clone</td>
+        <td>Long runs, close laptop, automations (<a href="cloud-agents.html">ref</a>)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>/multitask triggers</h2>
+  <ul>
+    <li>Type <code>/multitask</code> in the Agents Window before a prompt</li>
+    <li>Ask Cursor to multitask on messages already in the queue</li>
+    <li>Plan Mode → <strong>Build in Parallel</strong> (independent plan steps at once)</li>
+  </ul>
+
+  <h2>Foreground vs background subagent</h2>
+  <table>
+    <thead>
+      <tr><th>Mode</th><th>Parent blocks?</th><th>Use when</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Foreground subagent</td>
+        <td>Yes — waits for result</td>
+        <td>Parent needs output before continuing</td>
+      </tr>
+      <tr>
+        <td>Background subagent</td>
+        <td>No — returns immediately</td>
+        <td>Parallel workstreams; long research or shell tasks</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Worktrees — isolation for parallel edits</h2>
+  <p>Without isolation, two subagents editing the same checkout can conflict. Worktrees give each background task its own branch + filesystem copy. Promote to foreground when ready to test.</p>
+  <ol>
+    <li>Agents Window → worktree for a branch</li>
+    <li>Run isolated task in background</li>
+    <li>One-click move branch into local foreground to verify</li>
+  </ol>
+
+  <h2>When to use /multitask</h2>
+  <table>
+    <thead>
+      <tr><th>Good fit</th><th>Poor fit</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Two unrelated fixes (API + CSS)</td>
+        <td>One coherent refactor touching same files</td>
+      </tr>
+      <tr>
+        <td>Research + implementation in parallel</td>
+        <td>Step B depends on Step A's output</td>
+      </tr>
+      <tr>
+        <td>Queued prompts you don't want to wait on</td>
+        <td>Small one-file change — overhead not worth it</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Solo-builder moments</h2>
+  <table>
+    <thead>
+      <tr><th>Moment</th><th>Surface</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Bugbot comment + unrelated doc fix</td>
+        <td><code>/multitask</code> — two parallel subagents</td>
+      </tr>
+      <tr>
+        <td>Plan with 3 independent slices</td>
+        <td>Build in Parallel</td>
+      </tr>
+      <tr>
+        <td>Experiment on branch A while B runs tests</td>
+        <td>Worktree per branch</td>
+      </tr>
+      <tr>
+        <td>Overnight / close laptop</td>
+        <td>Cloud Agent, not local background</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Guardrails</h2>
+  <ul>
+    <li>Verify each subagent's diff yourself — parallel ≠ auto-reviewed</li>
+    <li>Stack with verify loop and hooks; background subagents still hit local hooks</li>
+    <li>Overlapping file edits → use worktrees or serialize</li>
+    <li>Cloud agents have no local hooks — different risk profile</li>
+  </ul>
+
+  <p class="back">
+    <a href="../lessons/0022-background-agents.html">Lesson 22</a> ·
+    <a href="cloud-agents.html">Cloud Agents</a> ·
+    <a href="run-modes.html">Run Modes</a> ·
+    <a href="git-workflows.html">Git Workflows</a>
+  </p>
+</body>
+</html>
