@@ -67,9 +67,18 @@
 
   <p>
     In the <strong>Agents Window</strong>, type <code>/multitask</code> before your
-    prompt (or ask Cursor to multitask on messages already queued). Instead of
-    running prompts one-by-one, Cursor spawns <strong>async subagents</strong> —
-    each with its own context window — and returns summaries to the parent chat.
+    prompt (or ask Cursor to multitask on messages already queued <em>in the same
+    chat</em>). Instead of running prompts one-by-one, Cursor spawns
+    <strong>async subagents</strong> — each with its own context window — and
+    returns summaries to the parent chat.
+  </p>
+
+  <p>
+    <strong>Separate conversations are not a queue.</strong> Drafting two agent
+    chats without sending does not stack work — each chat is isolated. The queue
+    lives inside <em>one</em> conversation: messages you add while an agent is
+    already running. See
+    <a href="https://cursor.com/docs/agent/overview">Agent overview — Queued messages</a>.
   </p>
 
   <div class="steps">
@@ -215,9 +224,18 @@
     <p><strong>Parallelize two independent slices</strong> — port habit-tracker's config stack to LocalLab.</p>
     <ol>
       <li><strong>Branch on LocalLab</strong> — open <a href="https://github.com/SamSamskies/locallab">LocalLab</a> and create a feature branch (e.g. <code>add-cursor-config</code>). Habit tracker already has rules, hooks, and skills — LocalLab only has rules so far.</li>
-      <li><strong>Queue two prompts</strong> — in the Agents Window, draft two <em>independent</em> requests. Example A: <code>Create .cursor/skills/locallab-ship/SKILL.md — codify the verify loop (npm run verify). Mirror habit-tracker's habit-tracker-ship skill. No app logic changes.</code> Example B: <code>Add an observe-only shell audit hook in .cursor/hooks.json — log agent shell commands to .cursor/shell-audit.log. Mirror habit tracker's hook setup. No other changes.</code></li>
-      <li><strong>/multitask</strong> — type <code>/multitask</code> and send both (or ask Cursor to multitask on the queued messages). Watch the sidebar for separate subagent runs.</li>
-      <li><strong>Review each diff</strong> — read both summaries; inspect file changes separately. Run <code>npm run verify</code> yourself.</li>
+      <li><strong>Send one /multitask prompt</strong> — easiest path. In a single Agents Window chat, send:
+        <pre class="example">/multitask
+
+Two independent slices on LocalLab — separate files, no overlap:
+
+1. Create .cursor/skills/locallab-ship/SKILL.md — codify npm run verify. Mirror habit-tracker's habit-tracker-ship skill. No app logic changes.
+2. Add observe-only shell audit hook in .cursor/hooks.json — log to .cursor/shell-audit.log. Mirror habit tracker. No other changes.
+
+Run npm run verify when each slice is done.</pre>
+        <p style="margin-top: 0.75rem;"><em>Alternative — queue in one chat:</em> send task 1 normally; while the agent is running, type task 2 and press <strong>Option+Enter</strong> (explicit queue) or Enter per your Settings → Chat → Queue messages default. When both are queued in that thread, send <code>/multitask on the queued messages</code>.</p>
+      </li>
+      <li><strong>Watch subagents</strong> — separate runs appear in the sidebar. Read both summaries; inspect file changes separately. Run <code>npm run verify</code> yourself.</li>
       <li><strong>Commit via SCM</strong> — one commit for the skill; one for the hooks. Push and open a PR if you want it on GitHub.</li>
     </ol>
     <p>You are done when two subagents finished in parallel, <code>npm run verify</code> is green, and LocalLab has both a ship skill and a shell audit hook.</p>
