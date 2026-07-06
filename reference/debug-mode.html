@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Debug Mode — Quick Reference</title>
+  <style>
+    :root {
+      --text: #1a1a1a;
+      --muted: #555;
+      --accent: #2563eb;
+      --border: #ddd;
+      --bg: #fafafa;
+      --card: #fff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Palatino Linotype", Palatino, Georgia, serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.55;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+    h1 {
+      font-weight: 400;
+      font-size: 1.75rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+    h2 {
+      font-size: 0.75rem;
+      font-family: system-ui, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin: 2rem 0 0.75rem;
+      font-weight: 600;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      font-family: system-ui, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: #f5f5f5;
+    }
+    tr:last-child td { border-bottom: none; }
+    ol { padding-left: 1.25rem; font-size: 0.95rem; }
+    li { margin-bottom: 0.45rem; }
+    code {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.85em;
+      background: #eee;
+      padding: 0.1em 0.35em;
+    }
+    a { color: var(--accent); }
+    .back { font-size: 0.88rem; margin-top: 2.5rem; }
+    @media print { body { background: white; } }
+  </style>
+</head>
+<body>
+  <h1>Debug Mode</h1>
+  <p class="subtitle">Runtime evidence before fixes — <code>Shift+Tab</code> to switch</p>
+
+  <h2>Four built-in modes</h2>
+  <table>
+    <thead>
+      <tr><th>Mode</th><th>Edits?</th><th>Reach for when</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Agent</strong></td><td>Yes</td><td>Default — build, refactor, ship slices</td></tr>
+      <tr><td><strong>Ask</strong></td><td>No</td><td>Explore code, no diffs</td></tr>
+      <tr><td><strong>Plan</strong></td><td>After approval</td><td>Multi-file features, review first</td></tr>
+      <tr><td><strong>Debug</strong></td><td>Yes (targeted)</td><td>Reproducible bug, cause unclear</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Debug loop</h2>
+  <ol>
+    <li>Hypothesize — explore files, list possible causes</li>
+    <li>Instrument — add logs to local debug server (Cursor extension)</li>
+    <li>Reproduce — you run the steps; agent captures runtime data</li>
+    <li>Analyze — read logs, confirm root cause</li>
+    <li>Fix — small, targeted change</li>
+    <li>Verify + clean up — re-run; agent removes instrumentation</li>
+  </ol>
+
+  <h2>Agent vs Debug</h2>
+  <table>
+    <thead>
+      <tr><th>Agent</th><th>Debug</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Reads code, guesses fix</td><td>Requires reproduction + logs first</td></tr>
+      <tr><td>Fast for obvious bugs</td><td>Better for timing, regressions, heisenbugs</td></tr>
+      <tr><td>@Terminals for failures</td><td>Structured instrumentation loop</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Good fits</h2>
+  <ul style="padding-left: 1.25rem; font-size: 0.95rem;">
+    <li>Bug reproduces but cause not obvious from reading code</li>
+    <li>Race conditions, async ordering</li>
+    <li>Performance / memory leaks</li>
+    <li>Regressions — "it used to work"</li>
+  </ul>
+
+  <p class="back">
+    <a href="../lessons/0023-debug-mode-and-persistent-context.html">Lesson 23</a> ·
+    <a href="persistent-context.html">Persistent Context</a> ·
+    <a href="verify-loop.html">Verify Loop</a> ·
+    <a href="run-modes.html">Run Modes</a>
+  </p>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Persistent Context — Quick Reference</title>
+  <style>
+    :root {
+      --text: #1a1a1a;
+      --muted: #555;
+      --accent: #2563eb;
+      --border: #ddd;
+      --bg: #fafafa;
+      --card: #fff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Palatino Linotype", Palatino, Georgia, serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.55;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+    h1 {
+      font-weight: 400;
+      font-size: 1.75rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+    h2 {
+      font-size: 0.75rem;
+      font-family: system-ui, sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin: 2rem 0 0.75rem;
+      font-weight: 600;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      font-family: system-ui, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: #f5f5f5;
+    }
+    tr:last-child td { border-bottom: none; }
+    code {
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 0.85em;
+      background: #eee;
+      padding: 0.1em 0.35em;
+    }
+    a { color: var(--accent); }
+    .back { font-size: 0.88rem; margin-top: 2.5rem; }
+    @media print { body { background: white; } }
+  </style>
+</head>
+<body>
+  <h1>Persistent Context</h1>
+  <p class="subtitle">What survives between chats — and what does not</p>
+
+  <h2>Removed in Cursor 2.1</h2>
+  <table>
+    <thead>
+      <tr><th>Old feature</th><th>Replacement</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Custom Modes</td><td>Built-in modes + rules + skills + subagents</td></tr>
+      <tr><td>IDE Memories</td><td>Project rules, user rules, <code>AGENTS.md</code></td></tr>
+    </tbody>
+  </table>
+  <p style="font-size: 0.92rem; margin-bottom: 1rem;">Export old memories: <code>Cmd+Shift+P</code> → "Export memories" → move into <code>.cursor/rules/</code>.</p>
+
+  <h2>Your solo-builder stack</h2>
+  <table>
+    <thead>
+      <tr><th>Layer</th><th>Scope</th><th>Stores</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>User rules</td><td>All projects</td><td>Global prefs (concise replies)</td></tr>
+      <tr><td>Project rules</td><td>One repo, git</td><td>Stack, style, conventions</td></tr>
+      <tr><td><code>AGENTS.md</code></td><td>Repo / subdirs</td><td>Readable agent instructions</td></tr>
+      <tr><td>Skills</td><td>On demand</td><td>Multi-step workflows</td></tr>
+      <tr><td>Hooks</td><td>Local agent events</td><td>Deterministic gates, audit</td></tr>
+      <tr><td>Automation Memories</td><td>Cloud automations only</td><td>Notes across automation runs</td></tr>
+    </tbody>
+  </table>
+
+  <h2>What chats forget</h2>
+  <ul style="padding-left: 1.25rem; font-size: 0.95rem;">
+    <li>Prior session reasoning and diffs — start fresh context per chat</li>
+    <li>Uncommitted decisions not written to rules or repo docs</li>
+    <li>Full API contracts hammered out last Tuesday</li>
+  </ul>
+
+  <h2>Precedence (rules conflict)</h2>
+  <p style="font-size: 0.95rem;">Team Rules → Project Rules → User Rules (solo: project beats user).</p>
+
+  <p class="back">
+    <a href="../lessons/0023-debug-mode-and-persistent-context.html">Lesson 23</a> ·
+    <a href="skills.html">Skills</a> ·
+    <a href="automations.html">Automations</a> ·
+    <a href="debug-mode.html">Debug Mode</a>
+  </p>
+</body>
+</html>

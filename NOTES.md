@@ -43,20 +43,21 @@
 - **Lesson 19 complete:** YOLO Mode / Run Modes — Auto-review default, permissions.json, stack with hooks + verify loop
 - **Lesson 20 complete:** Terminal Integration — @Terminals, integrated vs external terminal, Cursor CLI; verify + headless CLI read
 - **Lesson 21 complete:** Git Workflows — @Commit, @Branch, SCM commit, gh PR; [habit-tracker PR #2](https://github.com/SamSamskies/habit-tracker/pull/2) delete confirmation dialog; Bugbot flagged concurrent confirmDelete stacking
-- **Lesson 22 ready:** Background Agents — /multitask, worktrees, Build in Parallel vs Cloud Agents; practice = parallel port of habit-tracker skill + hook to LocalLab (PR #2 task retired — already merged)
+- **Lesson 22 complete:** Background Agents — `/multitask` is non-deterministic; queue = one chat while agent runs; worktrees manual; reverted LocalLab skill/hook port (not wanted now)
+- **Lesson 23 ready:** Debug Mode & Persistent Context — curriculum capstone; Custom Modes + IDE Memories removed in Cursor 2.1; replacements = built-in modes + rules/skills/subagents; automation Memories still cloud-only
 
-## Post–Lesson 18 curriculum (user, Jul 2026)
+## Post–Lesson 18 curriculum (user, Jul 2026) — complete
 
-After Lesson 18, cover these six topics — identified as gaps vs the full Cursor power-user checklist (Rules, Agent Mode, Planning Mode, Context Management, Model Selection, and MCP Integration already done):
+All six topics covered (Jul 2026):
 
-1. **Memories** — automation tool for notes across runs; only mentioned in Lessons 13–14, never practiced
-2. **Background Agents** — local multitask/background runs (cloud agents covered in Lesson 14)
-3. **YOLO Mode** — auto-run terminal commands; pairs with verify loop from Lesson 4
-4. **Custom Modes** — user-defined agent modes beyond Agent / Plan / Ask
-5. **Terminal Integration** — `@terminal`, Cursor CLI, integrated vs external terminal workflows
-6. **Git Workflows** — Cursor-specific git: `@git`, agent-driven commits/PRs (OSS Lessons 8–9 gave practice but not as a feature deep dive)
+1. ~~Memories~~ → Lesson 23: IDE Memories removed in 2.1; rules/skills/AGENTS.md + automation Memories (cloud)
+2. ~~Background Agents~~ → Lesson 22
+3. ~~YOLO Mode~~ → Lesson 19
+4. ~~Custom Modes~~ → Lesson 23: removed in 2.1; built-in modes + skills/subagents
+5. ~~Terminal Integration~~ → Lesson 20
+6. ~~Git Workflows~~ → Lesson 21
 
-Suggested order: YOLO Mode → Terminal Integration → Git Workflows → Background Agents → Custom Modes → Memories (Memories last — most useful once automations are familiar).
+Suggested order was followed with Lesson 23 as honest capstone for removed features + Debug mode.
 
 ## Model selection for Plan Mode
 

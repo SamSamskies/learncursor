@@ -32,6 +32,10 @@
   `-p`, `--force`, output formats for scripts and CI. Use for: Lesson 20 automation path.
 - [Prompting agents — git diffs](https://cursor.com/docs/agent/prompting)
   `@Commit (Diff of Working State)` and `@Branch (Diff with Main)` for attached diffs. Use for: Lesson 21 git @ mentions.
+- [Debug Mode](https://cursor.com/docs/agent/debug-mode)
+  Runtime-evidence bug loop — hypothesize, instrument, reproduce, analyze, fix. Use for: Lesson 23.
+- [Agent modes (help)](https://cursor.com/help/ai-features/agent)
+  Agent, Ask, Plan, Debug — when to use each. Use for: Lesson 23 built-in modes.
 - [Cursor for iOS](https://cursor.com/docs/cloud-agent/mobile)
   Native iPhone app — cloud agents, Remote Control, PR review, Live Activities. Same backend as cursor.com/agents. Use for: Lesson 18 mobile control plane.
 - [Build from anywhere with Cursor for iOS](https://cursor.com/blog/ios-mobile-app)

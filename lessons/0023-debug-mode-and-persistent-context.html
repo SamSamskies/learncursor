@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 23 — Debug Mode &amp; Persistent Context</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <div class="lesson-meta">Lesson 23 · ~15 minutes · curriculum capstone</div>
+  <h1>Debug Mode &amp; Persistent Context</h1>
+
+  <p class="epigraph">
+    Agent guesses from static code.
+    Debug Mode waits for runtime proof.
+  </p>
+
+  <p>
+    You have shipped apps, reviewed PRs, and stacked rules, hooks, skills, and
+    automations. Two topics remained on the post–Lesson 18 checklist —
+    <strong>Custom Modes</strong> and <strong>Memories</strong> — but Cursor
+  removed both in version 2.1. This lesson closes the gap honestly: the fourth
+    built-in mode you have not practiced yet (<strong>Debug</strong>), and the
+    persistence stack you already use instead of IDE memories.
+  </p>
+
+  <p>
+    Keep the
+    <a href="../reference/debug-mode.html">Debug Mode</a> and
+    <a href="../reference/persistent-context.html">Persistent Context</a>
+    references open.
+  </p>
+
+  <h2>Four modes — the real set today</h2>
+
+  <table>
+    <thead>
+      <tr><th>Mode</th><th>Edits files?</th><th>Reach for when</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Agent</strong></td>
+        <td>Yes</td>
+        <td>Default — build, refactor, ship slices</td>
+      </tr>
+      <tr>
+        <td><strong>Ask</strong></td>
+        <td>No</td>
+        <td>Understand code without touching it</td>
+      </tr>
+      <tr>
+        <td><strong>Plan</strong></td>
+        <td>After you approve</td>
+        <td>Multi-file features; Build in Parallel for independent steps</td>
+      </tr>
+      <tr>
+        <td><strong>Debug</strong></td>
+        <td>Yes — targeted</td>
+        <td>Reproducible bug, root cause unclear from reading code</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Switch with <code>Shift+Tab</code> or the mode picker. Each mode starts a
+    fresh context window — new chat when you change tasks
+    (<a href="https://cursor.com/help/ai-features/agent">Agent modes</a>).
+  </p>
+
+  <h2>What Debug Mode does differently</h2>
+
+  <p>
+    Standard Agent reads code and proposes fixes. Debug Mode follows a
+    <strong>runtime-evidence loop</strong> from
+    <a href="https://cursor.com/docs/agent/debug-mode">official docs</a>:
+  </p>
+
+  <div class="steps">
+    <div class="step">
+      <strong>Hypothesize</strong>
+      <span>Explore files; list multiple possible causes</span>
+    </div>
+    <div class="step">
+      <strong>Instrument</strong>
+      <span>Add log statements → local debug server (Cursor extension)</span>
+    </div>
+    <div class="step">
+      <strong>Reproduce</strong>
+      <span>You run the steps; agent captures real runtime data</span>
+    </div>
+    <div class="step">
+      <strong>Analyze + fix</strong>
+      <span>Read logs; small targeted patch; verify; remove instrumentation</span>
+    </div>
+  </div>
+
+  <p>
+    Pairs with <code>@Terminals</code> from
+    <a href="0020-terminal-integration.html">Lesson 20</a> — Debug is the
+    structured version when Agent's guess-and-check loop stalls on a bug you
+    can reproduce.
+  </p>
+
+  <h2>What replaced Custom Modes &amp; Memories</h2>
+
+  <table>
+    <thead>
+      <tr><th>Removed (Cursor 2.1)</th><th>Use instead</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Custom Modes</strong> (model + tool pinning)</td>
+        <td>Built-in modes; <code>/skill-name</code>; custom subagents in <code>.cursor/agents/</code></td>
+      </tr>
+      <tr>
+        <td><strong>IDE Memories</strong> (account notes in chat)</td>
+        <td>Project rules, user rules, <code>AGENTS.md</code> — version-controlled</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    If you had old memories: <code>Cmd+Shift+P</code> → <strong>Export
+    memories</strong> → move content into <code>.cursor/rules/</code>
+    (<a href="https://forum.cursor.com/t/are-my-memories-gone/144057">forum confirmation</a>).
+  </p>
+
+  <p>
+    <strong>Automation Memories</strong> (from
+    <a href="0014-cloud-agents-deep-dive.html">Lesson 14</a>) still exist — but
+    only as a cloud automation tool for notes across runs, not for local Agent
+    chats. Your weekly verify automation does not need them.
+  </p>
+
+  <h2>Your persistence stack (already live)</h2>
+
+  <table>
+    <thead>
+      <tr><th>Layer</th><th>On habit tracker</th><th>Survives new chat?</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Project rules</td>
+        <td>TypeScript + Drizzle</td>
+        <td>Yes — always or when relevant</td>
+      </tr>
+      <tr>
+        <td>Skills</td>
+        <td><code>habit-tracker-ship</code></td>
+        <td>Yes — invoked on demand</td>
+      </tr>
+      <tr>
+        <td>Hooks</td>
+        <td>Shell audit log</td>
+        <td>Yes — fires on agent events</td>
+      </tr>
+      <tr>
+        <td>Automations</td>
+        <td>Weekly verify</td>
+        <td>Yes — cloud cron, separate from IDE chat</td>
+      </tr>
+      <tr>
+        <td>Chat history</td>
+        <td>—</td>
+        <td><strong>No</strong> — each new chat starts fresh</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Rule of thumb: if you want Agent to remember it next month, put it in the
+    repo (rules, <code>AGENTS.md</code>, skill) — not in a chat message.
+  </p>
+
+  <h2>Check your understanding</h2>
+
+  <div class="quiz" id="quiz1"
+       data-messages='{"true":"Correct. Debug adds instrumentation and needs you to reproduce the bug.","false":"Agent mode guesses from static code without a structured log loop."}'>
+    <h3>1. What makes Debug different from Agent?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Debug uses runtime logs before fixing.</button>
+      <button data-correct="false">Agent mode cannot edit any source files.</button>
+      <button data-correct="false">Debug mode runs only inside cloud VMs.</button>
+    </div>
+    <div class="feedback" id="quiz1-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz2"
+       data-messages='{"true":"Correct. IDE Memories were removed — use version-controlled rules instead.","false":"IDE Memories still save prefs in Cursor Settings."}'>
+    <h3>2. Where do cross-session prefs live now?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Project rules and user rules replace memories.</button>
+      <button data-correct="false">IDE Memories still save prefs in settings.</button>
+      <button data-correct="false">Chat history persists full context forever.</button>
+    </div>
+    <div class="feedback" id="quiz2-feedback"></div>
+  </div>
+
+  <div class="quiz" id="quiz3"
+       data-messages='{"true":"Correct. Automation Memories are a cloud automation tool only.","false":"Automation Memories load into every local Agent chat."}'>
+    <h3>3. Automation Memories vs IDE memories?</h3>
+    <div class="quiz-options">
+      <button data-correct="true">Automation Memories are cloud automation only.</button>
+      <button data-correct="false">Automation Memories load in local chats.</button>
+      <button data-correct="false">Both memory types were removed in 2.1.</button>
+    </div>
+    <div class="feedback" id="quiz3-feedback"></div>
+  </div>
+
+  <h2>Do this now</h2>
+
+  <div class="practice">
+    <p><strong>Debug one real bug</strong> — habit tracker or LocalLab.</p>
+    <ol>
+      <li><strong>Pick a reproducible bug</strong> — failing test, wrong UI state, or a regression you can trigger reliably. If nothing is broken, temporarily break something small (e.g. invert one assertion) and note how to undo it.</li>
+      <li><strong>Switch to Debug</strong> — <code>Shift+Tab</code> until Debug appears. New chat recommended.</li>
+      <li><strong>Prompt with reproduction steps</strong> — include expected vs actual behavior, error output, and which command or click path triggers it. Let Debug instrument, then follow its reproduction steps exactly.</li>
+      <li><strong>Verify the fix</strong> — run your done-when command (<code>npm test</code>, <code>npm run verify</code>). Confirm instrumentation was removed.</li>
+      <li><strong>Capture one preference as a rule</strong> — if Debug surfaced something you want every future session to know (e.g. "always run e2e after dialog changes"), add one line to a project rule or user rule — not a chat memory.</li>
+    </ol>
+    <p>You are done when Debug found root cause via runtime evidence, tests are green, and one preference lives in rules — not chat.</p>
+  </div>
+
+  <h2>Curriculum complete</h2>
+
+  <p>
+    Lessons 1–23 cover the solo-builder Cursor stack: surfaces, prompts, rules,
+    verify loop, Plan Mode, UI, OSS, MCP, hooks, skills, automations, cloud
+    agents, PR review, capstone apps, mobile, run modes, terminal, git,
+    background agents, and now Debug + persistent context. Pick up app backlog
+    (LocalLab OCR, DB MCP) or a fresh idea whenever you want — the workflow
+    transfers.
+  </p>
+
+  <p class="source">
+    Primary source:
+    <a href="https://cursor.com/docs/agent/debug-mode">Debug Mode — official docs</a>.
+  </p>
+
+  <footer>
+    <p>Stuck on anything? Ask your agent teacher — say whether Debug instrumentation, mode switching, or rules-vs-memories tripped you up.</p>
+    <p style="margin-top: 0.75rem;">
+      Previous: <a href="0022-background-agents.html">Lesson 22 — Background Agents</a> ·
+      Reference: <a href="../reference/debug-mode.html">Debug Mode</a> ·
+      <a href="../reference/persistent-context.html">Persistent Context</a> ·
+      <a href="../reference/skills.html">Skills</a> ·
+      Mission: <a href="../MISSION.md">MISSION.md</a>
+    </p>
+  </footer>
+
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>
