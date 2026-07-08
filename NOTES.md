@@ -59,6 +59,24 @@ All six topics covered (Jul 2026):
 
 Suggested order was followed with Lesson 23 as honest capstone for removed features + Debug mode.
 
+## Phase 2 curriculum (drafted, Jul 2026)
+
+User has two separate repos: [habit-tracker](https://github.com/SamSamskies/habit-tracker) (full config stack) and [locallab](https://github.com/SamSamskies/locallab) (rules only). **User will finish Lesson 23 before starting Phase 2.**
+
+| # | Lesson | Practice repo(s) | Builds on |
+|---|--------|------------------|-----------|
+| 24 | Design Mode | habit-tracker | L7 UI, L18 iOS mention, L22 Agents Window |
+| 25 | Multi-root workspaces | habit-tracker + locallab | L3 rules, L13 automations multi-repo, L22 |
+| 26 | CLI deep dive | habit-tracker | L20 CLI intro |
+
+**L24 — Design Mode** (~15 min): Agents Window integrated browser, `Cmd+Shift+D`, click/draw/voice, queue edits mid-run. Exercise: run habit-tracker dev server, point at a UI element, describe a visual tweak, verify hot reload. Primary source: [Design Mode docs](https://cursor.com/docs/agent/design-mode).
+
+**L25 — Multi-root workspaces** (~15 min): Create `sam-apps.code-workspace` listing both clone paths. Folder-scoped rules; one cross-repo read/compare task (e.g. audit `.cursor/` setups or `npm run verify` scripts). Honest limits: worktrees and cloud agents disabled inside multi-root per [Apr 2026 changelog](https://cursor.com/changelog/04-24-26). Do **not** re-port habit-tracker hooks/skills to LocalLab.
+
+**L26 — CLI deep dive** (~15–20 min): Interactive `agent` sessions, resume, Shift+Tab modes, headless verify script. Note CLI still takes one workspace root — multi-repo via parent folder + `.cursorignore`, or use IDE multi-root instead. Primary sources: [Using Agent in CLI](https://cursor.com/docs/cli/using), [Headless CLI](https://cursor.com/docs/cli/headless), [CLI + MCP](https://cursor.com/docs/cli/mcp).
+
+**References to create with lessons:** `reference/design-mode.html`, `reference/multi-root-workspaces.html`, extend `reference/terminal-integration.html` or new `reference/cli-deep-dive.html`.
+
 ## Model selection for Plan Mode
 
 User has **Cursor Pro** ($20/mo API pool + generous Auto + Composer pool).
