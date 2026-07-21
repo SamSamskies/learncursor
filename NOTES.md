@@ -44,7 +44,7 @@
 - **Lesson 20 complete:** Terminal Integration — @Terminals, integrated vs external terminal, Cursor CLI; verify + headless CLI read
 - **Lesson 21 complete:** Git Workflows — @Commit, @Branch, SCM commit, gh PR; [habit-tracker PR #2](https://github.com/SamSamskies/habit-tracker/pull/2) delete confirmation dialog; Bugbot flagged concurrent confirmDelete stacking
 - **Lesson 22 complete:** Background Agents — `/multitask` is non-deterministic; queue = one chat while agent runs; worktrees manual; reverted LocalLab skill/hook port (not wanted now)
-- **Lesson 23 ready:** Debug Mode & Persistent Context — curriculum capstone; Custom Modes + IDE Memories removed in Cursor 2.1; replacements = built-in modes + rules/skills/subagents; automation Memories still cloud-only
+- **Lesson 23 ready (not started):** Debug Mode & Persistent Context — Custom Modes + IDE Memories removed in Cursor 2.1; replacements = built-in modes + rules/skills/subagents; automation Memories still cloud-only
 
 ## Post–Lesson 18 curriculum (user, Jul 2026) — complete
 
@@ -59,23 +59,33 @@ All six topics covered (Jul 2026):
 
 Suggested order was followed with Lesson 23 as honest capstone for removed features + Debug mode.
 
-## Phase 2 curriculum (drafted, Jul 2026)
+## Upcoming curriculum (Jul 2026)
 
-User has two separate repos: [habit-tracker](https://github.com/SamSamskies/habit-tracker) (full config stack) and [locallab](https://github.com/SamSamskies/locallab) (rules only). **User will finish Lesson 23 before starting Phase 2.**
+**Next up:** Lesson 23 (Debug Mode & Persistent Context) — user has not started it yet.
+
+User has two separate repos: [habit-tracker](https://github.com/SamSamskies/habit-tracker) (full config stack) and [locallab](https://github.com/SamSamskies/locallab) (rules only).
+
+Harness layers (rules, skills, hooks, verify, permissions) are covered; the gap is the **ratchet meta-habit** — when Agent fails a class of mistake, update the guide or sensor so it can't silently recur. Inserted as L24 immediately after Debug Mode (investigate → lock the harness). Design Mode / multi-root / CLI shift down; none depend on ratchet.
 
 | # | Lesson | Practice repo(s) | Builds on |
 |---|--------|------------------|-----------|
-| 24 | Design Mode | habit-tracker | L7 UI, L18 iOS mention, L22 Agents Window |
-| 25 | Multi-root workspaces | habit-tracker + locallab | L3 rules, L13 automations multi-repo, L22 |
-| 26 | CLI deep dive | habit-tracker | L20 CLI intro |
+| 23 | Debug Mode & Persistent Context | habit-tracker or locallab | L1 surfaces, L3–4 rules/verify |
+| 24 | Ratchet the harness | habit-tracker (full stack) | L3 rules, L4 verify, L11 hooks, L12 skills, L19 permissions |
+| 25 | Design Mode | habit-tracker | L7 UI, L18 iOS mention, L22 Agents Window |
+| 26 | Multi-root workspaces | habit-tracker + locallab | L3 rules, L13 automations multi-repo, L22 |
+| 27 | CLI deep dive | habit-tracker | L20 CLI intro |
 
-**L24 — Design Mode** (~15 min): Agents Window integrated browser, `Cmd+Shift+D`, click/draw/voice, queue edits mid-run. Exercise: run habit-tracker dev server, point at a UI element, describe a visual tweak, verify hot reload. Primary source: [Design Mode docs](https://cursor.com/docs/agent/design-mode).
+**L23 — Debug Mode & Persistent Context** (ready): built-in modes; Debug Mode evidence loop; rules/skills/AGENTS.md replace IDE Memories. Primary sources in lesson file.
 
-**L25 — Multi-root workspaces** (~15 min): Create `sam-apps.code-workspace` listing both clone paths. Folder-scoped rules; one cross-repo read/compare task (e.g. audit `.cursor/` setups or `npm run verify` scripts). Honest limits: worktrees and cloud agents disabled inside multi-root per [Apr 2026 changelog](https://cursor.com/changelog/04-24-26). Do **not** re-port habit-tracker hooks/skills to LocalLab.
+**L24 — Ratchet the harness** (~15 min): After a real Agent miss (or a replayed past miss), choose the right layer to update — rule / skill / hook / `permissions.json` / verify checklist — so that *class* of failure can't silently recur. Exercise: pick one failure from habit-tracker or LocalLab history, ratchet one harness file, re-run a prompt that would have triggered the miss, confirm the sensor catches it. Reference to create: `reference/harness-ratchet.html`. Ties Project Harness Files checklist closed.
 
-**L26 — CLI deep dive** (~15–20 min): Interactive `agent` sessions, resume, Shift+Tab modes, headless verify script. Note CLI still takes one workspace root — multi-repo via parent folder + `.cursorignore`, or use IDE multi-root instead. Primary sources: [Using Agent in CLI](https://cursor.com/docs/cli/using), [Headless CLI](https://cursor.com/docs/cli/headless), [CLI + MCP](https://cursor.com/docs/cli/mcp).
+**L25 — Design Mode** (~15 min): Agents Window integrated browser, `Cmd+Shift+D`, click/draw/voice, queue edits mid-run. Exercise: run habit-tracker dev server, point at a UI element, describe a visual tweak, verify hot reload. Primary source: [Design Mode docs](https://cursor.com/docs/agent/design-mode).
 
-**References to create with lessons:** `reference/design-mode.html`, `reference/multi-root-workspaces.html`, extend `reference/terminal-integration.html` or new `reference/cli-deep-dive.html`.
+**L26 — Multi-root workspaces** (~15 min): Create `sam-apps.code-workspace` listing both clone paths. Folder-scoped rules; one cross-repo read/compare task (e.g. audit `.cursor/` setups or `npm run verify` scripts). Honest limits: worktrees and cloud agents disabled inside multi-root per [Apr 2026 changelog](https://cursor.com/changelog/04-24-26). Do **not** re-port habit-tracker hooks/skills to LocalLab.
+
+**L27 — CLI deep dive** (~15–20 min): Interactive `agent` sessions, resume, Shift+Tab modes, headless verify script. Note CLI still takes one workspace root — multi-repo via parent folder + `.cursorignore`, or use IDE multi-root instead. Primary sources: [Using Agent in CLI](https://cursor.com/docs/cli/using), [Headless CLI](https://cursor.com/docs/cli/headless), [CLI + MCP](https://cursor.com/docs/cli/mcp).
+
+**References to create with lessons:** `reference/harness-ratchet.html`, `reference/design-mode.html`, `reference/multi-root-workspaces.html`, extend `reference/terminal-integration.html` or new `reference/cli-deep-dive.html`.
 
 ## Model selection for Plan Mode
 

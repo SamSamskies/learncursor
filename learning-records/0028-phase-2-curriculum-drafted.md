@@ -1,5 +1,7 @@
 # Phase 2 curriculum drafted
 
+Status: superseded by LR-0029
+
 User confirmed two separate app repos — [habit-tracker](https://github.com/SamSamskies/habit-tracker) (full rules/hooks/skills/automations stack) and [locallab](https://github.com/SamSamskies/locallab) (rules only; server + web in one repo). Lesson 23 deferred. Phase 2 adds three lessons: Design Mode (L24), multi-root workspaces (L25), CLI deep dive (L26).
 
 **Evidence:** User asked to draft Phase 2 after core curriculum; cited habit-tracker URL and later locallab URL; will complete Lesson 23 later.
